@@ -1,4 +1,4 @@
-/* Modern 2025 Design System */
+/* Futuristic 2025 AI Design System - Amped Up Edition for Automait LLC */
 :root {
   --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --ai-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
@@ -12,12 +12,15 @@
   --neon-cyan: #00f5ff;
   --neon-green: #39ff14;
   --t-color: #4ade80;
+  --glitch-red: #ff0000;
+  --glitch-blue: #00ffff;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  cursor: none; /* For custom cursor */
 }
 
 body {
@@ -28,16 +31,41 @@ body {
   overflow-x: hidden;
   position: relative;
 }
+/* Custom Cursor */
+.custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--neon-cyan);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  transition: all 0.1s ease;
+  mix-blend-mode: difference;
+}
 
-/* Animated Background */
-.animated-bg {
+.custom-cursor.hover {
+  width: 40px;
+  height: 40px;
+  background: rgba(0, 245, 255, 0.2);
+  border-color: var(--neon-green);
+  animation: pulse-cursor 1s infinite;
+}
+
+@keyframes pulse-cursor {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+/* Animated Background with Particles */
+#particles-js {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   z-index: -1;
-  overflow: hidden;
 }
 
 .gradient-sphere {
@@ -46,6 +74,7 @@ body {
   filter: blur(80px);
   opacity: 0.5;
   animation: float 20s infinite ease-in-out;
+  transform-style: preserve-3d; /* For parallax */
 }
 
 .sphere-1 {
@@ -56,7 +85,6 @@ body {
   left: -200px;
   animation-delay: 0s;
 }
-
 .sphere-2 {
   width: 400px;
   height: 400px;
@@ -81,6 +109,75 @@ body {
   50% { transform: translate(30px, -50px) scale(0.9); }
   75% { transform: translate(-30px, 30px) scale(1.05); }
 }
+/* Parallax Effect */
+.parallax {
+  perspective: 1px;
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transform-style: preserve-3d;
+}
+
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateZ(-1px) scale(2); /* Background layer */
+}
+
+/* Glitch Effect for Retro-Futurism */
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch::before, .glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;  background: var(--dark-bg);
+  clip: rect(0, 900px, 0, 0);
+  overflow: hidden;
+}
+
+.glitch::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--glitch-red);
+  animation: glitch-anim 3s infinite linear alternate-reverse;
+}
+
+.glitch::after {
+  left: -2px;
+  text-shadow: -2px 0 var(--glitch-blue);
+  animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(31px, 9999px, 94px, 0); transform: skew(0.92deg); }
+  5% { clip: rect(17px, 9999px, 94px, 0); transform: skew(0.46deg); }
+  10% { clip: rect(40px, 9999px, 87px, 0); transform: skew(0.59deg); }
+  15% { clip: rect(20px, 9999px, 9px, 0); transform: skew(0.7deg); }
+  20% { clip: rect(70px, 9999px, 61px, 0); transform: skew(0.31deg); }
+  25% { clip: rect(17px, 9999px, 55px, 0); transform: skew(0.98deg); }
+  30% { clip: rect(71px, 9999px, 1px, 0); transform: skew(0.27deg); }  35% { clip: rect(99px, 9999px, 63px, 0); transform: skew(0.31deg); }
+  40% { clip: rect(76px, 9999px, 30px, 0); transform: skew(0.2deg); }
+  45% { clip: rect(25px, 9999px, 39px, 0); transform: skew(0.52deg); }
+  50% { clip: rect(50px, 9999px, 57px, 0); transform: skew(0.78deg); }
+  55% { clip: rect(68px, 9999px, 24px, 0); transform: skew(0.04deg); }
+  60% { clip: rect(30px, 9999px, 21px, 0); transform: skew(0.61deg); }
+  65% { clip: rect(89px, 9999px, 36px, 0); transform: skew(0.76deg); }
+  70% { clip: rect(54px, 9999px, 72px, 0); transform: skew(0.8deg); }
+  75% { clip: rect(55px, 9999px, 91px, 0); transform: skew(0.47deg); }
+  80% { clip: rect(54px, 9999px, 32px, 0); transform: skew(0.52deg); }
+  85% { clip: rect(37px, 9999px, 70px, 0); transform: skew(0.19deg); }
+  90% { clip: rect(7px, 9999px, 88px, 0); transform: skew(0.62deg); }
+  95% { clip: rect(34px, 9999px, 56px, 0); transform: skew(0.9deg); }
+  100% { clip: rect(91px, 9999px, 30px, 0); transform: skew(0.3deg); }
+}
 
 /* Glass Navigation */
 header {
@@ -93,7 +190,6 @@ header {
   background: var(--glass-bg);
   border-bottom: 1px solid var(--glass-border);
 }
-
 .glass-nav {
   max-width: 1200px;
   margin: 0 auto;
@@ -112,14 +208,6 @@ header {
   gap: 2px;
 }
 
-.logo .zero {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  color: var(--neon-cyan);
-  text-shadow: 0 0 20px var(--neon-cyan);
-  font-size: 1.1em;
-}
-
 .logo .ai-text {
   background: var(--ai-gradient);
   -webkit-background-clip: text;
@@ -129,12 +217,6 @@ header {
   text-transform: uppercase;
   letter-spacing: -1px;
 }
-
-.logo .t-text {
-  color: var(--t-color);
-  font-weight: 700;
-}
-
 .logo-tag {
   font-size: 0.5em;
   color: var(--text-secondary);
@@ -164,8 +246,7 @@ header {
 
 .nav-link::after {
   content: '';
-  position: absolute;
-  bottom: -5px;
+  position: absolute;  bottom: -5px;
   left: 0;
   width: 0;
   height: 2px;
@@ -194,10 +275,10 @@ header {
 .hero {
   min-height: 100vh;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: center;  justify-content: center;
   padding: 120px 20px 60px;
   position: relative;
+  perspective: 1000px;
 }
 
 .hero-content {
@@ -222,22 +303,11 @@ header {
   margin-bottom: 20px;
   animation: slideUp 0.8s ease-out 0.2s both;
 }
-.gradient-text {
-  background: var(--ai-gradient);
+
+.gradient-text {  background: var(--ai-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-}
-
-.hero-subtitle {
-  font-size: 0.8em;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.brand-highlight {
-  color: var(--text-primary);
-  position: relative;
 }
 
 .hero-description {
@@ -262,8 +332,7 @@ header {
   align-items: center;
   gap: 10px;
   padding: 16px 32px;
-  text-decoration: none;
-  border-radius: 50px;
+  text-decoration: none;  border-radius: 50px;
   font-weight: 600;
   transition: all 0.3s ease;
   position: relative;
@@ -292,8 +361,7 @@ header {
   background: rgba(255, 255, 255, 0.15);
 }
 
-.cta-arrow {
-  transition: transform 0.3s ease;
+.cta-arrow {  transition: transform 0.3s ease;
 }
 
 .primary-cta:hover .cta-arrow {
@@ -323,7 +391,6 @@ header {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .metric-label {
   display: block;
   font-size: 0.9rem;
@@ -353,8 +420,7 @@ header {
   margin-bottom: 60px;
 }
 
-.section-title {
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
+.section-title {  font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 900;
   margin-bottom: 10px;
 }
@@ -377,13 +443,13 @@ header {
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
 }
 
 .feature-card::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
+  top: 0;  left: 0;
   right: 0;
   height: 2px;
   background: var(--ai-gradient);
@@ -396,7 +462,7 @@ header {
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
+  transform: rotateY(10deg) rotateX(10deg) translateY(-10px);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
 
@@ -412,8 +478,7 @@ header {
 }
 
 .icon-emoji {
-  font-size: 3rem;
-  display: block;
+  font-size: 3rem;  display: block;
 }
 
 .icon-glow {
@@ -444,7 +509,6 @@ header {
   display: flex;
   gap: 15px;
 }
-
 .stat {
   background: rgba(255, 255, 255, 0.05);
   padding: 5px 15px;
@@ -474,9 +538,78 @@ header {
 }
 
 .tech-item:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.15);  transform: translateY(-2px);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* AI Insights Section */
+.ai-insights {
+  text-align: center;
+  margin-top: 60px;
+}
+
+/* AI Demo Chat */
+.ai-demo-chat {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 15px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 0 30px rgba(237, 100, 166, 0.3);
+  z-index: 1000;
+}
+
+.ai-demo-chat.active {
+  display: flex;
+}
+.chat-message {
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 80%;
+}
+
+.user-message {
+  background: var(--ai-gradient);
+  align-self: flex-end;
+  color: white;
+}
+
+.ai-message {
+  background: var(--primary-gradient);
+  align-self: flex-start;
+  color: white;
+}
+
+.chat-input {
+  background: transparent;
+  border: 1px solid var(--glass-border);
+  color: var(--text-primary);
+  padding: 10px;
+  border-radius: 20px;
+}
+
+/* Ripple Effect on Buttons */
+.cta-button::before {
+  content: '';
+  position: absolute;  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.cta-button:active::before {
+  width: 200%;
+  height: 200%;
 }
 
 /* Footer */
@@ -494,8 +627,7 @@ header {
   text-align: center;
 }
 
-.footer-copyright {
-  color: var(--text-secondary);
+.footer-copyright {  color: var(--text-secondary);
   margin-bottom: 15px;
 }
 
@@ -526,7 +658,6 @@ header {
   gap: 8px;
   color: var(--text-secondary);
 }
-
 .status-dot {
   width: 8px;
   height: 8px;
@@ -556,8 +687,7 @@ header {
 @keyframes slideUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
-  }
+    transform: translateY(30px);  }
   to {
     opacity: 1;
     transform: translateY(0);
@@ -586,8 +716,7 @@ header {
     justify-content: center;
   }
   
-  .floating-metrics {
-    flex-direction: column;
+  .floating-metrics {    flex-direction: column;
     gap: 15px;
   }
   
