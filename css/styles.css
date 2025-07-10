@@ -2,11 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --primary: #ff6b35;
-  --primary-glow: #ff6b3580;
-  --accent: #00d4ff;
-  --dark: #000000;
-  --dark-gray: #0a0a0a;
+  /* New professional color scheme - purple/blue tech vibes */
+  --primary: #7c3aed; /* Purple */
+  --primary-glow: #7c3aed80;
+  --accent: #06b6d4; /* Cyan */
+  --accent-glow: #06b6d480;
+  --ai-highlight: #10b981; /* Green for AI */
+  --dark: #0a0a0a;
+  --dark-gray: #111111;
   --gray: #666;
   --light-gray: #999;
   --white: #ffffff;
@@ -55,8 +58,8 @@ body {
   top: -50%;
   left: -50%;
   background: radial-gradient(circle at 20% 50%, var(--primary-glow) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, var(--accent) 0%, transparent 50%),
-              radial-gradient(circle at 40% 20%, #ff35c5 0%, transparent 50%);
+              radial-gradient(circle at 80% 80%, var(--accent-glow) 0%, transparent 50%),
+              radial-gradient(circle at 40% 20%, #8b5cf6 0%, transparent 50%);
   opacity: 0.15;
   filter: blur(100px);
   animation: gradientShift 20s ease-in-out infinite;
@@ -103,15 +106,55 @@ nav {
 }
 
 .logo {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
   color: var(--white);
   text-decoration: none;
+  font-family: 'Inter', monospace;
 }
 
-.logo span {
-  color: var(--primary);
+/* Slashed zero style */
+.logo .zero {
+  position: relative;
+  display: inline-block;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  margin-right: -2px;
+}
+
+/* Option 1: Slashed zero (currently active) */
+.logo .zero::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  height: 1px;
+  background: var(--white);
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Option 2: Dotted zero (uncomment to use instead) */
+/*
+.logo .zero::after {
+  content: '•';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.5em;
+  color: var(--white);
+}
+*/
+
+.logo .ai {
+  color: var(--ai-highlight);
+  font-weight: 800;
+}
+
+.logo .rest {
+  color: var(--white);
 }
 
 .nav-links {
@@ -207,8 +250,8 @@ nav {
 .hero-badge {
   display: inline-block;
   padding: 8px 16px;
-  background: rgba(255, 107, 53, 0.1);
-  border: 1px solid rgba(255, 107, 53, 0.3);
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.3);
   border-radius: 100px;
   font-size: 14px;
   font-weight: 600;
@@ -227,7 +270,7 @@ nav {
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--white) 0%, var(--primary) 50%, var(--accent) 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 50%, var(--ai-highlight) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -461,7 +504,7 @@ nav {
 .feature-icon {
   width: 64px;
   height: 64px;
-  background: rgba(255, 107, 53, 0.1);
+  background: rgba(124, 58, 237, 0.1);
   border-radius: 12px;
   display: flex;
   align-items: center;
