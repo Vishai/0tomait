@@ -3,133 +3,341 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Automait LLC - AI Automation Revolution</title>
+  <title>0tomait - AI Business Automation Platform</title>
   <link rel="stylesheet" href="css/styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="particles-js" class="animated-bg"></div>
-  <div class="custom-cursor"></div>
+  <div class="gradient-bg"></div>
+  <div class="grid-overlay"></div>
 
-  <header>
-    <nav class="glass-nav">
-      <div class="logo glitch" data-text="Automait">
-        Autom<span class="ai-text">ai</span>t
-        <span class="logo-tag">LLC</span>
-      </div>
+  <nav>
+    <div class="nav-container">
+      <a href="#" class="logo">0to<span>mait</span></a>
       <ul class="nav-links">
-        <li><a href="#" class="nav-link active">Home</a></li>
-        <li><a href="#services" class="nav-link">Services</a></li>
-        <li><a href="#about" class="nav-link">About</a></li>
-        <li><a href="#case-studies" class="nav-link">Case Studies</a></li>
-        <li><a href="#blog" class="nav-link">Blog</a></li>
-        <li><a href="#contact" class="nav-link">Contact</a></li>
-        <li><a href="#" class="nav-link glass-cta" id="demo-toggle">Launch AI Demo</a></li>
+        <li><a href="#features">Solutions</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#resources">Resources</a></li>
+        <li><a href="#" class="cta-button">Start Building</a></li>
       </ul>
-    </nav>
-  </header>
-  <section class="hero parallax">
-    <div class="parallax-layer">
-      <div class="gradient-sphere sphere-1"></div>
-      <div class="gradient-sphere sphere-2"></div>
-      <div class="gradient-sphere sphere-3"></div>
+      <div class="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
     </div>
+  </nav>
+
+  <section class="hero">
     <div class="hero-content">
-      <span class="hero-badge glitch" data-text="AI-Powered Automation">AI-Powered Automation</span>
-      <h1 class="hero-title gradient-text glitch" data-text="Ought to Automate?">Ought to Automate?<br>Launch with Automait!</h1>
-      <p class="hero-description">Transform your business with next-gen AI chatbots, automated workflows, content creation, and data insights. Experience the future of efficiency in 2025.</p>
-      <div class="hero-actions">
-        <a href="#contact" class="cta-button primary-cta">Get Free Automation Audit <span class="cta-arrow">→</span></a>
-        <a href="#" class="cta-button secondary-cta" id="demo-toggle-secondary">Try Live Demo</a>
-      </div>
-      <div class="floating-metrics">
-        <div class="metric glass-card">
-          <span class="metric-value">24/7</span>
-          <span class="metric-label">AI Support</span>
-        </div>
-        <div class="metric glass-card">
-          <span class="metric-value">99%</span>
-          <span class="metric-label">Efficiency</span>
-        </div>
-        <div class="metric glass-card">
-          <span class="metric-value">$99</span>
-          <span class="metric-label">Starting</span>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section class="features" id="services">
-    <div class="features-header">
-      <h2 class="section-title glitch" data-text="Next-Gen Business Automation">Next-Gen Business Automation</h2>
-      <p class="section-subtitle">Powered by cutting-edge AI technology from Grok, Claude, and ChatGPT</p>
-    </div>
-    <div class="feature-grid">
-      <div class="feature-card glass-card">
-        <div class="feature-icon">
-          <span class="icon-glow"></span>
-          <span class="icon-emoji">🤖</span>
-        </div>
-        <h3>Small Business Process Automation</h3>
-        <p>Streamline customer support, invoicing, and inventory with intelligent AI chatbots and workflows.</p>
-        <div class="feature-stats">
-          <span class="stat">10ms response</span>
-          <span class="stat">95% accuracy</span>
+      <div class="hero-text">
+        <span class="hero-badge">AI-POWERED AUTOMATION</span>
+        <h1 class="hero-title">
+          Transform your business with
+          <span class="gradient-text">intelligent automation</span>
+        </h1>
+        <p class="hero-subtitle">
+          Deploy AI agents that understand your workflows, eliminate repetitive tasks, 
+          and unlock 10x productivity gains. From customer service to data analysis - 
+          we build the AI systems that work alongside your team.
+        </p>
+        <div class="hero-actions">
+          <a href="#contact" class="cta-button">Get Free Consultation</a>
+          <a href="#demo" class="secondary-button">
+            <span>Watch Demo</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M8 7L13 10L8 13V7Z" fill="currentColor"/>
+            </svg>
+          </a>
         </div>
       </div>
-      <div class="feature-card glass-card">
-        <div class="feature-icon">
-          <span class="icon-glow"></span>
-          <span class="icon-emoji">📝</span>
-        </div>
-        <h3>Content Creation & Marketing</h3>
-        <p>Generate SEO-optimized content, social media posts, and personalized marketing campaigns automatically.</p>
-        <div class="feature-stats">
-          <span class="stat">Consistent output</span>
-          <span class="stat">Boost engagement</span>
-        </div>
-      </div>      <div class="feature-card glass-card featured">
-        <div class="feature-icon">
-          <span class="icon-glow"></span>
-          <span class="icon-emoji">📊</span>
-        </div>
-        <h3>Data Analysis & Reporting</h3>
-        <p>Automate insights from your data with real-time reports, predictions, and visualizations.</p>
-        <div class="feature-stats">
-          <span class="stat">Real-time</span>
-          <span class="stat">Actionable insights</span>
+      <div class="hero-visual">
+        <div class="workflow-preview">
+          <div class="workflow-header">
+            <div class="status-dot"></div>
+            <span class="workflow-title">AI Workflow Active</span>
+          </div>
+          <div class="workflow-nodes">
+            <div class="workflow-node">
+              <div class="node-icon">📧</div>
+              <div class="node-content">
+                <h4>Customer Email Received</h4>
+                <p>AI analyzes intent and sentiment</p>
+              </div>
+            </div>
+            <div class="workflow-node">
+              <div class="node-icon">🤖</div>
+              <div class="node-content">
+                <h4>Intelligent Response</h4>
+                <p>Generates personalized reply in 0.3s</p>
+              </div>
+            </div>
+            <div class="workflow-node">
+              <div class="node-icon">📊</div>
+              <div class="node-content">
+                <h4>Update CRM & Analytics</h4>
+                <p>Automatically logs interaction data</p>
+              </div>
+            </div>
+            <div class="workflow-node">
+              <div class="node-icon">✅</div>
+              <div class="node-content">
+                <h4>Human Review (Optional)</h4>
+                <p>Flag complex cases for team review</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="tech-showcase">
-      <span class="tech-item">Grok</span>
-      <span class="tech-item">Claude</span>
-      <span class="tech-item">ChatGPT</span>
-      <span class="tech-item">Real-time Processing</span>
-      <span class="tech-item">Neural Networks</span>
-    </div>
-    <div class="ai-insights">
-      <h2 class="section-title glitch" data-text="AI-Curated Insights">AI-Curated Insights</h2>
-      <p>Real-time trends: "In 2025, AI automation is projected to save businesses 40% more time with tools like ours." (Demo placeholder)</p>
     </div>
   </section>
 
-  <!-- AI Demo Chat Widget -->
-  <div class="ai-demo-chat" id="ai-chat">
-    <div class="chat-message ai-message">Hello! I'm Automait's AI. How can I automate your business today?</div>
-    <input type="text" class="chat-input" placeholder="Type here..." id="chat-input">
-  </div>
-  <footer class="glass-footer" id="contact">
-    <div class="footer-content">
-      <p class="footer-copyright">© 2025 Automait LLC. Automating the future.</p>
-      <div class="footer-links">
-        <a href="#" class="footer-link">Contact</a>
-        <span class="footer-separator">•</span>
-        <a href="mailto:info@automait.com" class="footer-link">info@automait.com</a>
-        <span class="footer-separator">•</span>
-        <div class="footer-status">
-          <span class="status-dot"></span>
-          AI Systems Online
+  <section class="trusted-by">
+    <p class="trusted-by-title">Trusted by forward-thinking companies</p>
+    <div class="trusted-logos">
+      <span class="trusted-logo">TechCorp</span>
+      <span class="trusted-logo">Innovate</span>
+      <span class="trusted-logo">DataFlow</span>
+      <span class="trusted-logo">CloudNet</span>
+      <span class="trusted-logo">SmartBiz</span>
+    </div>
+  </section>
+
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2 class="section-title">
+        AI solutions that <span class="gradient-text">scale with you</span>
+      </h2>
+      <p class="section-subtitle">
+        We identify automation opportunities in your business and build custom AI agents 
+        that integrate seamlessly with your existing tools and workflows.
+      </p>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3 class="feature-title">Customer Service Automation</h3>
+        <p class="feature-description">
+          Deploy AI agents that handle customer inquiries 24/7. From answering FAQs 
+          to processing returns, our agents deliver human-like support at scale.
+        </p>
+        <div class="feature-metrics">
+          <div class="metric">
+            <span class="metric-value">85%</span>
+            <span class="metric-label">Query Resolution</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">24/7</span>
+            <span class="metric-label">Availability</span>
+          </div>
         </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3 class="feature-title">Data Analysis & Reporting</h3>
+        <p class="feature-description">
+          Transform raw data into actionable insights. Our AI analyzes patterns, 
+          generates reports, and provides recommendations to drive growth.
+        </p>
+        <div class="feature-metrics">
+          <div class="metric">
+            <span class="metric-value">10x</span>
+            <span class="metric-label">Faster Analysis</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">Real-time</span>
+            <span class="metric-label">Dashboards</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">Process Optimization</h3>
+        <p class="feature-description">
+          Identify bottlenecks and inefficiencies in your workflows. We build AI 
+          systems that streamline operations and reduce manual work by 80%.
+        </p>
+        <div class="feature-metrics">
+          <div class="metric">
+            <span class="metric-value">80%</span>
+            <span class="metric-label">Time Saved</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">50%</span>
+            <span class="metric-label">Cost Reduction</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🔗</div>
+        <h3 class="feature-title">Tool Integration</h3>
+        <p class="feature-description">
+          Connect AI to your existing stack - CRM, ERP, communication tools. 
+          Create unified workflows that leverage your current infrastructure.
+        </p>
+        <div class="feature-metrics">
+          <div class="metric">
+            <span class="metric-value">100+</span>
+            <span class="metric-label">Integrations</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">API-first</span>
+            <span class="metric-label">Architecture</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3 class="feature-title">Content Generation</h3>
+        <p class="feature-description">
+          Create marketing copy, documentation, and personalized communications 
+          at scale. Maintain brand voice while producing content 100x faster.
+        </p>
+        <div class="feature-metrics">
+          <div class="metric">
+            <span class="metric-value">100x</span>
+            <span class="metric-label">Output Speed</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">SEO</span>
+            <span class="metric-label">Optimized</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3 class="feature-title">Compliance & Security</h3>
+        <p class="feature-description">
+          Enterprise-grade security with SOC2 compliance. Your data stays yours, 
+          with full audit trails and role-based access controls.
+        </p>
+        <div class="feature-metrics">
+          <div class="metric">
+            <span class="metric-value">SOC2</span>
+            <span class="metric-label">Compliant</span>
+          </div>
+          <div class="metric">
+            <span class="metric-value">256-bit</span>
+            <span class="metric-label">Encryption</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="process" id="process">
+    <div class="section-header">
+      <h2 class="section-title">Our proven automation process</h2>
+      <p class="section-subtitle">
+        From initial assessment to full deployment, we handle everything
+      </p>
+    </div>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-number">1</div>
+        <h3 class="step-title">Discovery & Analysis</h3>
+        <p class="step-description">
+          We analyze your current workflows, identify automation opportunities, 
+          and calculate potential ROI for each process.
+        </p>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">2</div>
+        <h3 class="step-title">Custom AI Development</h3>
+        <p class="step-description">
+          Our team builds tailored AI agents using cutting-edge models, 
+          fine-tuned for your specific use cases and requirements.
+        </p>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">3</div>
+        <h3 class="step-title">Integration & Testing</h3>
+        <p class="step-description">
+          Seamlessly integrate AI into your existing systems. Rigorous testing 
+          ensures reliability and accuracy before deployment.
+        </p>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">4</div>
+        <h3 class="step-title">Deployment & Optimization</h3>
+        <p class="step-description">
+          Launch your AI automation with full support. Continuous monitoring 
+          and optimization ensure peak performance over time.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="cta-bg"></div>
+    <div class="cta-content">
+      <h2 class="cta-title">
+        Ready to <span class="gradient-text">automate your future?</span>
+      </h2>
+      <p class="cta-subtitle">
+        Join hundreds of businesses already saving thousands of hours with AI automation
+      </p>
+      <a href="#" class="cta-button">Schedule Free Consultation</a>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-brand">
+        <h3>0to<span style="color: var(--primary);">mait</span></h3>
+        <p>
+          Building intelligent automation solutions that transform how businesses 
+          operate. From zero to automated - we make AI work for you.
+        </p>
+      </div>
+      <div class="footer-section">
+        <h4>Solutions</h4>
+        <ul class="footer-links">
+          <li><a href="#">Customer Service AI</a></li>
+          <li><a href="#">Process Automation</a></li>
+          <li><a href="#">Data Analytics</a></li>
+          <li><a href="#">Content Generation</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Case Studies</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h4>Resources</h4>
+        <ul class="footer-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">API Reference</a></li>
+          <li><a href="#">Support</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 0tomait. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Security</a>
       </div>
     </div>
   </footer>
