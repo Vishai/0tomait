@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>2 AI Prompts That Save Hours | 0tomait</title>
+        <meta
+            name="description"
+            content="Two copy-paste prompts that make you look more prepared and professional. Try them in 5 minutes."
+        />
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --navy: #1e293b;
+                --navy-light: #334155;
+                --teal: #0d9488;
+                --teal-light: #14b8a6;
+                --warm-gray: #64748b;
+                --light-gray: #94a3b8;
+                --off-white: #f8fafc;
+                --white: #ffffff;
+                --border: #e2e8f0;
+            }
+
+            body {
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    sans-serif;
+                background: var(--off-white);
+                color: var(--navy);
+                line-height: 1.6;
+                min-height: 100vh;
+                padding: 60px 20px;
+            }
+
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                text-align: center;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 8px 16px;
+                background: rgba(13, 148, 136, 0.1);
+                border: 1px solid rgba(13, 148, 136, 0.2);
+                border-radius: 100px;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--teal);
+                margin-bottom: 24px;
+                letter-spacing: 0.5px;
+            }
+
+            h1 {
+                font-size: clamp(32px, 5vw, 44px);
+                font-weight: 800;
+                margin-bottom: 16px;
+                color: var(--navy);
+                letter-spacing: -1px;
+            }
+
+            .subtitle {
+                font-size: 18px;
+                color: var(--warm-gray);
+                margin-bottom: 48px;
+            }
+
+            .prompts-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+                text-align: left;
+                margin-bottom: 48px;
+            }
+
+            .prompt-card {
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 28px;
+            }
+
+            .prompt-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 8px;
+            }
+
+            .prompt-icon {
+                font-size: 24px;
+            }
+
+            .prompt-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: var(--navy);
+            }
+
+            .prompt-desc {
+                color: var(--warm-gray);
+                font-size: 15px;
+                margin-bottom: 20px;
+            }
+
+            .prompt-text {
+                background: var(--navy);
+                color: #e2e8f0;
+                border-radius: 8px;
+                padding: 20px;
+                font-family: "Courier New", monospace;
+                font-size: 13px;
+                line-height: 1.7;
+                white-space: pre-wrap;
+                margin-bottom: 16px;
+                max-height: 280px;
+                overflow-y: auto;
+            }
+
+            .copy-button {
+                background: var(--teal);
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 8px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 14px;
+            }
+
+            .copy-button:hover {
+                background: var(--teal-light);
+                transform: translateY(-1px);
+            }
+
+            .copy-button.copied {
+                background: #22c55e;
+            }
+
+            .how-to {
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: 12px;
+                padding: 24px;
+                max-width: 500px;
+                margin: 0 auto 48px;
+                text-align: left;
+            }
+
+            .how-to h3 {
+                font-size: 16px;
+                margin-bottom: 12px;
+                color: var(--teal);
+                font-weight: 700;
+            }
+
+            .how-to ol {
+                color: var(--warm-gray);
+                font-size: 14px;
+                line-height: 1.8;
+                padding-left: 20px;
+            }
+
+            .how-to a {
+                color: var(--teal);
+            }
+
+            .cta-section {
+                padding-top: 40px;
+                border-top: 1px solid var(--border);
+                text-align: center;
+                max-width: 480px;
+                margin: 0 auto;
+            }
+
+            .cta-section p {
+                color: var(--warm-gray);
+                margin-bottom: 24px;
+                font-size: 16px;
+            }
+
+            .cta-section strong {
+                color: var(--navy);
+            }
+
+            .cta-button {
+                display: inline-block;
+                background: var(--teal);
+                color: white;
+                padding: 14px 28px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 16px;
+                transition: all 0.2s;
+            }
+
+            .cta-button:hover {
+                background: var(--teal-light);
+                transform: translateY(-1px);
+            }
+
+            .back-link {
+                display: inline-block;
+                margin-top: 24px;
+                color: var(--light-gray);
+                text-decoration: none;
+                font-size: 14px;
+            }
+
+            .back-link:hover {
+                color: var(--warm-gray);
+            }
+
+            .logo {
+                font-size: 28px;
+                font-weight: 800;
+                text-decoration: none;
+                color: var(--navy);
+                display: inline-block;
+                margin-bottom: 32px;
+                letter-spacing: -0.5px;
+            }
+
+            .logo .ai {
+                color: var(--teal);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <a href="/" class="logo">
+                Øtom<span class="ai">AI</span>t
+            </a>
+
+            <span class="badge">2 FREE AI PROMPTS</span>
+            <h1>Save Hours This Week</h1>
+            <p class="subtitle">
+                Copy, paste into ChatGPT or Claude, and watch the magic. Pick
+                one or try both.
+            </p>
+
+            <div class="prompts-wrapper">
+                <!-- Prompt 1: Client Research -->
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <span class="prompt-icon">🎯</span>
+                        <h2 class="prompt-title">
+                            Instant Client Research Brief
+                        </h2>
+                    </div>
+                    <p class="prompt-desc">
+                        Paste a prospect's website or LinkedIn "About" section →
+                        get talking points, pain points, and smart questions for
+                        your call.
+                    </p>
+                    <div class="prompt-text" id="prompt1">
+                        You're a sales strategist helping me prepare for a
+                        prospect meeting. Here's information about the
+                        company/person I'm meeting with: [PASTE THEIR WEBSITE
+                        ABOUT PAGE OR LINKEDIN SUMMARY HERE] My business: [ONE
+                        SENTENCE ABOUT WHAT YOU DO] Please give me: 1.
+                        **Company/Person Snapshot** (3 bullets max) - What they
+                        do, who they serve, their apparent priorities 2.
+                        **Likely Pain Points** - Based on their industry and
+                        size, what problems do they probably face that I could
+                        help with? 3. **Talking Points That Show I Did My
+                        Homework** - 2-3 specific things I can mention to show I
+                        understand their world 4. **Smart Questions to Ask** -
+                        4-5 questions that will uncover their real needs and
+                        make me look prepared 5. **Potential Objections &
+                        Responses** - What hesitations might they have? How
+                        should I address them? Keep it concise and actionable.
+                        I'm reading this 10 minutes before my call.
+                    </div>
+                    <button
+                        class="copy-button"
+                        onclick="copyPrompt('prompt1', this)"
+                    >
+                        Copy Prompt
+                    </button>
+                </div>
+
+                <!-- Prompt 2: Quote Generator -->
+                <div class="prompt-card">
+                    <div class="prompt-header">
+                        <span class="prompt-icon">📝</span>
+                        <h2 class="prompt-title">
+                            Rough Notes → Professional Quote
+                        </h2>
+                    </div>
+                    <p class="prompt-desc">
+                        Paste your messy notes from a client conversation → get
+                        a formatted proposal you can send in minutes.
+                    </p>
+                    <div class="prompt-text" id="prompt2">
+                        You're a business consultant who writes clear,
+                        professional proposals. Here are my rough notes from a
+                        client conversation: [PASTE YOUR MESSY NOTES HERE] My
+                        business: [WHAT YOU DO] My typical rate/pricing
+                        structure: [HOURLY, PROJECT-BASED, ETC.] Please create a
+                        professional quote/proposal with: 1. **Project Summary**
+                        - 2-3 sentences restating what they need (shows I
+                        understood them) 2. **Scope of Work** - Bullet list of
+                        exactly what's included - Be specific enough to prevent
+                        scope creep 3. **What's NOT Included** - 2-3 items that
+                        are explicitly out of scope 4. **Timeline** - Realistic
+                        milestones or delivery date 5. **Investment** - Price
+                        with brief justification - Payment terms (e.g., 50%
+                        upfront, 50% on completion) 6. **Next Steps** - Clear
+                        call to action to move forward Tone: Professional but
+                        warm. Not corporate stiff. Format it so I can copy/paste
+                        into an email.
+                    </div>
+                    <button
+                        class="copy-button"
+                        onclick="copyPrompt('prompt2', this)"
+                    >
+                        Copy Prompt
+                    </button>
+                </div>
+            </div>
+
+            <div class="how-to">
+                <h3>How to use:</h3>
+                <ol>
+                    <li>Copy one of the prompts above</li>
+                    <li>
+                        Open
+                        <a href="https://chat.openai.com" target="_blank"
+                            >ChatGPT</a
+                        >
+                        or
+                        <a href="https://claude.ai" target="_blank">Claude</a>
+                    </li>
+                    <li>Paste and fill in the [BRACKETED] parts</li>
+                    <li>Hit enter → get your result in 30 seconds</li>
+                </ol>
+            </div>
+
+            <div class="cta-section">
+                <p>
+                    <strong>These prompts save you maybe an hour.</strong><br />
+                    What if you could save 5-10 hours every week with
+                    automations built specifically for your workflows?
+                </p>
+                <a
+                    href="https://calendar.app.google/cmtRRbjmx9MnxDTr9"
+                    class="cta-button"
+                    >Book a Free Discovery Call</a
+                >
+
+                <a href="/" class="back-link">← Back to 0tomait.com</a>
+            </div>
+        </div>
+
+        <script>
+            function copyPrompt(promptId, button) {
+                const promptText = document.getElementById(promptId).innerText;
+                navigator.clipboard.writeText(promptText);
+
+                button.textContent = "Copied!";
+                button.classList.add("copied");
+
+                setTimeout(() => {
+                    button.textContent = "Copy Prompt";
+                    button.classList.remove("copied");
+                }, 2000);
+            }
+        </script>
+    </body>
+</html>

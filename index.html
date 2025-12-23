@@ -1,368 +1,1003 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>0tomait - AI Business Automation Platform</title>
-  
-  <!-- Security & SEO Meta Tags -->
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <meta name="referrer" content="strict-origin-when-cross-origin">
-  <link rel="canonical" href="https://0tomait.com">
-  
-  <!-- Standard Meta Tags -->
-  <meta name="description" content="Transform your business with AI automation. Deploy intelligent agents that eliminate repetitive tasks and unlock 10x productivity gains.">
-  <meta name="keywords" content="AI automation, business automation, artificial intelligence, workflow optimization, productivity">
-  
-  <!-- Open Graph / Social Media -->
-  <meta property="og:title" content="0tomait - AI Business Automation Platform">
-  <meta property="og:description" content="Transform your business with intelligent automation">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://0tomait.com">
-  
-  <!-- Styles -->
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="gradient-bg"></div>
-  <div class="grid-overlay"></div>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>0tomait - AI Workflow Automation for Business Owners</title>
 
-  <nav>
-    <div class="nav-container">
-      <a href="#" class="logo">
-        <span class="zero">0</span><span class="rest">tom</span><span class="ai">AI</span><span class="rest">t</span>
-      </a>
-      <ul class="nav-links">
-        <li><a href="#features">Solutions</a></li>
-        <li><a href="#process">Process</a></li>
-        <li><a href="#pricing">Pricing</a></li>
-        <li><a href="#resources">Resources</a></li>
-        <li><a href="#" class="cta-button">Start Building</a></li>
-      </ul>
-      <div class="mobile-menu-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-    </div>
-  </nav>
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="upgrade-insecure-requests"
+        />
+        <meta
+            name="description"
+            content="I help business owners save 5-10 hours per week by building custom AI automations and teaching you to use them. No fluff, just results."
+        />
+        <link rel="canonical" href="https://0tomait.com" />
 
-  <section class="hero">
-    <div class="hero-content">
-      <div class="hero-text">
-        <span class="hero-badge">AI-POWERED BUSINESS AUTOMATION</span>
-        <h1 class="hero-title">
-          Zero to automated with
-          <span class="gradient-text">intelligent AI solutions</span>
-        </h1>
-        <p class="hero-subtitle">
-          Deploy AI agents that understand your workflows, eliminate repetitive tasks, 
-          and unlock 10x productivity gains. From customer service to data analysis - 
-          we build the AI systems that work alongside your team.
-        </p>
-        <div class="hero-actions">
-          <a href="#contact" class="cta-button">Get Free Consultation</a>
-          <a href="#demo" class="secondary-button">
-            <span>Watch Demo</span>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" stroke-width="2"/>
-              <path d="M8 7L13 10L8 13V7Z" fill="currentColor"/>
-            </svg>
-          </a>
-        </div>
-      </div>
-      <div class="hero-visual">
-        <div class="workflow-preview">
-          <div class="workflow-header">
-            <div class="status-dot"></div>
-            <span class="workflow-title">AI Workflow Active</span>
-          </div>
-          <div class="workflow-nodes">
-            <div class="workflow-node">
-              <div class="node-icon">📧</div>
-              <div class="node-content">
-                <h4>Customer Email Received</h4>
-                <p>AI analyzes intent and sentiment</p>
-              </div>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            :root {
+                --navy: #1e293b;
+                --navy-light: #334155;
+                --teal: #0d9488;
+                --teal-light: #14b8a6;
+                --warm-gray: #64748b;
+                --light-gray: #94a3b8;
+                --off-white: #f8fafc;
+                --white: #ffffff;
+                --border: #e2e8f0;
+            }
+
+            body {
+                font-family:
+                    "Inter",
+                    -apple-system,
+                    sans-serif;
+                background: var(--off-white);
+                color: var(--navy);
+                line-height: 1.6;
+            }
+
+            /* Navigation */
+            nav {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 16px 24px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                font-size: 28px;
+                font-weight: 800;
+                text-decoration: none;
+                color: var(--navy);
+                letter-spacing: -0.5px;
+            }
+
+            .logo .ai {
+                color: var(--teal);
+            }
+
+            .nav-links {
+                display: flex;
+                list-style: none;
+                gap: 32px;
+                align-items: center;
+            }
+
+            .nav-links a {
+                text-decoration: none;
+                color: var(--warm-gray);
+                font-weight: 500;
+                font-size: 15px;
+                transition: color 0.2s;
+            }
+
+            .nav-links a:hover {
+                color: var(--navy);
+            }
+
+            .cta-button {
+                display: inline-block;
+                background: var(--teal);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 15px;
+                transition: all 0.2s;
+            }
+
+            .cta-button:hover {
+                background: var(--teal-light);
+                transform: translateY(-1px);
+            }
+
+            .mobile-menu-toggle {
+                display: none;
+                flex-direction: column;
+                gap: 5px;
+                cursor: pointer;
+            }
+
+            .mobile-menu-toggle span {
+                width: 24px;
+                height: 2px;
+                background: var(--navy);
+            }
+
+            /* Hero Section */
+            .hero {
+                padding: 140px 24px 80px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .hero-content {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 60px;
+                align-items: center;
+            }
+
+            .hero-badge {
+                display: inline-block;
+                padding: 8px 16px;
+                background: rgba(13, 148, 136, 0.1);
+                border: 1px solid rgba(13, 148, 136, 0.2);
+                border-radius: 100px;
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--teal);
+                margin-bottom: 24px;
+                letter-spacing: 0.5px;
+            }
+
+            .hero-title {
+                font-size: clamp(36px, 5vw, 52px);
+                font-weight: 800;
+                line-height: 1.1;
+                margin-bottom: 24px;
+                color: var(--navy);
+                letter-spacing: -1px;
+            }
+
+            .gradient-text {
+                color: var(--teal);
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+                color: var(--warm-gray);
+                margin-bottom: 32px;
+                line-height: 1.7;
+            }
+
+            .hero-actions {
+                display: flex;
+                gap: 16px;
+                flex-wrap: wrap;
+            }
+
+            .secondary-button {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--navy);
+                text-decoration: none;
+                font-weight: 600;
+                padding: 12px 24px;
+                border: 2px solid var(--border);
+                border-radius: 8px;
+                transition: all 0.2s;
+            }
+
+            .secondary-button:hover {
+                border-color: var(--navy);
+            }
+
+            /* Workflow Preview Card */
+            .workflow-preview {
+                background: var(--white);
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+                border: 1px solid var(--border);
+            }
+
+            .workflow-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 20px;
+                padding-bottom: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .status-dot {
+                width: 10px;
+                height: 10px;
+                background: #22c55e;
+                border-radius: 50%;
+            }
+
+            .workflow-title {
+                font-weight: 600;
+                font-size: 14px;
+                color: var(--navy);
+            }
+
+            .workflow-nodes {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .workflow-node {
+                display: flex;
+                gap: 16px;
+                padding: 16px;
+                background: var(--off-white);
+                border-radius: 12px;
+                align-items: flex-start;
+            }
+
+            .node-icon {
+                font-size: 24px;
+                flex-shrink: 0;
+            }
+
+            .node-content h4 {
+                font-size: 15px;
+                font-weight: 600;
+                color: var(--navy);
+                margin-bottom: 4px;
+            }
+
+            .node-content p {
+                font-size: 14px;
+                color: var(--warm-gray);
+            }
+
+            /* Sections */
+            section {
+                padding: 80px 24px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .section-header {
+                text-align: center;
+                margin-bottom: 48px;
+            }
+
+            .section-title {
+                font-size: clamp(28px, 4vw, 40px);
+                font-weight: 800;
+                color: var(--navy);
+                margin-bottom: 16px;
+                letter-spacing: -0.5px;
+            }
+
+            .section-subtitle {
+                font-size: 18px;
+                color: var(--warm-gray);
+                max-width: 650px;
+                margin: 0 auto;
+                line-height: 1.7;
+            }
+
+            /* Feature Cards */
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 24px;
+            }
+
+            .feature-card {
+                background: var(--white);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 32px;
+                transition: all 0.2s;
+            }
+
+            .feature-card:hover {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+                transform: translateY(-2px);
+            }
+
+            .feature-icon {
+                font-size: 32px;
+                margin-bottom: 16px;
+            }
+
+            .feature-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: var(--navy);
+                margin-bottom: 12px;
+            }
+
+            .feature-description {
+                color: var(--warm-gray);
+                line-height: 1.7;
+            }
+
+            .feature-metrics {
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid var(--border);
+            }
+
+            .metric-value {
+                font-size: 28px;
+                font-weight: 800;
+                color: var(--teal);
+            }
+
+            .metric-label {
+                display: block;
+                font-size: 14px;
+                color: var(--light-gray);
+                margin-top: 4px;
+            }
+
+            /* Process Steps */
+            .process-steps {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 32px;
+                margin-top: 48px;
+            }
+
+            .process-step {
+                text-align: center;
+                padding: 32px 24px;
+            }
+
+            .step-number {
+                width: 48px;
+                height: 48px;
+                background: var(--teal);
+                color: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 20px;
+                margin: 0 auto 20px;
+            }
+
+            .step-title {
+                font-size: 20px;
+                font-weight: 700;
+                color: var(--navy);
+                margin-bottom: 12px;
+            }
+
+            .step-description {
+                color: var(--warm-gray);
+                font-size: 15px;
+                line-height: 1.7;
+            }
+
+            /* Calculator Section */
+            .calculator-section {
+                background: var(--white);
+                border-radius: 16px;
+                padding: 48px;
+                border: 1px solid var(--border);
+                max-width: 700px;
+                margin: 48px auto 0;
+            }
+
+            .calc-inputs {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 32px;
+                margin-bottom: 40px;
+            }
+
+            .calc-field label {
+                display: block;
+                color: var(--warm-gray);
+                font-size: 14px;
+                margin-bottom: 12px;
+                font-weight: 500;
+            }
+
+            .calc-field input[type="range"] {
+                width: 100%;
+                height: 8px;
+                border-radius: 4px;
+                background: var(--border);
+                accent-color: var(--teal);
+                cursor: pointer;
+            }
+
+            .calc-display {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 8px;
+            }
+
+            .calc-display .value {
+                color: var(--teal);
+                font-weight: 700;
+                font-size: 18px;
+            }
+
+            .calc-display .range {
+                color: var(--light-gray);
+                font-size: 12px;
+            }
+
+            .calc-results {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 24px;
+                text-align: center;
+                padding-top: 32px;
+                border-top: 1px solid var(--border);
+            }
+
+            .calc-results .number {
+                font-size: 36px;
+                font-weight: 800;
+            }
+
+            .calc-results .label {
+                color: var(--warm-gray);
+                font-size: 14px;
+                margin-top: 4px;
+            }
+
+            /* CTA Section */
+            .cta-section {
+                background: var(--navy);
+                color: white;
+                padding: 80px 24px;
+                text-align: center;
+                margin-top: 80px;
+                max-width: none;
+            }
+
+            .cta-section .section-title {
+                color: white;
+            }
+
+            .cta-section .section-subtitle {
+                color: rgba(255, 255, 255, 0.7);
+            }
+
+            .cta-section .cta-button {
+                margin-top: 32px;
+                padding: 16px 32px;
+                font-size: 17px;
+            }
+
+            .pricing-note {
+                margin-top: 24px;
+                color: rgba(255, 255, 255, 0.6);
+                font-size: 15px;
+            }
+
+            .pricing-note strong {
+                color: white;
+            }
+
+            /* Footer */
+            footer {
+                background: var(--white);
+                padding: 48px 24px;
+                border-top: 1px solid var(--border);
+                text-align: center;
+            }
+
+            footer .logo {
+                margin-bottom: 16px;
+                display: inline-block;
+            }
+
+            footer p {
+                color: var(--warm-gray);
+                font-size: 14px;
+            }
+
+            /* Mobile Responsive */
+            @media (max-width: 768px) {
+                .nav-links {
+                    display: none;
+                }
+
+                .mobile-menu-toggle {
+                    display: flex;
+                }
+
+                .hero-content {
+                    grid-template-columns: 1fr;
+                    gap: 40px;
+                }
+
+                .hero {
+                    padding: 120px 20px 60px;
+                }
+
+                .calc-inputs {
+                    grid-template-columns: 1fr;
+                }
+
+                .calc-results {
+                    grid-template-columns: 1fr;
+                    gap: 32px;
+                }
+
+                .features-grid {
+                    grid-template-columns: 1fr;
+                }
+
+                .process-steps {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    <span class="zero">0</span>tom<span class="ai">AI</span>t
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#problem">The Problem</a></li>
+                    <li><a href="#solution">How It Works</a></li>
+                    <li><a href="#results">Results</a></li>
+                    <li>
+                        <a href="#contact" class="cta-button">Book a Call</a>
+                    </li>
+                </ul>
+                <div class="mobile-menu-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
             </div>
-            <div class="workflow-node">
-              <div class="node-icon">🤖</div>
-              <div class="node-content">
-                <h4>Intelligent Response</h4>
-                <p>Generates personalized reply in 0.3s</p>
-              </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <span class="hero-badge">AI WORKFLOW ACCELERATOR</span>
+                    <h1 class="hero-title">
+                        Stop drowning in
+                        <span class="gradient-text">repetitive busy work</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        I help business owners save 5-10 hours per week by
+                        building custom AI automations — and teaching you how to
+                        use them. In 8 weeks, you'll have working systems and
+                        the skills to keep building.
+                    </p>
+                    <div class="hero-actions">
+                        <a href="#contact" class="cta-button"
+                            >Book Free Discovery Call</a
+                        >
+                        <a href="#results" class="secondary-button">
+                            <span>See Real Results</span>
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                            >
+                                <path
+                                    d="M7 4L13 10L7 16"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="hero-visual">
+                    <div class="workflow-preview">
+                        <div class="workflow-header">
+                            <div class="status-dot"></div>
+                            <span class="workflow-title"
+                                >Real Client Result: Blog Automation</span
+                            >
+                        </div>
+                        <div class="workflow-nodes">
+                            <div class="workflow-node">
+                                <div class="node-icon">📝</div>
+                                <div class="node-content">
+                                    <h4>Before: 5 hours/week</h4>
+                                    <p>
+                                        Manual research, writing, editing,
+                                        formatting
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="workflow-node">
+                                <div class="node-icon">🤖</div>
+                                <div class="node-content">
+                                    <h4>AI System Built</h4>
+                                    <p>
+                                        Custom automation for research + draft
+                                        generation
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="workflow-node">
+                                <div class="node-icon">⚡</div>
+                                <div class="node-content">
+                                    <h4>After: 1 hour/week</h4>
+                                    <p>Quick review and publish — that's it</p>
+                                </div>
+                            </div>
+                            <div class="workflow-node">
+                                <div class="node-icon">📊</div>
+                                <div class="node-content">
+                                    <h4>= 200 hours saved/year</h4>
+                                    <p>Time back for what actually matters</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="workflow-node">
-              <div class="node-icon">📊</div>
-              <div class="node-content">
-                <h4>Update CRM & Analytics</h4>
-                <p>Automatically logs interaction data</p>
-              </div>
+        </section>
+
+        <!-- Problem Section -->
+        <section id="problem">
+            <div class="section-header">
+                <h2 class="section-title">Sound familiar?</h2>
+                <p class="section-subtitle">
+                    You know AI could help your business, but you're stuck
+                    between "I don't have time to figure this out" and "I don't
+                    want to hire an agency that builds something I can't
+                    maintain."
+                </p>
             </div>
-            <div class="workflow-node">
-              <div class="node-icon">✅</div>
-              <div class="node-content">
-                <h4>Human Review (Optional)</h4>
-                <p>Flag complex cases for team review</p>
-              </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⏰</div>
+                    <h3 class="feature-title">Buried in Repetitive Tasks</h3>
+                    <p class="feature-description">
+                        You spend 10+ hours per week on tasks that feel like
+                        they should be automated — email responses, content
+                        creation, data entry, reporting. But you don't know
+                        where to start.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤯</div>
+                    <h3 class="feature-title">Overwhelmed by AI Options</h3>
+                    <p class="feature-description">
+                        ChatGPT, Claude, Zapier, Make, n8n... there are a
+                        hundred tools and everyone has an opinion. You've tried
+                        a few things but nothing stuck.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3 class="feature-title">Don't Want a Black Box</h3>
+                    <p class="feature-description">
+                        You've seen agencies build fancy systems that break the
+                        moment they leave. You want to actually understand
+                        what's being built so you can maintain and extend it
+                        yourself.
+                    </p>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        </section>
 
-  <section class="trusted-by">
-    <p class="trusted-by-title">Trusted by forward-thinking companies</p>
-    <div class="trusted-logos">
-      <span class="trusted-logo">TechCorp</span>
-      <span class="trusted-logo">Innovate</span>
-      <span class="trusted-logo">DataFlow</span>
-      <span class="trusted-logo">CloudNet</span>
-      <span class="trusted-logo">SmartBiz</span>
-    </div>
-  </section>
+        <!-- Solution Section -->
+        <section id="solution">
+            <div class="section-header">
+                <h2 class="section-title">
+                    The
+                    <span class="gradient-text">AI Workflow Accelerator</span>
+                </h2>
+                <p class="section-subtitle">
+                    An 8-week program where I build your automations WITH you —
+                    so you walk away with working systems AND the skills to keep
+                    building.
+                </p>
+            </div>
 
-  <section class="features" id="features">
-    <div class="section-header">
-      <h2 class="section-title">
-        AI solutions that <span class="gradient-text">scale with you</span>
-      </h2>
-      <p class="section-subtitle">
-        We identify automation opportunities in your business and build custom AI agents 
-        that integrate seamlessly with your existing tools and workflows.
-      </p>
-    </div>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Audit & Identify</h3>
+                    <p class="step-description">
+                        Week 1: We map your workflows and find the 2-3
+                        highest-impact automation opportunities. No guessing —
+                        we pick what saves you the most time.
+                    </p>
+                </div>
 
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3 class="feature-title">Customer Service Automation</h3>
-        <p class="feature-description">
-          Deploy AI agents that handle customer inquiries 24/7. From answering FAQs 
-          to processing returns, our agents deliver human-like support at scale.
-        </p>
-        <div class="feature-metrics">
-          <div class="metric">
-            <span class="metric-value">85%</span>
-            <span class="metric-label">Query Resolution</span>
-          </div>
-          <div class="metric">
-            <span class="metric-value">24/7</span>
-            <span class="metric-label">Availability</span>
-          </div>
-        </div>
-      </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Learn the Foundations</h3>
+                    <p class="step-description">
+                        Week 2: AI fundamentals training. Claude, ChatGPT,
+                        prompt engineering — the skills that make everything
+                        else click.
+                    </p>
+                </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3 class="feature-title">Data Analysis & Reporting</h3>
-        <p class="feature-description">
-          Transform raw data into actionable insights. Our AI analyzes patterns, 
-          generates reports, and provides recommendations to drive growth.
-        </p>
-        <div class="feature-metrics">
-          <div class="metric">
-            <span class="metric-value">10x</span>
-            <span class="metric-label">Faster Analysis</span>
-          </div>
-          <div class="metric">
-            <span class="metric-value">Real-time</span>
-            <span class="metric-label">Dashboards</span>
-          </div>
-        </div>
-      </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Build Together</h3>
+                    <p class="step-description">
+                        Weeks 3-6: We build your 2-3 automations side by side. I
+                        do the heavy lifting, you learn by doing. Each week you
+                        get more independent.
+                    </p>
+                </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3 class="feature-title">Process Optimization</h3>
-        <p class="feature-description">
-          Identify bottlenecks and inefficiencies in your workflows. We build AI 
-          systems that streamline operations and reduce manual work by 80%.
-        </p>
-        <div class="feature-metrics">
-          <div class="metric">
-            <span class="metric-value">80%</span>
-            <span class="metric-label">Time Saved</span>
-          </div>
-          <div class="metric">
-            <span class="metric-value">50%</span>
-            <span class="metric-label">Cost Reduction</span>
-          </div>
-        </div>
-      </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Optimize & Document</h3>
+                    <p class="step-description">
+                        Weeks 7-8: Refine everything, create SOPs, build your
+                        roadmap for future automations. You leave fully
+                        self-sufficient.
+                    </p>
+                </div>
+            </div>
+        </section>
 
-      <div class="feature-card">
-        <div class="feature-icon">🔗</div>
-        <h3 class="feature-title">Tool Integration</h3>
-        <p class="feature-description">
-          Connect AI to your existing stack - CRM, ERP, communication tools. 
-          Create unified workflows that leverage your current infrastructure.
-        </p>
-        <div class="feature-metrics">
-          <div class="metric">
-            <span class="metric-value">100+</span>
-            <span class="metric-label">Integrations</span>
-          </div>
-          <div class="metric">
-            <span class="metric-value">API-first</span>
-            <span class="metric-label">Architecture</span>
-          </div>
-        </div>
-      </div>
+        <!-- Results Section -->
+        <section id="results">
+            <div class="section-header">
+                <h2 class="section-title">What you walk away with</h2>
+            </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">📝</div>
-        <h3 class="feature-title">Content Generation</h3>
-        <p class="feature-description">
-          Create marketing copy, documentation, and personalized communications 
-          at scale. Maintain brand voice while producing content 100x faster.
-        </p>
-        <div class="feature-metrics">
-          <div class="metric">
-            <span class="metric-value">100x</span>
-            <span class="metric-label">Output Speed</span>
-          </div>
-          <div class="metric">
-            <span class="metric-value">SEO</span>
-            <span class="metric-label">Optimized</span>
-          </div>
-        </div>
-      </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">2-3 Working Automations</h3>
+                    <p class="feature-description">
+                        Custom-built for YOUR workflows. Not templates — real
+                        systems that integrate with your existing tools and
+                        actually get used.
+                    </p>
+                    <div class="feature-metrics">
+                        <span class="metric-value">5-10</span>
+                        <span class="metric-label">Hours saved/week</span>
+                    </div>
+                </div>
 
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3 class="feature-title">Compliance & Security</h3>
-        <p class="feature-description">
-          Enterprise-grade security with SOC2 compliance. Your data stays yours, 
-          with full audit trails and role-based access controls.
-        </p>
-        <div class="feature-metrics">
-          <div class="metric">
-            <span class="metric-value">SOC2</span>
-            <span class="metric-label">Compliant</span>
-          </div>
-          <div class="metric">
-            <span class="metric-value">256-bit</span>
-            <span class="metric-label">Encryption</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3 class="feature-title">AI Skills That Stick</h3>
+                    <p class="feature-description">
+                        You'll understand how to use Claude, ChatGPT, and
+                        automation tools at a practical level. No more "I don't
+                        know where to start."
+                    </p>
+                    <div class="feature-metrics">
+                        <span class="metric-value">8</span>
+                        <span class="metric-label">Training sessions</span>
+                    </div>
+                </div>
 
-  <section class="process" id="process">
-    <div class="section-header">
-      <h2 class="section-title">Our proven automation process</h2>
-      <p class="section-subtitle">
-        From initial assessment to full deployment, we handle everything
-      </p>
-    </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <h3 class="feature-title">Complete Documentation</h3>
+                    <p class="feature-description">
+                        SOPs for every automation, troubleshooting guides, and a
+                        roadmap for future builds. Everything you need to
+                        maintain and extend.
+                    </p>
+                    <div class="feature-metrics">
+                        <span class="metric-value">100%</span>
+                        <span class="metric-label">Self-sufficient</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <div class="process-steps">
-      <div class="process-step">
-        <div class="step-number">1</div>
-        <h3 class="step-title">Discovery & Analysis</h3>
-        <p class="step-description">
-          We analyze your current workflows, identify automation opportunities, 
-          and calculate potential ROI for each process.
-        </p>
-      </div>
+        <!-- Fit Section -->
+        <section id="fit">
+            <div class="section-header">
+                <h2 class="section-title">This is for you if...</h2>
+            </div>
 
-      <div class="process-step">
-        <div class="step-number">2</div>
-        <h3 class="step-title">Custom AI Development</h3>
-        <p class="step-description">
-          Our team builds tailored AI agents using cutting-edge models, 
-          fine-tuned for your specific use cases and requirements.
-        </p>
-      </div>
+            <div class="features-grid" style="max-width: 700px; margin: 0 auto">
+                <div class="feature-card">
+                    <p
+                        class="feature-description"
+                        style="font-size: 17px; line-height: 2"
+                    >
+                        ✓ You're a business owner or solopreneur spending 10+
+                        hours/week on repetitive tasks<br /><br />
+                        ✓ You use Google Workspace or Microsoft 365<br /><br />
+                        ✓ You're curious about AI but overwhelmed by the
+                        options<br /><br />
+                        ✓ You want to learn, not just outsource<br /><br />
+                        ✓ You value your time at $100+/hour
+                    </p>
+                </div>
+            </div>
+        </section>
 
-      <div class="process-step">
-        <div class="step-number">3</div>
-        <h3 class="step-title">Integration & Testing</h3>
-        <p class="step-description">
-          Seamlessly integrate AI into your existing systems. Rigorous testing 
-          ensures reliability and accuracy before deployment.
-        </p>
-      </div>
+        <!-- Calculator Section -->
+        <section id="calculator">
+            <div class="section-header">
+                <h2 class="section-title">What's your time worth?</h2>
+                <p class="section-subtitle">
+                    Most clients save 5-10 hours per week. See what that means
+                    for your bottom line.
+                </p>
+            </div>
 
-      <div class="process-step">
-        <div class="step-number">4</div>
-        <h3 class="step-title">Deployment & Optimization</h3>
-        <p class="step-description">
-          Launch your AI automation with full support. Continuous monitoring 
-          and optimization ensure peak performance over time.
-        </p>
-      </div>
-    </div>
-  </section>
+            <div class="calculator-section">
+                <div class="calc-inputs">
+                    <div class="calc-field">
+                        <label>Hours/week on repetitive tasks</label>
+                        <input
+                            type="range"
+                            id="hoursInput"
+                            min="5"
+                            max="30"
+                            value="10"
+                        />
+                        <div class="calc-display">
+                            <span class="range">5 hrs</span>
+                            <span class="value" id="hoursDisplay"
+                                >10 hours</span
+                            >
+                            <span class="range">30 hrs</span>
+                        </div>
+                    </div>
 
-  <section class="cta" id="contact">
-    <div class="cta-bg"></div>
-    <div class="cta-content">
-      <h2 class="cta-title">
-        Ready to <span class="gradient-text">automate your future?</span>
-      </h2>
-      <p class="cta-subtitle">
-        Join hundreds of businesses already saving thousands of hours with AI automation
-      </p>
-      <a href="#" class="cta-button">Schedule Free Consultation</a>
-    </div>
-  </section>
+                    <div class="calc-field">
+                        <label>What's your time worth? ($/hour)</label>
+                        <input
+                            type="range"
+                            id="rateInput"
+                            min="50"
+                            max="500"
+                            value="150"
+                            step="25"
+                        />
+                        <div class="calc-display">
+                            <span class="range">$50</span>
+                            <span class="value" id="rateDisplay">$150</span>
+                            <span class="range">$500</span>
+                        </div>
+                    </div>
+                </div>
 
-  <footer>
-    <div class="footer-content">
-      <div class="footer-brand">
-        <h3 class="logo">
-          <span class="zero">0</span><span class="rest">tom</span><span class="ai">AI</span><span class="rest">t</span>
-        </h3>
-        <p>
-          Building intelligent automation solutions that transform how businesses 
-          operate. From zero to automated - we make AI work for you.
-        </p>
-      </div>
-      <div class="footer-section">
-        <h4>Solutions</h4>
-        <ul class="footer-links">
-          <li><a href="#">Customer Service AI</a></li>
-          <li><a href="#">Process Automation</a></li>
-          <li><a href="#">Data Analytics</a></li>
-          <li><a href="#">Content Generation</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h4>Company</h4>
-        <ul class="footer-links">
-          <li><a href="#">About Us</a></li>
-          <li><a href="#">Case Studies</a></li>
-          <li><a href="#">Blog</a></li>
-          <li><a href="#">Careers</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h4>Resources</h4>
-        <ul class="footer-links">
-          <li><a href="#">Documentation</a></li>
-          <li><a href="#">API Reference</a></li>
-          <li><a href="#">Support</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2025 0tomait. All rights reserved.</p>
-      <div class="footer-bottom-links">
-        <a href="#">Privacy Policy</a>
-        <a href="#">Terms of Service</a>
-        <a href="#">Security</a>
-      </div>
-    </div>
-  </footer>
+                <div class="calc-results">
+                    <div>
+                        <div
+                            class="number"
+                            id="hoursSaved"
+                            style="color: var(--teal)"
+                        >
+                            260
+                        </div>
+                        <div class="label">Hours saved/year</div>
+                    </div>
+                    <div>
+                        <div
+                            class="number"
+                            id="moneySaved"
+                            style="color: #22c55e"
+                        >
+                            $39,000
+                        </div>
+                        <div class="label">Value of time saved</div>
+                    </div>
+                    <div>
+                        <div
+                            class="number"
+                            id="roiMultiple"
+                            style="color: var(--navy)"
+                        >
+                            8.7x
+                        </div>
+                        <div class="label">Return on $4,500</div>
+                    </div>
+                </div>
 
-  <script src="js/scripts.js"></script>
-</body>
+                <p
+                    style="
+                        text-align: center;
+                        color: var(--light-gray);
+                        font-size: 13px;
+                        margin-top: 24px;
+                    "
+                >
+                    *Based on automating 50% of your repetitive task hours
+                    (conservative estimate)
+                </p>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section" id="contact">
+            <h2 class="section-title">Ready to get your time back?</h2>
+            <p class="section-subtitle">
+                Book a free 30-minute discovery call. We'll look at your
+                workflows, identify the biggest opportunities, and see if the
+                Accelerator is a fit.
+            </p>
+            <p class="pricing-note">
+                <strong>Investment:</strong> $4,500 for the full 8-week
+                program<br />
+                <span style="font-size: 14px">(or 2 payments of $2,400)</span>
+            </p>
+            <a
+                href="https://calendar.app.google/cmtRRbjmx9MnxDTr9"
+                class="cta-button"
+                >Book Free Discovery Call</a
+            >
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <a href="#" class="logo">
+                Øtom<span class="ai">AI</span>t
+            </a>
+            <p style="margin-top: 16px">
+                Helping business owners save time with AI automation — without
+                the complexity or vendor lock-in.
+            </p>
+            <p style="margin-top: 24px; color: var(--light-gray)">
+                © 2025 0tomait. All rights reserved.
+            </p>
+        </footer>
+
+        <!-- Calculator Script -->
+        <script>
+            const hoursInput = document.getElementById("hoursInput");
+            const rateInput = document.getElementById("rateInput");
+            const hoursDisplay = document.getElementById("hoursDisplay");
+            const rateDisplay = document.getElementById("rateDisplay");
+            const hoursSaved = document.getElementById("hoursSaved");
+            const moneySaved = document.getElementById("moneySaved");
+            const roiMultiple = document.getElementById("roiMultiple");
+
+            function updateCalculator() {
+                const hours = parseInt(hoursInput.value);
+                const rate = parseInt(rateInput.value);
+
+                const annualHoursSaved = Math.round(hours * 0.5 * 52);
+                const annualMoneySaved = annualHoursSaved * rate;
+                const roi = (annualMoneySaved / 4500).toFixed(1);
+
+                hoursDisplay.textContent = hours + " hours";
+                rateDisplay.textContent = "$" + rate;
+                hoursSaved.textContent = annualHoursSaved.toLocaleString();
+                moneySaved.textContent =
+                    "$" + annualMoneySaved.toLocaleString();
+                roiMultiple.textContent = roi + "x";
+            }
+
+            hoursInput.addEventListener("input", updateCalculator);
+            rateInput.addEventListener("input", updateCalculator);
+            updateCalculator();
+        </script>
+    </body>
 </html>
