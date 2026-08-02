@@ -1,54 +1,51 @@
-# 0tomait - AI Business Automation Platform
+# 0tomait
 
-A cutting-edge website for 0tomait, showcasing AI-powered business automation solutions that transform workflows and drive 10x productivity gains.
+Website and working artifacts for 0tomait — AI workflow automation for business owners.
 
-## Overview
+Two things live in this repository:
 
-0tomait helps businesses integrate artificial intelligence into their workflows, identifying automation opportunities and building custom AI agents that work seamlessly with existing tools and processes.
+1. **The website** — a dependency-free static site. Two self-contained pages, no build
+   step, nothing to break.
+2. **[`fde-hub/`](./fde-hub/)** — the deployment-manifest spec, flow pattern library, and
+   tooling for making forward-deployed automation engagements survive the engineer who
+   built them. Start with its [README](./fde-hub/README.md) and
+   [thesis](./fde-hub/docs/thesis.md).
 
-## Features
+## The site
 
-- **Modern Design**: Inspired by Factory.ai's aesthetic with a dark theme, animated gradients, and glass morphism effects
-- **Responsive Layout**: Fully responsive design that works beautifully on all devices
-- **Interactive Elements**: Smooth animations, parallax effects, and dynamic interactions
-- **Performance Optimized**: Fast loading with optimized assets and smooth scrolling
+| File | What it is |
+| --- | --- |
+| `index.html` | The landing page. Light navy/teal theme, all CSS and JS inline — deliberately self-contained. CTA links to the Google Calendar booking page. |
+| `win.html` | Lead magnet: two copy-paste AI prompts. Linked from the QR codes below. |
+| `qr-code-win*.png` | QR codes pointing at `win.html`, for print and slides. |
+| `_headers` | Security headers for Cloudflare Pages / Netlify hosting. |
+| `.htaccess` | The same protections for Apache hosting; ignored on platform hosts. |
+| `robots.txt`, `sitemap.xml` | Crawler plumbing. Update `sitemap.xml` lastmod when a page materially changes. |
 
-## Tech Stack
+There is no framework and no build on purpose: each page is one file you can read top to
+bottom, and deploying is copying files. Colors live in the `:root` variables at the top of
+each page's inline stylesheet.
 
-- **HTML5**: Semantic markup with accessibility in mind
-- **CSS3**: Modern styling with CSS Grid, Flexbox, and custom properties
-- **JavaScript**: Vanilla JS for optimal performance
-- **Fonts**: Inter font family for clean, modern typography
+Preview locally by opening `index.html` in a browser, or:
 
-## Key Sections
+```bash
+npx serve .
+```
 
-1. **Hero**: Eye-catching introduction with animated workflow visualization
-2. **Trusted By**: Social proof with company logos
-3. **Features**: Six core automation solutions with metrics
-4. **Process**: Four-step automation implementation process
-5. **CTA**: Strong call-to-action for consultations
-6. **Footer**: Comprehensive site navigation and resources
+## Deploying
 
-## Getting Started
+The site is built for platform hosting (Cloudflare Pages or Netlify — either works, free
+tier is sufficient):
 
-1. Clone the repository
-2. Open `index.html` in your browser
-3. No build process required - it's ready to deploy!
+1. Connect this GitHub repository to the platform; framework preset "None", no build
+   command, output directory `/`.
+2. Add the custom domain `0tomait.com` and follow the platform's DNS instructions at the
+   registrar. SSL is automatic, as is the HTTP→HTTPS redirect.
+3. Done. Every push to `main` deploys; every branch gets a preview URL.
 
-## Customization
-
-- Colors can be modified in the CSS `:root` variables
-- Content is easily editable in the HTML file
-- JavaScript animations can be tweaked in `js/scripts.js`
-
-## Future Enhancements
-
-- Contact form integration
-- Live chat widget
-- Case studies section
-- Blog integration
-- API documentation
+Security headers ship via `_headers`. If the site is ever served from Apache instead,
+`.htaccess` carries the same headers and the HTTPS redirect.
 
 ## License
 
-© 2025 0tomait. All rights reserved.
+© 2026 0tomait. All rights reserved.
