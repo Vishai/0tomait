@@ -1,4 +1,4 @@
-# Deployment Manifest — spec v0.2
+# Deployment Manifest — spec v0.3
 
 A deployment manifest describes a client environment and everything deployed into it, in a
 form that can be read cold by an engineer or an agent who was not present for the original
@@ -47,6 +47,23 @@ Metadata about the document, not the client. `spec_version` pins the schema. `ma
 is the person accountable for this document being true *today* — not the person who wrote
 it originally.
 
+### `people` *(v0.3)*
+
+The person registry: the single home for every human in the manifest. Every other
+person-bearing field — `maintainer`, `system_owner`, `decision_maker`, `delegate`,
+`current_owner`, `tenure.person` — references an entry here by id, so a staffing change is
+one edit rather than a scavenger hunt across five sections.
+
+Entries must name real people with real decision rights; "the ops team" is not a person.
+`notes` carries how to work with them effectively — response habits, availability windows
+— kept professional, because the client reads this document. Departed people stay in the
+registry: their tenures still reference them, and history should not dangle. A defunct
+team can be modeled as an entry when its tenures predate individual attribution.
+
+The validator enforces the registry wherever one exists: unknown references are errors,
+inline contacts alongside a registry are flagged for migration, and registered people
+nothing references are noted as possible leftovers.
+
 ### `client`
 
 Who they are and how they operate.
@@ -55,10 +72,10 @@ Who they are and how they operate.
 or three sentences. If you cannot write it, you do not yet understand the deployment well
 enough to maintain it, and everything downstream will be guesswork.
 
-`contacts` must name real people with real decision rights. "The ops team" is not a
-contact. `communication_norms` captures the operational reality of working with them —
-who answers fast, who is a bottleneck, whose approval is required. This is the field that
-saves a successor their first two weeks.
+`communication_norms` captures the cross-cutting reality of working with the client —
+which decisions wait on whose cadence, which availability windows gate the schedule.
+Per-person norms belong on the people entries. (`contacts` remains for pre-0.3 manifests;
+the people registry replaces it.)
 
 `timezone` and `operating_hours` exist because every schedule and change window in the rest
 of the document is meaningless without them.
@@ -314,6 +331,14 @@ Beyond the schema, the validator checks:
   tenures (an orphaned deployment); inherited tenures with no walkthrough on record;
   every human step running through a single person; stale walkthroughs; tenure dates that
   end before they begin.
+- **People integrity** *(v0.3)* — person references that resolve to nobody; tenures naming
+  people outside the registry; inline contacts where a registry exists; registered people
+  nothing references; a 0.3 manifest with no registry at all.
+- **Role coverage** *(v0.3, with `--patterns <dir>`)* — for each flow that names a pattern,
+  every role the pattern declares must be held by an open tenure. The pattern's position
+  is that the flow does not survive unstaffed roles; the validator makes that position
+  enforceable. Trigger kinds that deviate from the pattern are noted as data for the
+  pattern's instantiations.
 
 The validator also accepts flow pattern files (detected by their `pattern_version` field),
 checking them against `flow-pattern.schema.json` plus pattern-specific lint: defaults must
@@ -328,6 +353,21 @@ only assert.
 
 Wire it into CI so the document is validated rather than trusted.
 
+## Compiling for agents
+
+`tools/brief.js` compiles a manifest into an agent briefing — a CLAUDE.md-style context
+pack for a maintenance agent. Constraints become imperatives, spaces become approval
+rules, gotchas become warnings, known exceptions become do-not-fix markers, and the
+glossary becomes vocabulary. This is the operational half of the thesis: agents are
+bottlenecked on context, not capability, and the manifest is where the context lives.
+
+```
+node fde-hub/tools/brief.js path/to/manifest.json --out CLAUDE.md
+```
+
+The briefing is a lossy view; it says so in its own header and directs the agent back to
+the manifest as the source of truth.
+
 ## Extending
 
 Add fields when a real engagement produces information that has nowhere to go, and when a
@@ -337,6 +377,14 @@ spec earns its keep by being short enough that people actually complete it.
 Bump `spec_version` on any change that would invalidate an existing manifest.
 
 ## Changelog
+
+**0.3** — the person registry. Adds top-level `people` as the single home for every human;
+`maintainer`, `system_owner`, `decision_maker`, `delegate`, `current_owner`, and
+`tenure.person` become id references into it. Fixes 0.2's structural flaw: the same person
+scattered across five sections, each mention a separate edit when staffing changed.
+`client.contacts` becomes optional legacy. 0.1/0.2 manifests remain schema-valid (person
+fields accept inline contacts); the lint requires the registry at 0.3 and flags inline
+contacts wherever a registry exists.
 
 **0.2** — the stewardship layer. Adds `spaces` (business domains with named decision
 makers), `lineage` on flows and systems (the family tree of tenures), `walkthroughs`

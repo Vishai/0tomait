@@ -48,6 +48,18 @@ function typeOf(value) {
 function validateSchema(value, schema, root, at, errors) {
   if (schema.$ref) return validateSchema(value, resolveRef(schema.$ref, root), root, at, errors);
 
+  if (schema.anyOf) {
+    const attempts = schema.anyOf.map((sub) => {
+      const subErrors = [];
+      validateSchema(value, sub, root, at, subErrors);
+      return subErrors;
+    });
+    if (!attempts.some((e) => e.length === 0)) {
+      errors.push(...attempts.reduce((a, b) => (b.length < a.length ? b : a)));
+    }
+    return;
+  }
+
   const fail = (message) => errors.push({ at, message });
 
   if (schema.type) {
@@ -138,7 +150,7 @@ function daysBetween(fromIso, to) {
   return Math.round((to - from) / DAY_MS);
 }
 
-function lint(manifest, now) {
+function lint(manifest, now, patternsById) {
   const errors = [];
   const warnings = [];
   const notes = [];
@@ -150,6 +162,12 @@ function lint(manifest, now) {
   const systems = manifest.systems || [];
   const entities = manifest.entities || [];
   const flows = manifest.flows || [];
+  const people = manifest.people || [];
+  const peopleIds = new Set(people.map((p) => p.id));
+  const displayName = (ref) => {
+    const p = people.find((x) => x.id === ref);
+    return p ? p.name : ref;
+  };
 
   const systemIds = new Set(systems.map((s) => s.id));
   const entityIds = new Set(entities.map((e) => e.id));
@@ -164,6 +182,7 @@ function lint(manifest, now) {
     ['constraints', manifest.constraints || []],
     ['spaces', manifest.spaces || []],
     ['walkthroughs', manifest.walkthroughs || []],
+    ['people', people],
   ];
   for (const [name, items] of collections) {
     const seen = new Set();
@@ -207,6 +226,50 @@ function lint(manifest, now) {
   ((manifest.handoff || {}).debt || []).forEach((d, i) =>
     ref(`handoff.debt[${i}].flow_id`, d.flow_id, flowIds, 'flow')
   );
+
+  // People (spec 0.3): humans live in one registry; everything else points at it.
+  const personField = (at, value) => {
+    if (value === undefined) return;
+    if (typeof value === 'string') {
+      if (!peopleIds.has(value)) err(at, `references unknown person '${value}'`);
+    } else if (people.length) {
+      note(at, 'is an inline contact. Centralize this person in people[] and reference them by id — a staffing change should be one edit, not a scavenger hunt.');
+    }
+  };
+  personField('manifest.maintainer', (manifest.manifest || {}).maintainer);
+  systems.forEach((s, i) => personField(`systems[${i}] (${s.id}).system_owner`, s.system_owner));
+  (manifest.spaces || []).forEach((s, i) => {
+    personField(`spaces[${i}] (${s.id}).decision_maker`, s.decision_maker);
+    personField(`spaces[${i}] (${s.id}).delegate`, s.delegate);
+  });
+  personField('handoff.current_owner', (manifest.handoff || {}).current_owner);
+
+  const specVersion = (manifest.manifest || {}).spec_version;
+  if (specVersion === '0.3' && !people.length) {
+    err('people', 'spec 0.3 centralizes humans in the people registry — it is required and missing or empty.');
+  }
+  if (!people.length && !((manifest.client || {}).contacts || []).length) {
+    warn('people', 'no humans are recorded anywhere. A manifest with no people in it is a dead document.');
+  }
+  if (people.length) {
+    const referenced = new Set();
+    const collect = (v) => {
+      if (typeof v === 'string') referenced.add(v);
+    };
+    collect((manifest.manifest || {}).maintainer);
+    systems.forEach((s) => collect(s.system_owner));
+    (manifest.spaces || []).forEach((s) => {
+      collect(s.decision_maker);
+      collect(s.delegate);
+    });
+    collect((manifest.handoff || {}).current_owner);
+    [...flows, ...systems].forEach((x) => (x.lineage || []).forEach((t) => collect(t.person)));
+    people.forEach((p, i) => {
+      if (!referenced.has(p.id)) {
+        note(`people[${i}] (${p.id})`, 'is registered but nothing references them. Either a contact worth keeping context on, or a leftover.');
+      }
+    });
+  }
 
   // Credentials. The manifest is meant to be readable by anyone who inherits the
   // account, which means it must never be the place a secret lives.
@@ -324,10 +387,13 @@ function lint(manifest, now) {
       if (t.trained_via !== undefined && !walkthroughIds.has(t.trained_via)) {
         err(`${at}.lineage[${i}]`, `trained_via references unknown walkthrough '${t.trained_via}'`);
       }
+      if (people.length && !peopleIds.has(t.person)) {
+        err(`${at}.lineage[${i}]`, `person '${t.person}' is not in the people registry`);
+      }
       if (t.to === undefined && t.mode === 'inherited' && t.trained_via === undefined) {
         note(
           `${at}.lineage[${i}]`,
-          `${t.person} inherited '${t.role}' with no walkthrough on record. If the handover happened informally, that knowledge now exists only in conversation.`
+          `${displayName(t.person)} inherited '${t.role}' with no walkthrough on record. If the handover happened informally, that knowledge now exists only in conversation.`
         );
       }
     });
@@ -335,7 +401,7 @@ function lint(manifest, now) {
       warn(at, 'lineage records only closed tenures — every role here is currently unheld. That is an orphaned deployment, not a documentation gap.');
     }
     if (hasHumanSteps && open.length) {
-      const operators = new Set(open.filter((t) => t.role !== 'steward').map((t) => t.person));
+      const operators = new Set(open.filter((t) => t.role !== 'steward').map((t) => displayName(t.person)));
       if (operators.size === 1) {
         note(at, `every human step runs through one person (${[...operators][0]}). The family tree shows no backup — a planned absence becomes an outage.`);
       }
@@ -343,6 +409,34 @@ function lint(manifest, now) {
   };
   flows.forEach((f, i) => lintLineage(`flows[${i}] (${f.id})`, f.lineage, (f.human_in_the_loop || []).length > 0));
   systems.forEach((s, i) => lintLineage(`systems[${i}] (${s.id})`, s.lineage, false));
+
+  // Role coverage: a flow's pattern declares the roles it needs to survive;
+  // the family tree shows which are actually held. Requires --patterns <dir>.
+  if (patternsById) {
+    flows.forEach((f, i) => {
+      if (!f.pattern) return;
+      const p = patternsById[f.pattern];
+      if (!p) {
+        warn(`flows[${i}] (${f.id})`, `names pattern '${f.pattern}', which is not in the loaded pattern library.`);
+        return;
+      }
+      const openRoles = new Set((f.lineage || []).filter((t) => t.to === undefined).map((t) => t.role));
+      (p.human_roles || []).forEach((r) => {
+        if (!openRoles.has(r.role)) {
+          warn(
+            `flows[${i}] (${f.id})`,
+            `pattern '${p.id}' declares role '${r.role}' and no open tenure holds it. The pattern's position is that this flow does not survive without that role staffed.`
+          );
+        }
+      });
+      if (f.trigger && !((p.base_shape || {}).trigger_kinds || []).includes(f.trigger.kind)) {
+        note(
+          `flows[${i}] (${f.id})`,
+          `trigger kind '${f.trigger.kind}' deviates from pattern '${p.id}' (${p.base_shape.trigger_kinds.join(', ')}). Deviations are data — record it in the pattern's instantiations.`
+        );
+      }
+    });
+  }
 
   if ((manifest.manifest || {}).spec_version === '0.2') {
     flows.forEach((f, i) => {
@@ -398,12 +492,28 @@ function report(label, items, symbol) {
 function main() {
   const args = process.argv.slice(2);
   const strict = args.includes('--strict');
-  const files = args.filter((a) => !a.startsWith('--'));
+  const patternsIdx = args.indexOf('--patterns');
+  const patternsDir = patternsIdx >= 0 ? args[patternsIdx + 1] : null;
+  const files = args.filter((a, i) => !a.startsWith('--') && (patternsIdx < 0 || i !== patternsIdx + 1));
 
   if (!files.length) {
-    console.error('usage: node validate.js [--strict] <manifest-or-pattern.json> [...]');
+    console.error('usage: node validate.js [--strict] [--patterns <dir>] <manifest-or-pattern.json> [...]');
     console.error('       pattern files are detected by their pattern_version field');
+    console.error('       --patterns enables role-coverage checks on manifests whose flows name a pattern');
     process.exit(2);
+  }
+
+  let patternsById = null;
+  if (patternsDir) {
+    patternsById = {};
+    for (const f of fs.readdirSync(patternsDir).filter((n) => n.endsWith('.pattern.json'))) {
+      try {
+        const p = JSON.parse(fs.readFileSync(path.join(patternsDir, f), 'utf8'));
+        if (p.id) patternsById[p.id] = p;
+      } catch (e) {
+        console.error(`skipping unreadable pattern ${f}: ${e.message}`);
+      }
+    }
   }
 
   const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
@@ -433,7 +543,7 @@ function main() {
       ? { errors: [], warnings: [], notes: [] }
       : isPattern
         ? lintPattern(manifest)
-        : lint(manifest, now);
+        : lint(manifest, now, patternsById);
 
     report('schema errors', schemaErrors, '✗');
     report('errors', errors, '✗');

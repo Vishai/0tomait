@@ -48,7 +48,15 @@ node fde-hub/tools/validate.js fde-hub/patterns/document-intake-match.pattern.js
 
 # Generate the engagement workbook
 node fde-hub/tools/scaffold.js fde-hub/patterns/document-intake-match.pattern.json --out workbook.md
+
+# Later: hold the client manifest to the pattern's staffing requirements
+node fde-hub/tools/validate.js --patterns fde-hub/patterns path/to/client.manifest.json
 ```
+
+With `--patterns`, the validator enforces role coverage: every role a flow's pattern
+declares must be held by an open tenure in that flow's lineage. A pattern requiring a
+backup-operator is no longer advice — an unstaffed role is a warning with the pattern's
+reasoning attached.
 
 The workbook walks the instantiation in order: fit check, glue interview, variation
 decisions, staffing plan, failure design, manifest obligations, metrics baseline, and a

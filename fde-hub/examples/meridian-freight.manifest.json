@@ -1,13 +1,51 @@
 {
   "manifest": {
-    "spec_version": "0.2",
+    "spec_version": "0.3",
     "updated": "2026-08-02",
-    "maintainer": {
-      "name": "Brandon Armstrong",
-      "role": "Forward deployed engineer, owns this manifest and the deployed flows",
-      "org": "0tomait"
-    }
+    "maintainer": "brandon-armstrong"
   },
+
+  "people": [
+    {
+      "id": "brandon-armstrong",
+      "name": "Brandon Armstrong",
+      "role": "Forward deployed engineer — built both flows, owns this manifest and the retainer",
+      "org": "0tomait"
+    },
+    {
+      "id": "dana-reyes",
+      "name": "Dana Reyes",
+      "role": "VP Operations — economic buyer; final word on scope and on anything customer-visible or money-moving",
+      "org": "Meridian Freight Group",
+      "notes": "Responds same-day on email, rarely to Slack. Batch decisions that need her — her cadence sets the pace for anything above Marcus's authority."
+    },
+    {
+      "id": "marcus-bell",
+      "name": "Marcus Bell",
+      "role": "Billing supervisor — day-to-day owner of the invoicing flow, controls the QuickBooks chart of accounts and invoice templates, first to report breakage",
+      "org": "Meridian Freight Group",
+      "notes": "Lives in Slack; the fastest route to reality on the floor."
+    },
+    {
+      "id": "priya-chandran",
+      "name": "Priya Chandran",
+      "role": "IT contractor, 10 hrs/week — sole grantor of system access and tenant changes; administers the TMS integration user and its permissions",
+      "org": "External (Northline IT)",
+      "notes": "Reachable Tuesday and Thursday only. Raise access requests at least a week ahead — this is the single most common cause of schedule slip on this account."
+    },
+    {
+      "id": "tina-okafor",
+      "name": "Tina Okafor",
+      "role": "Former billing clerk — worked the review queue March through May 2026",
+      "org": "Meridian Freight Group (departed 2026-05-30)"
+    },
+    {
+      "id": "meridian-inhouse-it",
+      "name": "Meridian in-house IT (function eliminated 2024)",
+      "role": "Former in-house IT function — administered the TMS and its customizations until the position was cut",
+      "org": "Meridian Freight Group"
+    }
+  ],
 
   "client": {
     "name": "Meridian Freight Group (FICTIONAL — reference example, not a real company)",
@@ -16,24 +54,7 @@
     "business_summary": "Meridian brokers truckload freight between shippers and a network of roughly 900 carriers. They make money on the spread between what a shipper pays for a load and what the carrier accepts, so margin per load is thin and volume is everything. Nothing ships without a signed rate confirmation, and nothing gets invoiced without a proof of delivery on file.",
     "timezone": "America/Chicago",
     "operating_hours": "Dispatch is staffed 05:00-19:00 CT weekdays, with a skeleton weekend desk. Billing runs Monday and Thursday afternoons.",
-    "contacts": [
-      {
-        "name": "Dana Reyes",
-        "role": "VP Operations — economic buyer, approves scope and sign-off on anything touching dispatch",
-        "org": "Meridian Freight Group"
-      },
-      {
-        "name": "Marcus Bell",
-        "role": "Billing supervisor — day-to-day owner of the invoicing flow and the person who reports breakage first",
-        "org": "Meridian Freight Group"
-      },
-      {
-        "name": "Priya Chandran",
-        "role": "IT contractor, 10 hrs/week — the only person who can grant system access or change DNS",
-        "org": "External (Northline IT)"
-      }
-    ],
-    "communication_norms": "Dana responds same-day on email, rarely to Slack. Marcus lives in Slack and is the fastest route to reality on the floor. Priya is only reachable Tuesday and Thursday, so any access request must be raised at least a week before it is needed — this is the single most common cause of schedule slip on this account."
+    "communication_norms": "Per-person norms live on their people entries. Cross-cutting: decisions above Marcus's authority wait on Dana's email cadence, so batch them rather than trickling; anything needing Priya must anticipate her Tuesday/Thursday availability a week out."
   },
 
   "engagement": {
@@ -73,11 +94,7 @@
       "vendor": "McLeod Software",
       "purpose": "System of record for loads, carriers, rates, and settlement. Every operational question at Meridian ultimately resolves to a row in here.",
       "criticality": "core",
-      "system_owner": {
-        "name": "Priya Chandran",
-        "role": "Administers the TMS integration user and its permissions",
-        "org": "External (Northline IT)"
-      },
+      "system_owner": "priya-chandran",
       "access": {
         "method": "db-credentials",
         "secret_location": "1Password vault 'Meridian' → item 'TMS read replica (0tomait)'",
@@ -97,8 +114,7 @@
       "lineage": [
         {
           "role": "administrator",
-          "person": "Meridian in-house IT (role eliminated)",
-          "org": "Meridian Freight Group",
+          "person": "meridian-inhouse-it",
           "from": "2019-01-01",
           "to": "2024-05-31",
           "mode": "built",
@@ -106,8 +122,7 @@
         },
         {
           "role": "administrator",
-          "person": "Priya Chandran",
-          "org": "External (Northline IT)",
+          "person": "priya-chandran",
           "from": "2024-06-01",
           "mode": "inherited"
         }
@@ -162,11 +177,7 @@
       "vendor": "Intuit",
       "purpose": "Issues the customer invoice and holds accounts receivable. The end of the line for this deployment.",
       "criticality": "core",
-      "system_owner": {
-        "name": "Marcus Bell",
-        "role": "Controls the chart of accounts and invoice templates",
-        "org": "Meridian Freight Group"
-      },
+      "system_owner": "marcus-bell",
       "access": {
         "method": "oauth2",
         "secret_location": "Refresh token in AWS Secrets Manager at 'meridian/qbo/refresh-token'",
@@ -301,15 +312,13 @@
       "lineage": [
         {
           "role": "steward",
-          "person": "Brandon Armstrong",
-          "org": "0tomait",
+          "person": "brandon-armstrong",
           "from": "2026-02-09",
           "mode": "built"
         },
         {
           "role": "queue-operator",
-          "person": "Tina Okafor",
-          "org": "Meridian Freight Group",
+          "person": "tina-okafor",
           "from": "2026-03-02",
           "to": "2026-05-30",
           "mode": "inherited",
@@ -317,8 +326,7 @@
         },
         {
           "role": "queue-operator",
-          "person": "Marcus Bell",
-          "org": "Meridian Freight Group",
+          "person": "marcus-bell",
           "from": "2026-06-02",
           "mode": "inherited",
           "trained_via": "wt-queue-morning"
@@ -366,23 +374,20 @@
       "lineage": [
         {
           "role": "steward",
-          "person": "Brandon Armstrong",
-          "org": "0tomait",
+          "person": "brandon-armstrong",
           "from": "2026-03-20",
           "mode": "built"
         },
         {
           "role": "approver",
-          "person": "Marcus Bell",
-          "org": "Meridian Freight Group",
+          "person": "marcus-bell",
           "from": "2026-04-01",
           "mode": "inherited",
           "trained_via": "wt-large-invoice-review"
         },
         {
           "role": "skip-reconciler",
-          "person": "Marcus Bell",
-          "org": "Meridian Freight Group",
+          "person": "marcus-bell",
           "from": "2026-04-01",
           "mode": "inherited"
         }
@@ -584,11 +589,7 @@
   },
 
   "handoff": {
-    "current_owner": {
-      "name": "Brandon Armstrong",
-      "role": "Owns both flows and this manifest through the retainer term ending 2026-12-31",
-      "org": "0tomait"
-    },
+    "current_owner": "brandon-armstrong",
     "unfinished": [
       "Manual POD matching sits at 23% against a 20% target. The gap is almost entirely handwritten load numbers on photographed paperwork.",
       "Days-sales-outstanding has not been measured post-launch. Finance reports quarterly; the first clean reading should land after Q3 close.",
@@ -655,29 +656,17 @@
       "id": "billing",
       "name": "Billing & receivables",
       "purpose": "Everything between a delivered load and cash in the bank: the sweep, the mailbox, the invoices.",
-      "decision_maker": {
-        "name": "Dana Reyes",
-        "role": "VP Operations — final word on anything that changes what a customer sees or when money moves",
-        "org": "Meridian Freight Group"
-      },
-      "delegate": {
-        "name": "Marcus Bell",
-        "role": "Billing supervisor — can approve operational changes up to and including queue handling; cannot approve anything customer-visible",
-        "org": "Meridian Freight Group"
-      },
+      "decision_maker": "dana-reyes",
+      "delegate": "marcus-bell",
       "flows": ["pod-intake", "invoice-issue"],
       "systems": ["email-billing", "docstore", "accounting", "ocr"],
-      "notes": "Dana's approval condition on large invoices (see constraints) defines the political boundary of this space. Changes that stay inside the queue are Marcus's call; changes a customer could notice are Dana's, always."
+      "notes": "Dana's approval condition on large invoices (see constraints) defines the political boundary of this space. The delegate line: changes that stay inside the queue are Marcus's call; changes a customer could notice are Dana's, always."
     },
     {
       "id": "client-it",
       "name": "Client IT & access",
       "purpose": "Tenant administration, credentials, DNS, and the TMS. Not a business domain, but a space in its own right because it has exactly one gatekeeper.",
-      "decision_maker": {
-        "name": "Priya Chandran",
-        "role": "IT contractor — sole grantor of system access and tenant changes, available Tuesdays and Thursdays",
-        "org": "External (Northline IT)"
-      },
+      "decision_maker": "priya-chandran",
       "systems": ["tms", "email-billing"],
       "notes": "There is no delegate. When Priya is unavailable this space is closed — plan around it rather than trying to escalate, because escalation paths do not exist."
     }

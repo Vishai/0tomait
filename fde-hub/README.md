@@ -43,26 +43,31 @@ walkthrough — instead of a crisis.
 
 | Path | What it is |
 | --- | --- |
-| [`spec/deployment-manifest.schema.json`](./spec/deployment-manifest.schema.json) | The manifest schema (v0.2). Canonical definition. |
+| [`spec/deployment-manifest.schema.json`](./spec/deployment-manifest.schema.json) | The manifest schema (v0.3). Canonical definition. |
 | [`spec/flow-pattern.schema.json`](./spec/flow-pattern.schema.json) | The pattern schema (v0.1). |
 | [`spec/SPEC.md`](./spec/SPEC.md) | Field-by-field guide — what each section is for and how to fill it in. |
 | [`patterns/`](./patterns/) | The flow pattern library: four patterns and the rules the library runs on. |
 | [`examples/meridian-freight.manifest.json`](./examples/meridian-freight.manifest.json) | A complete worked example. Fictional client, realistic mess — including a staffing transition that went badly and what it taught. |
-| [`tools/validate.js`](./tools/validate.js) | Zero-dependency validator for manifests and patterns. |
+| [`tools/validate.js`](./tools/validate.js) | Zero-dependency validator for manifests and patterns, including role-coverage checks. |
 | [`tools/scaffold.js`](./tools/scaffold.js) | Turns a pattern into a per-client engagement workbook. |
+| [`tools/brief.js`](./tools/brief.js) | Compiles a manifest into an agent briefing — the context pack that turns "an agent with repo access" into "an agent that knows the client". |
 | [`docs/thesis.md`](./docs/thesis.md) | Why this and not a template library first. |
 
 ## Quick start
 
 ```bash
-# Validate the worked example (expect deliberate warnings — see below)
-node fde-hub/tools/validate.js fde-hub/examples/meridian-freight.manifest.json
+# Validate the worked example, with role-coverage checks against the pattern library
+# (expect deliberate warnings — see below)
+node fde-hub/tools/validate.js --patterns fde-hub/patterns fde-hub/examples/meridian-freight.manifest.json
 
-# Validate the pattern library
+# Validate the pattern library itself
 node fde-hub/tools/validate.js fde-hub/patterns/*.pattern.json
 
 # Start an engagement: generate the workbook for a pattern
 node fde-hub/tools/scaffold.js fde-hub/patterns/document-intake-match.pattern.json --out workbook.md
+
+# Hand the deployment to a maintenance agent: compile the briefing
+node fde-hub/tools/brief.js fde-hub/examples/meridian-freight.manifest.json --out CLAUDE.md
 ```
 
 To start a manifest for a real client, copy the example and replace it section by section.
@@ -91,6 +96,11 @@ Beyond schema conformance:
 - **Staffing smells.** Flows no space claims. Lineages with only closed tenures — an
   orphaned deployment. Inherited roles with no walkthrough on record. Every human step
   running through a single person.
+- **People integrity.** One registry for every human (v0.3); dangling person references
+  are errors, and a staffing change is one edit instead of five.
+- **Role coverage** (`--patterns <dir>`). A flow's pattern declares the roles it needs to
+  survive; the validator checks each one is held by an open tenure. The pattern's
+  backup-operator requirement stops being advice and becomes a check.
 
 The example emits two warnings and a handful of notes on purpose — a stale system entry, a
 flow with no weekend monitoring, human steps concentrated in one person, and handovers
@@ -99,7 +109,7 @@ same risks the prose sections could only assert.
 
 ## Status
 
-Manifest spec 0.2, pattern spec 0.1 — both deliberately provisional. Patterns enter the
+Manifest spec 0.3, pattern spec 0.1 — both deliberately provisional. Patterns enter the
 library by extraction from real deployments or are labeled sketches; defaults graduate to
 recommendations at three instantiations, not before. Fields get added when a real
 deployment produces information with nowhere to go — not speculatively.

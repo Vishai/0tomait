@@ -27,16 +27,16 @@
       "properties": {
         "spec_version": {
           "type": "string",
-          "enum": ["0.1", "0.2"],
-          "description": "Version of the deployment-manifest spec this document conforms to. 0.2 adds the stewardship layer: spaces, lineage, and walkthroughs."
+          "enum": ["0.1", "0.2", "0.3"],
+          "description": "Version of the deployment-manifest spec this document conforms to. 0.2 adds the stewardship layer: spaces, lineage, and walkthroughs. 0.3 adds the people registry: one home for every human, referenced by id everywhere else."
         },
         "updated": {
           "$ref": "#/$defs/date",
           "description": "Date this manifest was last revised. Not the same as the last_verified date on individual records."
         },
         "maintainer": {
-          "$ref": "#/$defs/contact",
-          "description": "Who is accountable for this manifest being true today."
+          "description": "Who is accountable for this manifest being true today. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
         },
         "supersedes": {
           "type": "string",
@@ -49,7 +49,7 @@
       "type": "object",
       "description": "Who the client is and how they operate. Context an outsider cannot infer from the code.",
       "additionalProperties": false,
-      "required": ["name", "industry", "size", "business_summary", "contacts", "timezone"],
+      "required": ["name", "industry", "size", "business_summary", "timezone"],
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "industry": { "type": "string", "minLength": 1 },
@@ -74,7 +74,7 @@
         "contacts": {
           "type": "array",
           "minItems": 1,
-          "description": "Named humans. A manifest with no people in it is a dead document.",
+          "description": "Legacy (pre-0.3): named humans inline. From 0.3, humans live in the top-level people registry and this field is unnecessary. The lint still insists on humans existing somewhere — a manifest with no people in it is a dead document.",
           "items": { "$ref": "#/$defs/contact" }
         },
         "communication_norms": {
@@ -252,8 +252,8 @@
       "required": ["current_owner", "unfinished", "debt", "risks", "recommended_next"],
       "properties": {
         "current_owner": {
-          "$ref": "#/$defs/contact",
-          "description": "Who owns this today. If nobody does, say so explicitly rather than leaving it implied."
+          "description": "Who owns this today. If nobody does, say so explicitly rather than leaving it implied. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
         },
         "unfinished": {
           "type": "array",
@@ -304,6 +304,12 @@
           "description": "Coupling that is not obvious from the code. 'If you change X, Y silently stops.'"
         }
       }
+    },
+
+    "people": {
+      "type": "array",
+      "description": "The person registry — the single home for every human in this manifest. Added in v0.3. All person-bearing fields (maintainer, system_owner, decision_maker, delegate, current_owner, tenure.person) reference entries here by id, so a staffing change is one edit, not a scavenger hunt across five sections.",
+      "items": { "$ref": "#/$defs/person" }
     },
 
     "spaces": {
@@ -358,7 +364,11 @@
           "minLength": 2,
           "description": "The role held, not the job title: steward, queue-operator, approver, drift-adjudicator, administrator. Matches the role names in the flow's pattern where one exists."
         },
-        "person": { "type": "string", "minLength": 1 },
+        "person": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Person id from people[] in 0.3 manifests; a bare name in earlier versions. The lint enforces registry membership whenever a registry exists."
+        },
         "org": { "type": "string", "description": "Client, vendor, or your own firm." },
         "from": { "$ref": "#/$defs/date" },
         "to": {
@@ -433,12 +443,12 @@
           "description": "What part of the client's world this is, in their terms."
         },
         "decision_maker": {
-          "$ref": "#/$defs/contact",
-          "description": "One name, not a committee. If two people must both agree, that fact belongs in notes — but one of them still answers the phone first."
+          "description": "One name, not a committee. If two people must both agree, that fact belongs in notes — but one of them still answers the phone first. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
         },
         "delegate": {
-          "$ref": "#/$defs/contact",
-          "description": "Who answers when the decision maker is unavailable, and the limit of what they can approve."
+          "description": "Who answers when the decision maker is unavailable, and the limit of what they can approve. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
         },
         "flows": { "type": "array", "items": { "$ref": "#/$defs/id" } },
         "systems": { "type": "array", "items": { "$ref": "#/$defs/id" } },
@@ -446,6 +456,27 @@
           "type": "string",
           "description": "The politics of the space that do not fit in constraints — where the delegate's authority ends, which changes are radioactive."
         }
+      }
+    },
+
+    "person_ref": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Id of an entry in the people registry."
+    },
+
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "role"],
+      "description": "A registry entry: one human, described once. Departed people stay in the registry — their tenures still reference them, and history should not dangle. A defunct team can be modeled as a person when its tenures predate individual attribution.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1, "description": "Their job, and what they are the decision-maker for." },
+        "org": { "type": "string", "description": "Client, vendor, or your own firm." },
+        "email": { "type": "string" },
+        "notes": { "type": "string", "description": "How to work with them effectively — response habits, availability windows. Kept professional; this document gets read by the client." }
       }
     },
 
@@ -477,8 +508,8 @@
           "description": "core: the business stops without it. Determines change-window discipline."
         },
         "system_owner": {
-          "$ref": "#/$defs/contact",
-          "description": "Who at the client controls this system. The person whose approval you need."
+          "description": "Who at the client controls this system — the person whose approval you need. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
         },
         "access": {
           "type": "object",
