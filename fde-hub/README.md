@@ -51,6 +51,7 @@ walkthrough — instead of a crisis.
 | [`tools/validate.js`](./tools/validate.js) | Zero-dependency validator for manifests and patterns, including role-coverage checks. |
 | [`tools/scaffold.js`](./tools/scaffold.js) | Turns a pattern into a per-client engagement workbook. |
 | [`tools/brief.js`](./tools/brief.js) | Compiles a manifest into an agent briefing — the context pack that turns "an agent with repo access" into "an agent that knows the client". |
+| [`tools/report.js`](./tools/report.js) | Field report intake: files bugs, friction, gaps, and usage notes into the manifest from the command line, and closes them with a recorded resolution. |
 | [`docs/thesis.md`](./docs/thesis.md) | Why this and not a template library first. |
 
 ## Quick start
@@ -101,6 +102,9 @@ Beyond schema conformance:
 - **Role coverage** (`--patterns <dir>`). A flow's pattern declares the roles it needs to
   survive; the validator checks each one is held by an open tenure. The pattern's
   backup-operator requirement stops being advice and becomes a check.
+- **Feedback hygiene** (v0.4). Field reports capture what operators observe: bugs,
+  friction, gaps, usage. Closed reports need a recorded resolution, aging open reports
+  get flagged, and a cluster of reports against one flow reads as a redesign signal.
 
 The example emits two warnings and a handful of notes on purpose — a stale system entry, a
 flow with no weekend monitoring, human steps concentrated in one person, and handovers
@@ -109,7 +113,7 @@ same risks the prose sections could only assert.
 
 ## Status
 
-Manifest spec 0.3, pattern spec 0.1 — both deliberately provisional. Patterns enter the
+Manifest spec 0.4, pattern spec 0.1 — both deliberately provisional. Patterns enter the
 library by extraction from real deployments or are labeled sketches; defaults graduate to
 recommendations at three instantiations, not before. Fields get added when a real
 deployment produces information with nowhere to go — not speculatively.

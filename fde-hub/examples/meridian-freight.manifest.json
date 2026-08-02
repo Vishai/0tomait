@@ -1,6 +1,6 @@
 {
   "manifest": {
-    "spec_version": "0.3",
+    "spec_version": "0.4",
     "updated": "2026-08-02",
     "maintainer": "brandon-armstrong"
   },
@@ -710,6 +710,41 @@
       "duration": "45 minutes",
       "prerequisites": ["Read this manifest first — the recording assumes it"],
       "last_updated": "2026-07-28"
+    }
+  ],
+
+  "field_reports": [
+    {
+      "id": "fr-20260624-1",
+      "date": "2026-06-24",
+      "kind": "bug",
+      "reported_by": "marcus-bell",
+      "channel": "#meridian-alerts",
+      "report": "Same POD filed twice on load 471203. Carrier sent it Tuesday and again Thursday with a cover sheet added, so the file hash differed and dedup let it through.",
+      "flow_id": "pod-intake",
+      "status": "resolved",
+      "resolution": "Dedup now also compares extracted load number plus page count before filing a second document on a non-split load. Second copies land in the review queue instead.",
+      "resolved_on": "2026-06-26"
+    },
+    {
+      "id": "fr-20260710-1",
+      "date": "2026-07-10",
+      "kind": "friction",
+      "reported_by": "marcus-bell",
+      "channel": "morning queue session",
+      "report": "The handwritten ones take three or four times longer than anything else in the queue. Most mornings they are the whole queue.",
+      "flow_id": "pod-intake",
+      "status": "acknowledged"
+    },
+    {
+      "id": "fr-20260722-1",
+      "date": "2026-07-22",
+      "kind": "gap",
+      "reported_by": "dana-reyes",
+      "channel": "email",
+      "report": "I cannot see which delivered loads are still waiting on paperwork without asking Marcus. Before the automation I could at least see the pile on his desk.",
+      "flow_id": "pod-intake",
+      "status": "open"
     }
   ],
 

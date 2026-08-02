@@ -1,4 +1,4 @@
-# Deployment Manifest — spec v0.3
+# Deployment Manifest — spec v0.4
 
 A deployment manifest describes a client environment and everything deployed into it, in a
 form that can be read cold by an engineer or an agent who was not present for the original
@@ -308,6 +308,34 @@ specific. Build it before it is needed — the reference manifest's family tree 
 departure that happened before the walkthrough existed, and the two-week backlog that
 followed.
 
+### `field_reports` *(v0.4)*
+
+The deployment's feedback channel: bugs, friction, gaps, usage notes, and ideas from the
+people who operate the system, recorded in the manifest where the next engineer will find
+them. This is how the deployment identifies its own gaps instead of waiting for an
+engineer to notice.
+
+The intake points already exist. Run summaries, queue sessions, and alert channels are
+where operators talk; the discipline is writing down what they say. `tools/report.js`
+makes that one command, so a remark survives the Slack thread it arrived in:
+
+```
+node fde-hub/tools/report.js manifest.json --kind friction --by marcus-bell \
+  --flow pod-intake --channel "morning queue session" "what was actually said"
+node fde-hub/tools/report.js manifest.json --list
+node fde-hub/tools/report.js manifest.json --resolve fr-20260710-1 "what was done"
+```
+
+Three rules give the section its value. `report` stays close to the reporter's own words,
+because paraphrase flattens the signal. Every closed report records a `resolution`, and a
+declined report with its reasoning is a decision in miniature. The lint tracks the age of
+open reports, because feedback that sits unanswered teaches people to stop reporting.
+
+Reports also aggregate: several unresolved reports against one flow is a redesign signal,
+and the validator says so. Field reports are the narrative complement to the
+human-review-queue pattern's outcome capture; outcomes are per-item data, reports are
+what the data cannot say.
+
 ## Validation
 
 ```
@@ -339,6 +367,9 @@ Beyond the schema, the validator checks:
   is that the flow does not survive unstaffed roles; the validator makes that position
   enforceable. Trigger kinds that deviate from the pattern are noted as data for the
   pattern's instantiations.
+- **Feedback hygiene** *(v0.4)* — closed reports must record a resolution; open reports
+  past 45 days are flagged; three or more unresolved reports against one flow is called
+  out as a redesign signal; report references to flows, systems, and people must resolve.
 
 The validator also accepts flow pattern files (detected by their `pattern_version` field),
 checking them against `flow-pattern.schema.json` plus pattern-specific lint: defaults must
@@ -377,6 +408,12 @@ spec earns its keep by being short enough that people actually complete it.
 Bump `spec_version` on any change that would invalidate an existing manifest.
 
 ## Changelog
+
+**0.4** — field reports. Adds top-level `field_reports`: observations from the people who
+operate the deployment, each with a kind, a status lifecycle, and a recorded resolution
+once closed. `tools/report.js` handles intake and closure from the command line, and the
+agent briefing surfaces open reports. All additions optional; earlier manifests remain
+valid.
 
 **0.3** — the person registry. Adds top-level `people` as the single home for every human;
 `maintainer`, `system_owner`, `decision_maker`, `delegate`, `current_owner`, and

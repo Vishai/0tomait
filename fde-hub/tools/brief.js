@@ -243,6 +243,23 @@ function compile(manifest, sourcePath) {
     add();
   }
 
+  // --- Open field reports ----------------------------------------------------
+  const openReports = (manifest.field_reports || []).filter(
+    (r) => r.status === 'open' || r.status === 'acknowledged'
+  );
+  if (openReports.length) {
+    add('## Known friction: open field reports');
+    add();
+    add('These came from the people who operate the system. Treat them as the most current information in this briefing, and close the loop in the manifest when you act on one.');
+    add();
+    for (const r of openReports) {
+      const who = (person(r.reported_by) || {}).name || r.reported_by;
+      const where = r.flow_id ? ` (flow \`${r.flow_id}\`)` : r.system_id ? ` (system \`${r.system_id}\`)` : '';
+      add(`- **${r.kind}**${where}: ${r.report} *(${who}, ${r.date})*`);
+    }
+    add();
+  }
+
   // --- Handoff state ---------------------------------------------------------
   const h = manifest.handoff || {};
   if ((h.blast_radius_notes || '').length) {

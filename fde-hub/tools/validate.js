@@ -21,6 +21,8 @@ const SCHEMA_PATH = path.join(__dirname, '..', 'spec', 'deployment-manifest.sche
 const PATTERN_SCHEMA_PATH = path.join(__dirname, '..', 'spec', 'flow-pattern.schema.json');
 const STALE_AFTER_DAYS = 90;
 const WALKTHROUGH_STALE_DAYS = 180;
+const FIELD_REPORT_STALE_DAYS = 45;
+const FIELD_REPORT_CLUSTER = 3;
 const EXPIRY_WARN_DAYS = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -183,6 +185,7 @@ function lint(manifest, now, patternsById) {
     ['spaces', manifest.spaces || []],
     ['walkthroughs', manifest.walkthroughs || []],
     ['people', people],
+    ['field_reports', manifest.field_reports || []],
   ];
   for (const [name, items] of collections) {
     const seen = new Set();
@@ -444,6 +447,38 @@ function lint(manifest, now, patternsById) {
         note(`flows[${i}] (${f.id})`, "has no lineage recorded. Even 'built and still held by the author' is worth a line — it is the start of the family tree.");
       }
     });
+  }
+
+  // Field reports (spec 0.4): the deployment's feedback channel. Feedback that
+  // sits unanswered teaches people to stop reporting, so age and clustering
+  // are surfaced alongside referential integrity.
+  const reportsList = manifest.field_reports || [];
+  const unresolvedByFlow = {};
+  reportsList.forEach((r, i) => {
+    const at = `field_reports[${i}] (${r.id})`;
+    ref(`${at}.flow_id`, r.flow_id, flowIds, 'flow');
+    ref(`${at}.system_id`, r.system_id, systemIds, 'system');
+    if (people.length && r.reported_by && !peopleIds.has(r.reported_by)) {
+      note(`${at}.reported_by`, `'${r.reported_by}' is not in the people registry. Register them if they will appear again; reporters deserve credit that survives.`);
+    }
+    const closed = r.status === 'resolved' || r.status === 'declined';
+    if (closed && !r.resolution) {
+      err(at, `status is '${r.status}' but no resolution is recorded. What was done, or why it will not be, is the part the next person needs.`);
+    }
+    if (!closed) {
+      const age = daysBetween(r.date, now);
+      if (age !== null && age > FIELD_REPORT_STALE_DAYS) {
+        warn(at, `${r.kind} report open ${age} days with no resolution. Feedback that sits unanswered teaches people to stop reporting.`);
+      }
+      if (r.flow_id && (r.kind === 'bug' || r.kind === 'friction' || r.kind === 'gap')) {
+        unresolvedByFlow[r.flow_id] = (unresolvedByFlow[r.flow_id] || 0) + 1;
+      }
+    }
+  });
+  for (const [flowId, count] of Object.entries(unresolvedByFlow)) {
+    if (count >= FIELD_REPORT_CLUSTER) {
+      warn(`field_reports (flow ${flowId})`, `${count} unresolved reports against one flow. A cluster is a redesign signal, not a ticket backlog.`);
+    }
   }
 
   return { errors, warnings, notes };

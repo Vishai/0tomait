@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://0tomait.com/spec/deployment-manifest/v0.2.json",
+  "$id": "https://0tomait.com/spec/deployment-manifest/v0.4.json",
   "title": "FDE Deployment Manifest",
   "description": "A machine-readable description of a client environment and everything deployed into it. Written to be read cold by a human or an agent who was not present for the original engagement.",
   "type": "object",
@@ -27,8 +27,8 @@
       "properties": {
         "spec_version": {
           "type": "string",
-          "enum": ["0.1", "0.2", "0.3"],
-          "description": "Version of the deployment-manifest spec this document conforms to. 0.2 adds the stewardship layer: spaces, lineage, and walkthroughs. 0.3 adds the people registry: one home for every human, referenced by id everywhere else."
+          "enum": ["0.1", "0.2", "0.3", "0.4"],
+          "description": "Version of the deployment-manifest spec this document conforms to. 0.2 adds the stewardship layer: spaces, lineage, and walkthroughs. 0.3 adds the people registry. 0.4 adds field reports: the deployment's feedback channel."
         },
         "updated": {
           "$ref": "#/$defs/date",
@@ -324,6 +324,12 @@
       "items": { "$ref": "#/$defs/walkthrough" }
     },
 
+    "field_reports": {
+      "type": "array",
+      "description": "Observations from the people who operate the deployment: bugs, friction, gaps, and usage notes, each with a status and, once closed, a resolution. Added in v0.4. This is the deployment's feedback channel, recorded where the next engineer will find it. Reports cluster before they escalate; several against one flow is a redesign signal.",
+      "items": { "$ref": "#/$defs/field_report" }
+    },
+
     "glossary": {
       "type": "array",
       "description": "Client-specific vocabulary. Almost always omitted, and almost always the reason an outsider misreads the domain.",
@@ -456,6 +462,47 @@
           "type": "string",
           "description": "The politics of the space that do not fit in constraints — where the delegate's authority ends, which changes are radioactive."
         }
+      }
+    },
+
+    "field_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "kind", "reported_by", "report", "status"],
+      "description": "One observation from the field. The lifecycle is open, acknowledged, then resolved or declined. A declined report with its reasoning recorded is a decision in miniature.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "kind": {
+          "type": "string",
+          "enum": ["bug", "friction", "gap", "usage", "idea"],
+          "description": "bug: it misbehaves. friction: it works but fights the person using it. gap: something it should cover and does not. usage: an observation about how it is actually used. idea: a suggestion worth keeping."
+        },
+        "reported_by": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Person id from people[] where a registry exists, otherwise a name. When the steward files on an operator's behalf, credit the operator; reports from the people doing the work carry the most signal."
+        },
+        "channel": {
+          "type": "string",
+          "description": "How it arrived: a queue session, a run summary, a hallway remark. Knowing where feedback surfaces tells you where to listen."
+        },
+        "report": {
+          "type": "string",
+          "minLength": 15,
+          "description": "What was observed, in words close to the reporter's own. Paraphrase flattens the signal."
+        },
+        "flow_id": { "$ref": "#/$defs/id" },
+        "system_id": { "$ref": "#/$defs/id" },
+        "status": {
+          "type": "string",
+          "enum": ["open", "acknowledged", "resolved", "declined"]
+        },
+        "resolution": {
+          "type": "string",
+          "description": "What was done, or why it will not be. The lint requires this once status is resolved or declined."
+        },
+        "resolved_on": { "$ref": "#/$defs/date" }
       }
     },
 
