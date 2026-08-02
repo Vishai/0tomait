@@ -1,12 +1,12 @@
 # 0tomait
 
-Website and working artifacts for 0tomait — AI workflow automation for business owners.
+Website and working artifacts for 0tomait, a forward-deployed AI engineering practice.
 
 Two things live in this repository:
 
-1. **The website** — a dependency-free static site. Two self-contained pages, no build
+1. **The website**: a dependency-free static site. Two self-contained pages, no build
    step, nothing to break.
-2. **[`fde-hub/`](./fde-hub/)** — the deployment-manifest spec, flow pattern library, and
+2. **[`fde-hub/`](./fde-hub/)**: the deployment-manifest spec, flow pattern library, and
    tooling for making forward-deployed automation engagements survive the engineer who
    built them. Start with its [README](./fde-hub/README.md) and
    [thesis](./fde-hub/docs/thesis.md).
@@ -15,7 +15,7 @@ Two things live in this repository:
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The landing page. Light navy/teal theme, all CSS and JS inline — deliberately self-contained. CTA links to the Google Calendar booking page. |
+| `index.html` | The landing page. Light navy/teal theme, all CSS and JS inline, deliberately self-contained. CTA links to the Google Calendar booking page. |
 | `win.html` | Lead magnet: two copy-paste AI prompts. Linked from the QR codes below. |
 | `qr-code-win*.png` | QR codes pointing at `win.html`, for print and slides. |
 | `_headers` | Security headers for Cloudflare Pages / Netlify hosting. |
@@ -34,8 +34,8 @@ npx serve .
 
 ## Deploying
 
-The site is built for platform hosting (Cloudflare Pages or Netlify — either works, free
-tier is sufficient):
+The site is built for platform hosting (Cloudflare Pages or Netlify; either works, and
+the free tier is sufficient):
 
 1. Connect this GitHub repository to the platform; framework preset "None", no build
    command, output directory `/`.

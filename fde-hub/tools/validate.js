@@ -595,4 +595,6 @@ function main() {
   process.exit(failed ? 1 : 0);
 }
 
-main();
+if (require.main === module) main();
+
+module.exports = { validateSchema, lint, lintPattern, SCHEMA_PATH, PATTERN_SCHEMA_PATH };
