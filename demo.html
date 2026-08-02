@@ -35,7 +35,7 @@
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+            href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
             rel="stylesheet"
         />
 
@@ -47,15 +47,17 @@
             }
 
             :root {
-                --navy: #1e293b;
-                --navy-light: #334155;
-                --teal: #0d9488;
-                --teal-light: #14b8a6;
-                --warm-gray: #64748b;
-                --light-gray: #94a3b8;
-                --off-white: #f8fafc;
-                --white: #ffffff;
-                --border: #e2e8f0;
+                --ink: #1e293b;
+                --ink-soft: #475569;
+                --ink-faint: #64748b;
+                --muted: #94a3b8;
+                --paper: #f8fafc;
+                --card: #ffffff;
+                --line: #e2e8f0;
+                --accent: #0d9488;
+                --accent-dark: #0f766e;
+                --terminal: #0f172a;
+                --terminal-ink: #cbd5e1;
                 --amber: #b45309;
             }
 
@@ -63,14 +65,23 @@
                 scroll-behavior: smooth;
             }
 
+            @media (prefers-reduced-motion: reduce) {
+                html {
+                    scroll-behavior: auto;
+                }
+            }
+
             body {
-                font-family:
-                    "Inter",
-                    -apple-system,
-                    sans-serif;
-                background: var(--off-white);
-                color: var(--navy);
-                line-height: 1.6;
+                font-family: "IBM Plex Sans", -apple-system, sans-serif;
+                background: var(--paper);
+                color: var(--ink);
+                line-height: 1.65;
+                font-size: 16.5px;
+            }
+
+            a:focus-visible {
+                outline: 2px solid var(--accent);
+                outline-offset: 2px;
             }
 
             nav {
@@ -78,31 +89,31 @@
                 top: 0;
                 left: 0;
                 right: 0;
-                z-index: 1000;
-                background: rgba(255, 255, 255, 0.95);
-                backdrop-filter: blur(10px);
-                border-bottom: 1px solid var(--border);
+                z-index: 100;
+                background: rgba(248, 250, 252, 0.92);
+                backdrop-filter: blur(8px);
+                border-bottom: 1px solid var(--line);
             }
 
-            .nav-container {
-                max-width: 1080px;
+            .nav-inner {
+                max-width: 1000px;
                 margin: 0 auto;
-                padding: 16px 24px;
+                padding: 14px 24px;
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
             }
 
             .logo {
-                font-size: 28px;
-                font-weight: 800;
+                font-size: 24px;
+                font-weight: 700;
                 text-decoration: none;
-                color: var(--navy);
+                color: var(--ink);
                 letter-spacing: -0.5px;
             }
 
             .logo .ai {
-                color: var(--teal);
+                color: var(--accent);
             }
 
             .nav-actions {
@@ -111,114 +122,130 @@
                 align-items: center;
             }
 
-            .nav-actions a {
+            .nav-actions > a:first-child {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 13px;
                 text-decoration: none;
-                color: var(--warm-gray);
-                font-weight: 500;
-                font-size: 15px;
+                color: var(--ink-faint);
             }
 
-            .nav-actions a:hover {
-                color: var(--navy);
+            .nav-actions > a:first-child:hover {
+                color: var(--ink);
             }
 
-            .cta-button {
+            .btn {
                 display: inline-block;
-                background: var(--teal);
-                color: white !important;
-                padding: 12px 24px;
-                border-radius: 8px;
+                background: var(--accent);
+                color: #fff;
+                padding: 9px 18px;
+                border-radius: 3px;
                 text-decoration: none;
                 font-weight: 600;
-                font-size: 15px;
-                transition: all 0.2s;
+                font-size: 14px;
             }
 
-            .cta-button:hover {
-                background: var(--teal-light);
-                transform: translateY(-1px);
+            .btn:hover {
+                background: var(--accent-dark);
+            }
+
+            .textlink {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 14px;
+                color: var(--accent-dark);
+                text-decoration: none;
+                border-bottom: 1px solid var(--line);
+                padding-bottom: 2px;
+            }
+
+            .textlink:hover {
+                border-color: var(--accent);
             }
 
             main {
-                max-width: 1080px;
+                max-width: 1000px;
                 margin: 0 auto;
-                padding: 140px 24px 80px;
+                padding: 140px 24px 64px;
             }
 
-            .page-badge {
-                display: inline-block;
-                padding: 8px 16px;
-                background: rgba(13, 148, 136, 0.1);
-                border: 1px solid rgba(13, 148, 136, 0.2);
-                border-radius: 100px;
-                font-size: 13px;
-                font-weight: 600;
-                color: var(--teal);
-                margin-bottom: 24px;
-                letter-spacing: 0.5px;
+            .kicker {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12.5px;
+                font-weight: 500;
+                letter-spacing: 1.5px;
+                color: var(--accent-dark);
+                margin-bottom: 18px;
+            }
+
+            .kicker .idx {
+                color: var(--muted);
             }
 
             h1 {
-                font-size: clamp(32px, 4.5vw, 46px);
-                font-weight: 800;
-                line-height: 1.15;
+                font-size: clamp(30px, 4.2vw, 44px);
+                font-weight: 700;
+                line-height: 1.12;
                 letter-spacing: -1px;
                 margin-bottom: 20px;
-                max-width: 780px;
+                max-width: 760px;
+                text-wrap: balance;
             }
 
             .lede {
-                font-size: 18px;
-                color: var(--warm-gray);
-                max-width: 720px;
-                line-height: 1.7;
-                margin-bottom: 12px;
+                font-size: 17.5px;
+                color: var(--ink-soft);
+                max-width: 700px;
+                margin-bottom: 14px;
             }
 
             .fictional-note {
-                font-size: 14px;
-                color: var(--light-gray);
-                max-width: 720px;
-                margin-bottom: 56px;
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 13px;
+                color: var(--ink-faint);
+                max-width: 700px;
+                margin-bottom: 64px;
+                line-height: 1.7;
             }
 
             .fictional-note a {
-                color: var(--teal);
-                text-decoration: none;
+                color: var(--accent-dark);
             }
 
-            /* Client card */
-            .client-card {
-                background: var(--white);
-                border: 1px solid var(--border);
-                border-radius: 16px;
-                padding: 36px;
-                margin-bottom: 72px;
+            /* Setup block */
+            .setup {
+                border: 1px solid var(--line);
+                background: var(--card);
+                border-radius: 6px;
+                padding: 36px 40px;
+                margin-bottom: 84px;
             }
 
-            .client-card h2 {
-                font-size: 22px;
-                margin-bottom: 12px;
+            .setup h2 {
+                font-size: 20px;
+                font-weight: 700;
+                margin-bottom: 10px;
             }
 
-            .client-card p {
-                color: var(--warm-gray);
+            .setup > p {
+                color: var(--ink-soft);
                 max-width: 760px;
+                font-size: 15.5px;
             }
 
             .metric-row {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
-                gap: 24px;
+                gap: 32px;
                 margin-top: 28px;
-                padding-top: 28px;
-                border-top: 1px solid var(--border);
+                padding-top: 26px;
+                border-top: 1px solid var(--line);
             }
 
             .metric-row .num {
-                font-size: 32px;
-                font-weight: 800;
-                color: var(--teal);
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 26px;
+                font-weight: 600;
+                color: var(--accent-dark);
+                font-variant-numeric: tabular-nums;
             }
 
             .metric-row .num.miss {
@@ -226,135 +253,140 @@
             }
 
             .metric-row .lbl {
-                font-size: 14px;
-                color: var(--warm-gray);
-                margin-top: 4px;
+                font-size: 13.5px;
+                color: var(--ink-faint);
+                margin-top: 6px;
+                line-height: 1.55;
             }
 
             /* Phases */
             .phase {
-                display: grid;
-                grid-template-columns: 56px 1fr;
-                gap: 28px;
-                margin-bottom: 72px;
-            }
-
-            .phase-num {
-                width: 56px;
-                height: 56px;
-                border-radius: 50%;
-                background: var(--navy);
-                color: white;
-                font-weight: 800;
-                font-size: 22px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
+                border-top: 1px solid var(--line);
+                padding: 64px 0;
             }
 
             .phase h2 {
-                font-size: 28px;
-                font-weight: 800;
+                font-size: clamp(22px, 3vw, 28px);
+                font-weight: 700;
                 letter-spacing: -0.5px;
-                margin-bottom: 12px;
-                padding-top: 10px;
+                margin-bottom: 14px;
+                max-width: 640px;
+                text-wrap: balance;
             }
 
-            .phase > div > p {
-                color: var(--warm-gray);
-                max-width: 720px;
+            .phase > p {
+                color: var(--ink-soft);
+                max-width: 680px;
                 margin-bottom: 16px;
+                font-size: 15.5px;
             }
 
             .phase strong {
-                color: var(--navy);
+                color: var(--ink);
             }
 
-            /* Artifact panels */
-            .artifact {
-                background: var(--navy);
-                border-radius: 12px;
-                padding: 24px 28px;
-                margin: 24px 0;
-                overflow-x: auto;
+            /* Panels */
+            .panel {
+                background: var(--terminal);
+                border-radius: 6px;
+                overflow: hidden;
+                margin: 28px 0;
             }
 
-            .artifact-label {
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                color: var(--teal-light);
-                margin-bottom: 14px;
+            .panel-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 18px;
+                border-bottom: 1px solid rgba(148, 163, 184, 0.15);
             }
 
-            .artifact pre {
-                font-family:
-                    ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-                font-size: 13.5px;
-                line-height: 1.65;
-                color: #cbd5e1;
-                white-space: pre;
-            }
-
-            .artifact .hl {
-                color: #5eead4;
-            }
-
-            .artifact .warn {
-                color: #fbbf24;
-            }
-
-            .artifact .dim {
+            .panel-bar span {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 11.5px;
+                letter-spacing: 0.5px;
                 color: #64748b;
             }
 
-            /* Inline cards */
-            .card-grid {
+            .panel-bar .dot {
+                width: 9px;
+                height: 9px;
+                border-radius: 50%;
+                background: #22c55e;
+            }
+
+            .panel pre {
+                padding: 20px 22px;
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 13px;
+                line-height: 1.7;
+                color: var(--terminal-ink);
+                overflow-x: auto;
+            }
+
+            .panel .k {
+                color: #5eead4;
+            }
+
+            .panel .w {
+                color: #fbbf24;
+            }
+
+            .panel .c {
+                color: #64748b;
+            }
+
+            /* Field rows */
+            .rows {
+                border-top: 1px solid var(--line);
+                margin: 28px 0;
+            }
+
+            .frow {
                 display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 16px;
-                margin: 24px 0;
+                grid-template-columns: 220px 1fr;
+                gap: 28px;
+                padding: 22px 0;
+                border-bottom: 1px solid var(--line);
             }
 
-            .mini-card {
-                background: var(--white);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                padding: 22px;
+            .frow .tag {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12px;
+                color: var(--accent-dark);
             }
 
-            .mini-card h3 {
+            .frow .tag .st {
+                color: var(--muted);
+            }
+
+            .frow .tag .who {
+                display: block;
+                color: var(--ink-faint);
+                margin-top: 6px;
+            }
+
+            .frow p {
+                color: var(--ink-soft);
                 font-size: 15px;
-                margin-bottom: 8px;
-            }
-
-            .mini-card p {
-                font-size: 14px;
-                color: var(--warm-gray);
-                line-height: 1.6;
-            }
-
-            .mini-card .tag {
-                display: inline-block;
-                font-size: 11px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-                text-transform: uppercase;
-                color: var(--teal);
-                background: rgba(13, 148, 136, 0.08);
-                border-radius: 4px;
-                padding: 3px 8px;
-                margin-bottom: 10px;
+                max-width: 600px;
             }
 
             /* Family tree */
+            .tree {
+                border: 1px solid var(--line);
+                background: var(--card);
+                border-radius: 6px;
+                padding: 8px 28px;
+                margin: 28px 0;
+            }
+
             .tenure {
-                display: flex;
+                display: grid;
+                grid-template-columns: 16px 1fr;
                 gap: 16px;
-                padding: 18px 0;
-                border-bottom: 1px solid var(--border);
+                padding: 20px 0;
+                border-bottom: 1px solid var(--line);
             }
 
             .tenure:last-child {
@@ -362,119 +394,120 @@
             }
 
             .tenure-dot {
-                width: 12px;
-                height: 12px;
+                width: 10px;
+                height: 10px;
                 border-radius: 50%;
-                background: var(--teal);
-                margin-top: 6px;
-                flex-shrink: 0;
+                background: var(--accent);
+                margin-top: 7px;
             }
 
             .tenure-dot.closed {
-                background: var(--light-gray);
+                background: var(--muted);
             }
 
             .tenure h4 {
-                font-size: 15px;
+                font-size: 15.5px;
+                font-weight: 600;
             }
 
             .tenure .dates {
-                font-size: 13px;
-                color: var(--light-gray);
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12px;
+                color: var(--muted);
+                margin-top: 2px;
             }
 
             .tenure p {
-                font-size: 14px;
-                color: var(--warm-gray);
-                margin-top: 6px;
-                max-width: 640px;
+                font-size: 14.5px;
+                color: var(--ink-soft);
+                margin-top: 8px;
+                max-width: 620px;
             }
 
-            .tree-card {
-                background: var(--white);
-                border: 1px solid var(--border);
-                border-radius: 12px;
-                padding: 10px 24px;
-                margin: 24px 0;
-            }
-
-            /* Close */
+            /* Closing */
             .closing {
-                background: var(--navy);
-                color: white;
-                border-radius: 16px;
-                padding: 56px 40px;
-                text-align: center;
-                margin-top: 24px;
+                background: var(--terminal);
+                border-radius: 6px;
+                padding: 52px 48px;
+                color: #e2e8f0;
+                margin-top: 20px;
+            }
+
+            .closing .kicker {
+                color: #5eead4;
             }
 
             .closing h2 {
-                font-size: 30px;
-                font-weight: 800;
+                font-size: clamp(24px, 3vw, 30px);
+                font-weight: 700;
+                color: #f8fafc;
                 margin-bottom: 14px;
+                max-width: 540px;
             }
 
             .closing p {
-                color: #cbd5e1;
-                max-width: 640px;
-                margin: 0 auto 28px;
+                color: #94a3b8;
+                max-width: 600px;
+                margin-bottom: 30px;
             }
 
             .closing .actions {
                 display: flex;
-                gap: 16px;
-                justify-content: center;
+                gap: 24px;
+                align-items: center;
                 flex-wrap: wrap;
             }
 
-            .ghost-button {
-                display: inline-block;
-                color: white;
-                padding: 12px 24px;
-                border: 1px solid rgba(255, 255, 255, 0.35);
-                border-radius: 8px;
-                text-decoration: none;
-                font-weight: 600;
+            .closing .btn {
                 font-size: 15px;
+                padding: 11px 22px;
             }
 
-            .ghost-button:hover {
-                border-color: white;
+            .closing .textlink {
+                color: #5eead4;
+                border-color: rgba(94, 234, 212, 0.3);
             }
 
             footer {
+                border-top: 1px solid var(--line);
                 text-align: center;
-                padding: 48px 24px;
-                color: var(--warm-gray);
-                font-size: 14px;
+                padding: 36px 24px;
             }
 
-            @media (max-width: 640px) {
-                .phase {
-                    grid-template-columns: 1fr;
-                }
-                .phase-num {
-                    width: 44px;
-                    height: 44px;
-                    font-size: 18px;
-                }
+            footer p {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12px;
+                color: var(--muted);
+            }
+
+            @media (max-width: 720px) {
                 .metric-row {
                     grid-template-columns: 1fr;
+                }
+                .frow {
+                    grid-template-columns: 1fr;
+                    gap: 8px;
+                }
+                .setup {
+                    padding: 26px 22px;
+                }
+                .closing {
+                    padding: 36px 26px;
                 }
             }
         </style>
     </head>
     <body>
         <nav>
-            <div class="nav-container">
+            <div class="nav-inner">
                 <a href="index.html" class="logo">
                     Øtom<span class="ai">AI</span>t
                 </a>
                 <div class="nav-actions">
-                    <a href="index.html">Back to site</a>
+                    <a href="index.html">&larr; back to site</a>
                     <a
                         href="https://calendar.app.google/cmtRRbjmx9MnxDTr9"
-                        class="cta-button"
+                        class="btn"
                         >Book a Call</a
                     >
                 </div>
@@ -482,7 +515,7 @@
         </nav>
 
         <main>
-            <span class="page-badge">A WORKED EXAMPLE</span>
+            <div class="kicker">A WORKED EXAMPLE</div>
             <h1>What a deployment looks like when it's built to be handed over</h1>
             <p class="lede">
                 This is the reference engagement behind the 0tomait method: a
@@ -491,25 +524,25 @@
                 alive after the engineer moves on.
             </p>
             <p class="fictional-note">
-                Meridian Freight is fictional, built as the worked example for
-                the published method. The discipline shown here is the real
-                product, and every artifact on this page sits in the
-                <a
-                    href="https://github.com/Vishai/0tomait/tree/main/fde-hub"
+                note: Meridian Freight is fictional, built as the worked
+                example for the published method. The discipline shown here is
+                the real product, and every artifact on this page sits in the
+                <a href="https://github.com/Vishai/0tomait/tree/main/fde-hub"
                     >public repository</a
                 >
                 where you can read it in full.
             </p>
 
-            <div class="client-card">
+            <div class="setup">
                 <h2>The setup</h2>
                 <p>
                     Meridian brokers truckload freight between shippers and
-                    roughly 900 carriers. Nothing gets invoiced without a signed
-                    proof of delivery on file, and matching that paperwork to
-                    loads by hand kept billing three to nine days behind. Two
-                    staff spent most of their week rekeying documents out of a
-                    shared inbox while days-sales-outstanding drifted past 45.
+                    roughly 900 carriers. Nothing gets invoiced without a
+                    signed proof of delivery on file, and matching that
+                    paperwork to loads by hand kept billing three to nine days
+                    behind. Two staff spent most of their week rekeying
+                    documents out of a shared inbox while days-sales-outstanding
+                    drifted past 45.
                 </p>
                 <div class="metric-row">
                     <div>
@@ -538,276 +571,280 @@
 
             <!-- Phase 1 -->
             <div class="phase">
-                <div class="phase-num">1</div>
-                <div>
-                    <h2>Embed: learn what the code can't tell you</h2>
-                    <p>
-                        The first weeks produce no code. They produce the
-                        context that makes every later decision safe: what
-                        words mean in this building, who decides what, and
-                        which data quirks will silently corrupt a naive
-                        integration.
-                    </p>
-                    <div class="card-grid">
-                        <div class="mini-card">
-                            <span class="tag">glossary</span>
-                            <h3>"POD" means proof of delivery</h3>
-                            <p>
-                                The signed document that gates all revenue.
-                                Newcomers confuse it with the BOL, issued at
-                                pickup. An AI agent would confidently read
-                                "pod" as Kubernetes. The glossary exists so
-                                neither mistake happens.
-                            </p>
-                        </div>
-                        <div class="mini-card">
-                            <span class="tag">data quirk</span>
-                            <h3>Load numbers reset every fiscal year</h3>
-                            <p>
-                                Joining on load number alone silently mixes a
-                                2025 load with a 2026 one. The safe key is
-                                fiscal year plus load number. This one line in
-                                the manifest prevents a data corruption bug
-                                nobody would trace for months.
-                            </p>
-                        </div>
-                        <div class="mini-card">
-                            <span class="tag">who decides</span>
-                            <h3>Dana decides, Priya gates access</h3>
-                            <p>
-                                Anything a customer could notice needs Dana,
-                                the VP of Operations. All system access flows
-                                through Priya, an IT contractor reachable two
-                                days a week. Miss that fact and every schedule
-                                slips a week.
-                            </p>
-                        </div>
+                <div class="kicker"><span class="idx">PHASE 1 /</span> EMBED</div>
+                <h2>Learn what the code can't tell you</h2>
+                <p>
+                    The first weeks produce no code. They produce the context
+                    that makes every later decision safe: what words mean in
+                    this building, who decides what, and which data quirks will
+                    silently corrupt a naive integration.
+                </p>
+                <div class="rows">
+                    <div class="frow">
+                        <div class="tag">glossary</div>
+                        <p>
+                            <strong>"POD" means proof of delivery.</strong> The
+                            signed document that gates all revenue. Newcomers
+                            confuse it with the BOL, issued at pickup. An AI
+                            agent would confidently read "pod" as Kubernetes.
+                            The glossary exists so neither mistake happens.
+                        </p>
+                    </div>
+                    <div class="frow">
+                        <div class="tag">data quirk</div>
+                        <p>
+                            <strong
+                                >Load numbers reset every fiscal year.</strong
+                            >
+                            Joining on load number alone silently mixes a 2025
+                            load with a 2026 one. The safe key is fiscal year
+                            plus load number. This one line in the manifest
+                            prevents a data corruption bug nobody would trace
+                            for months.
+                        </p>
+                    </div>
+                    <div class="frow">
+                        <div class="tag">who decides</div>
+                        <p>
+                            <strong>Dana decides, Priya gates access.</strong>
+                            Anything a customer could notice needs Dana, the VP
+                            of Operations. All system access flows through
+                            Priya, an IT contractor reachable two days a week.
+                            Miss that fact and every schedule slips a week.
+                        </p>
                     </div>
                 </div>
             </div>
 
             <!-- Phase 2 -->
             <div class="phase">
-                <div class="phase-num">2</div>
-                <div>
-                    <h2>Ship: automation on the client's rhythm</h2>
-                    <p>
-                        Two flows went live. One watches the billing mailbox,
-                        extracts load numbers from carrier paperwork, and files
-                        each document against its load. The other runs on
-                        Meridian's twice-weekly billing rhythm and raises the
-                        invoices. Both fail closed: an item that errors is
-                        skipped and reported, never half-executed. Invoices
-                        over $25,000 stay human-approved, because the whole
-                        project was approved on that condition.
-                    </p>
-                    <div class="artifact">
-                        <div class="artifact-label">
-                            from the manifest &middot; flows.pod-intake.failure_mode
-                        </div>
-                        <pre>
-<span class="hl">"on_failure"</span>: "Retries three times with backoff, then leaves the
-  email unread and emits a CloudWatch alarm. <span class="hl">Unread mail is the
+                <div class="kicker"><span class="idx">PHASE 2 /</span> SHIP</div>
+                <h2>Automation on the client's rhythm</h2>
+                <p>
+                    Two flows went live. One watches the billing mailbox,
+                    extracts load numbers from carrier paperwork, and files
+                    each document against its load. The other runs on
+                    Meridian's twice-weekly billing rhythm and raises the
+                    invoices. Both fail closed: an item that errors is skipped
+                    and reported, never half-executed. Invoices over $25,000
+                    stay human-approved, because the whole project was approved
+                    on that condition.
+                </p>
+                <div class="panel">
+                    <div class="panel-bar">
+                        <span>manifest &middot; flows.pod-intake.failure_mode</span>
+                        <span class="dot"></span>
+                    </div>
+                    <pre>
+<span class="k">"on_failure"</span>: "Retries three times with backoff, then leaves the
+  email unread and emits a CloudWatch alarm. <span class="k">Unread mail is the
   safety net: no POD is ever lost</span>, it just stays in the inbox
   for a human.",
-<span class="hl">"who_notices"</span>: "CloudWatch alarm to #meridian-alerts, which Marcus
-  watches. <span class="warn">Nobody watches it on weekends.</span>"</pre>
-                    </div>
-                    <p>
-                        That last line is deliberate. Weekend coverage was
-                        priced, declined by the client, and recorded. Honest
-                        gaps in the document beat comfortable silence, and the
-                        tooling is about to prove it.
-                    </p>
+<span class="k">"who_notices"</span>: "CloudWatch alarm to #meridian-alerts, which Marcus
+  watches. <span class="w">Nobody watches it on weekends.</span>"</pre>
                 </div>
+                <p>
+                    That last line is deliberate. Weekend coverage was priced,
+                    declined by the client, and recorded. Honest gaps in the
+                    document beat comfortable silence, and the tooling is about
+                    to prove it.
+                </p>
             </div>
 
             <!-- Phase 3 -->
             <div class="phase">
-                <div class="phase-num">3</div>
-                <div>
-                    <h2>Document: decisions keep their reasoning</h2>
-                    <p>
-                        Every consequential choice is recorded with the
-                        alternatives that lost and the condition that should
-                        reopen it. Here is one: the mailbox is polled every
-                        three minutes instead of using push notifications,
-                        which sounds backwards until you read why.
-                    </p>
-                    <div class="artifact">
-                        <div class="artifact-label">
-                            from the manifest &middot; decisions.poll-not-webhook
-                        </div>
-                        <pre>
-<span class="hl">"decision"</span>: "Poll the billing mailbox on a 3-minute delta query
+                <div class="kicker">
+                    <span class="idx">PHASE 3 /</span> DOCUMENT
+                </div>
+                <h2>Decisions keep their reasoning</h2>
+                <p>
+                    Every consequential choice is recorded with the
+                    alternatives that lost and the condition that should reopen
+                    it. Here is one: the mailbox is polled every three minutes
+                    instead of using push notifications, which sounds backwards
+                    until you read why.
+                </p>
+                <div class="panel">
+                    <div class="panel-bar">
+                        <span>manifest &middot; decisions.poll-not-webhook</span>
+                        <span class="dot"></span>
+                    </div>
+                    <pre>
+<span class="k">"decision"</span>: "Poll the billing mailbox on a 3-minute delta query
   rather than subscribing to change notifications."
-<span class="hl">"context"</span>:  "Subscriptions expire every three days and must be
+<span class="k">"context"</span>:  "Subscriptions expire every three days and must be
   renewed by a running process. Meridian has no weekend coverage,
   so a renewal failure on a Friday would silently stop POD intake
-  until Monday. <span class="hl">Polling costs trivially more and degrades visibly.</span>"
-<span class="hl">"rejected"</span>: ["Graph webhooks: invisible single point of failure",
+  until Monday. <span class="k">Polling costs trivially more and degrades visibly.</span>"
+<span class="k">"rejected"</span>: ["Graph webhooks: invisible single point of failure",
              "IMAP: basic auth disabled by tenant policy"]
-<span class="hl">"revisit_when"</span>: "Meridian establishes real on-call coverage."</pre>
-                    </div>
-                    <p>
-                        A successor who prefers webhooks now knows this was a
-                        considered trade, what would make it wrong, and when to
-                        revisit. Without this record they would "modernize" the
-                        trigger and reintroduce the exact failure it avoids.
-                    </p>
+<span class="k">"revisit_when"</span>: "Meridian establishes real on-call coverage."</pre>
                 </div>
+                <p>
+                    A successor who prefers webhooks now knows this was a
+                    considered trade, what would make it wrong, and when to
+                    revisit. Without this record they would "modernize" the
+                    trigger and reintroduce the exact failure it avoids.
+                </p>
             </div>
 
             <!-- Phase 4 -->
             <div class="phase">
-                <div class="phase-num">4</div>
-                <div>
-                    <h2>Hand over: staffed roles and a talking deployment</h2>
-                    <p>
-                        Every human step has a named owner and a family tree.
-                        Meridian's queue has already survived one staffing
-                        change, and the record shows both the failure and what
-                        it taught:
-                    </p>
-                    <div class="tree-card">
-                        <div class="tenure">
-                            <div class="tenure-dot closed"></div>
-                            <div>
-                                <h4>Tina Okafor &middot; queue-operator</h4>
-                                <div class="dates">
-                                    March 2026 &ndash; May 2026
-                                </div>
-                                <p>
-                                    Left Meridian. No walkthrough existed yet,
-                                    so the queue reverted cold to her
-                                    supervisor and a two-week backlog followed.
-                                    The pairing script below was written as a
-                                    direct result.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="tenure">
-                            <div class="tenure-dot"></div>
-                            <div>
-                                <h4>Marcus Bell &middot; queue-operator</h4>
-                                <div class="dates">
-                                    June 2026 &ndash; present &middot; trained
-                                    via the morning-queue pairing script
-                                </div>
-                                <p>
-                                    The next transition follows a procedure:
-                                    close the tenure, open the new one, deliver
-                                    the walkthrough.
-                                </p>
-                            </div>
+                <div class="kicker">
+                    <span class="idx">PHASE 4 /</span> HAND OVER
+                </div>
+                <h2>Staffed roles and a talking deployment</h2>
+                <p>
+                    Every human step has a named owner and a family tree.
+                    Meridian's queue has already survived one staffing change,
+                    and the record shows both the failure and what it taught:
+                </p>
+                <div class="tree">
+                    <div class="tenure">
+                        <div class="tenure-dot closed"></div>
+                        <div>
+                            <h4>Tina Okafor &middot; queue-operator</h4>
+                            <div class="dates">2026-03-02 &rarr; 2026-05-30</div>
+                            <p>
+                                Left Meridian. No walkthrough existed yet, so
+                                the queue reverted cold to her supervisor and a
+                                two-week backlog followed. The pairing script
+                                below was written as a direct result.
+                            </p>
                         </div>
                     </div>
-                    <p>
-                        The tooling then reads the document back and says what
-                        a polite consultant might soften. This is the actual
-                        validator output for this deployment:
-                    </p>
-                    <div class="artifact">
-                        <div class="artifact-label">
-                            terminal &middot; node tools/validate.js --patterns patterns/ meridian.manifest.json
+                    <div class="tenure">
+                        <div class="tenure-dot"></div>
+                        <div>
+                            <h4>Marcus Bell &middot; queue-operator</h4>
+                            <div class="dates">
+                                2026-06-02 &rarr; present &middot; trained_via:
+                                wt-queue-morning
+                            </div>
+                            <p>
+                                The next transition follows a procedure: close
+                                the tenure, open the new one, deliver the
+                                walkthrough.
+                            </p>
                         </div>
-                        <pre>
-<span class="warn">! warnings (2)</span>
+                    </div>
+                </div>
+                <p>
+                    The tooling then reads the document back and says what a
+                    polite consultant might soften. This is the actual
+                    validator output for this deployment:
+                </p>
+                <div class="panel">
+                    <div class="panel-bar">
+                        <span
+                            >$ node tools/validate.js --patterns patterns/
+                            meridian.manifest.json</span
+                        >
+                        <span class="dot"></span>
+                    </div>
+                    <pre>
+<span class="w">! warnings (2)</span>
     systems[3] (accounting): System last verified 93 days ago.
     flows[0] (pod-intake): nobody is recorded as noticing this
       flow failing. Record it as a risk if genuinely unmonitored.
 
-<span class="dim">&middot; notes (4)</span>
+<span class="c">&middot; notes (4)</span>
     flows[0] (pod-intake): every human step runs through one
       person (Marcus Bell). The family tree shows no backup —
       a planned absence becomes an outage.
     systems[0] (tms).lineage[1]: Priya Chandran inherited
       'administrator' with no walkthrough on record.</pre>
+                </div>
+                <p>
+                    The deployment also talks back. Operators' complaints
+                    become field reports with a tracked lifecycle, so the
+                    system surfaces its own gaps:
+                </p>
+                <div class="rows">
+                    <div class="frow">
+                        <div class="tag">
+                            friction <span class="st">&middot; open</span>
+                            <span class="who">marcus-bell &middot; queue session</span>
+                        </div>
+                        <p>
+                            "The handwritten ones take three or four times
+                            longer than anything else in the queue. Most
+                            mornings they are the whole queue."
+                        </p>
                     </div>
-                    <p>
-                        The deployment also talks back. Operators' complaints
-                        become field reports with a tracked lifecycle, so the
-                        system surfaces its own gaps:
-                    </p>
-                    <div class="card-grid">
-                        <div class="mini-card">
-                            <span class="tag">friction &middot; open</span>
-                            <h3>Reported by Marcus, from a queue session</h3>
-                            <p>
-                                "The handwritten ones take three or four times
-                                longer than anything else in the queue. Most
-                                mornings they are the whole queue."
-                            </p>
+                    <div class="frow">
+                        <div class="tag">
+                            gap <span class="st">&middot; open</span>
+                            <span class="who">dana-reyes &middot; email</span>
                         </div>
-                        <div class="mini-card">
-                            <span class="tag">gap &middot; open</span>
-                            <h3>Reported by Dana, the VP</h3>
-                            <p>
-                                "I cannot see which delivered loads are still
-                                waiting on paperwork without asking Marcus.
-                                Before the automation I could at least see the
-                                pile on his desk."
-                            </p>
-                        </div>
-                        <div class="mini-card">
-                            <span class="tag">bug &middot; resolved</span>
-                            <h3>Closed with its fix on record</h3>
-                            <p>
-                                A duplicate POD slipped past dedup when a
-                                carrier re-sent it with a cover sheet. The
-                                resolution is written down where the next
-                                engineer will find it.
-                            </p>
-                        </div>
+                        <p>
+                            "I cannot see which delivered loads are still
+                            waiting on paperwork without asking Marcus. Before
+                            the automation I could at least see the pile on his
+                            desk."
+                        </p>
                     </div>
-                    <p>
-                        Finally, the whole manifest compiles into a briefing an
-                        AI coding agent can maintain the system from. Your
-                        constraints become its hard rules:
-                    </p>
-                    <div class="artifact">
-                        <div class="artifact-label">
-                            from the compiled agent briefing
+                    <div class="frow">
+                        <div class="tag">
+                            bug <span class="st">&middot; resolved</span>
+                            <span class="who">marcus-bell &middot; #meridian-alerts</span>
                         </div>
-                        <pre>
+                        <p>
+                            A duplicate POD slipped past dedup when a carrier
+                            re-sent it with a cover sheet. The resolution is
+                            written down where the next engineer will find it.
+                        </p>
+                    </div>
+                </div>
+                <p>
+                    Finally, the whole manifest compiles into a briefing an AI
+                    coding agent can maintain the system from. Your constraints
+                    become its hard rules:
+                </p>
+                <div class="panel">
+                    <div class="panel-bar">
+                        <span>compiled agent briefing &middot; excerpt</span>
+                        <span class="dot"></span>
+                    </div>
+                    <pre>
 ## Hard rules — never violate these
 
-- <span class="hl">Do not write to the TMS from any deployed flow.</span> Read only,
+- <span class="k">Do not write to the TMS from any deployed flow.</span> Read only,
   and only against the replica. (technical)
-- <span class="hl">Invoices over $25,000 must remain human-approved.</span> Dana
+- <span class="k">Invoices over $25,000 must remain human-approved.</span> Dana
   agreed to the whole project on this condition. Removing it
   without asking her would damage the relationship well beyond
   the value of the automation. (political)</pre>
-                    </div>
                 </div>
             </div>
 
             <div class="closing">
+                <div class="kicker">THE OUTCOME</div>
                 <h2>This is what you'd be holding</h2>
                 <p>
                     Working automation, the reasoning behind it, staffed roles
                     with walkthroughs, and a system that reports its own
                     friction. Maintainable by the next engineer, your own
-                    staff, or an AI agent. The method is public; the
-                    engagement is yours.
+                    staff, or an AI agent. The method is public; the engagement
+                    is yours.
                 </p>
                 <div class="actions">
                     <a
                         href="https://calendar.app.google/cmtRRbjmx9MnxDTr9"
-                        class="cta-button"
+                        class="btn"
                         >Book Free Discovery Call</a
                     >
                     <a
                         href="https://github.com/Vishai/0tomait/tree/main/fde-hub"
-                        class="ghost-button"
-                        >Read the method on GitHub</a
+                        class="textlink"
+                        >read the method on github &rarr;</a
                     >
                 </div>
             </div>
         </main>
 
         <footer>
-            <p>&copy; 2026 0tomait. All rights reserved.</p>
+            <p>&copy; 2026 0tomait &middot; all rights reserved</p>
         </footer>
     </body>
 </html>
