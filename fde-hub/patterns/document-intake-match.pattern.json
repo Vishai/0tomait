@@ -1,0 +1,268 @@
+{
+  "pattern_version": "0.1",
+  "id": "document-intake-match",
+  "name": "Document intake and matching",
+  "problem": "Paperwork the business needs arrives through a channel built for humans — a shared mailbox, a drive folder, a fax bridge — and someone reads each item, figures out which record it belongs to, and files it by hand. The work is matching, the backlog gates money, and the person doing it is described as 'the one who knows how'.",
+  "signals": [
+    "A shared inbox or folder is functionally a work queue, though nobody designed it as one.",
+    "Staff describe the job as 'matching' or 'keying': reading a document to find which record it belongs to.",
+    "A downstream money event — invoicing, payment release, a claim — waits on the document being filed.",
+    "Turnaround is measured in days and everyone has stopped finding that strange."
+  ],
+  "not_for": [
+    "The senders could send structured data instead. If the top senders would adopt a portal, a feed, or even a subject-line convention, fixing the channel beats parsing it — check this before building any extraction.",
+    "Latency under a minute matters. This shape is built around polling and queues; genuinely real-time intake is a different pattern with different failure modes.",
+    "The document does not map to a record in any system. Matching needs a system of record to match against; if none exists, building one is the actual project."
+  ],
+  "base_shape": {
+    "trigger_kinds": ["polling", "email", "file-drop", "webhook"],
+    "steps": [
+      "Watch the channel via a delta or cursor mechanism, so nothing is read twice and nothing is missed between runs.",
+      "Classify each item: the target document, some other legitimate document, or junk.",
+      "Extract the join identifier — try structured layers first (subject, filename, form fields), OCR last.",
+      "Resolve the identifier against the system of record, applying the uniqueness caveats recorded on the entity.",
+      "Above the confidence threshold: file the document to its destination and record the match in the flow's own state.",
+      "Below it: route to the human review queue with the machine's best guess and confidence attached.",
+      "Track every item's state — seen, matched, filed, queued — in a store the flow owns."
+    ],
+    "state": "Which items were seen, matched, filed, or queued — in the flow's own table, never scribbled into the client's system of record. The channel itself doubles as the dead-letter queue: an unprocessed item stays visibly unprocessed (unread mail, an unmoved file) rather than vanishing into a log.",
+    "commitments": [
+      "Never lose a document. Every failure path must leave the item somewhere a human would find it without knowing the flow exists.",
+      "Never guess a match. A wrong match files a document against the wrong record and corrupts the downstream event; a missed match costs one human review. The asymmetry decides every threshold.",
+      "The review queue is part of the flow, not an afterthought — instantiate human-review-queue alongside this pattern."
+    ]
+  },
+  "variation_points": [
+    {
+      "id": "trigger-style",
+      "question": "Poll the channel, or subscribe to change notifications?",
+      "options": [
+        {
+          "choice": "poll",
+          "when": "No on-call exists and nobody would notice a silently lapsed subscription until the backlog surfaced.",
+          "consequence": "Minutes of latency and trivially more API calls; the failure mode is visible and self-announcing."
+        },
+        {
+          "choice": "subscribe",
+          "when": "Latency genuinely matters and subscription renewal is monitored by something that pages a human within hours.",
+          "consequence": "Lower latency, fewer calls; adds a renewal that fails silently — the worst property a failure can have in an uncovered environment."
+        }
+      ],
+      "default": "poll",
+      "default_because": "Most FDE clients have no weekend coverage and no on-call. An invisible failure mode is disqualifying in that environment — first proven out in the reference deployment's 'poll-not-webhook' decision, which records the full reasoning."
+    },
+    {
+      "id": "extraction-ladder",
+      "question": "How is the join identifier extracted from the document?",
+      "options": [
+        {
+          "choice": "parse-structured",
+          "when": "The identifier reliably appears in metadata: subject line, filename, a form field.",
+          "consequence": "Cheap and near-perfect; breaks quietly when senders change habits, so monitor per-sender match rates."
+        },
+        {
+          "choice": "ocr",
+          "when": "The identifier exists only inside the document image.",
+          "consequence": "Handles the worst senders; requires a tuned confidence threshold and a labeled set to tune it on."
+        },
+        {
+          "choice": "hybrid-by-sender",
+          "when": "The sender population is bimodal — some structured, some photographed paper.",
+          "consequence": "Route per sender. The most moving parts, the best queue rate."
+        }
+      ],
+      "default": "hybrid-by-sender",
+      "default_because": "Sender populations are almost always bimodal in practice: a structured majority and a long tail of photographs. Building only one path either over-engineers the majority or abandons the tail."
+    },
+    {
+      "id": "confidence-policy",
+      "question": "Where does the auto-accept threshold sit, and how is it chosen?",
+      "options": [
+        {
+          "choice": "tuned-on-labeled-set",
+          "when": "Always, for documents that gate money.",
+          "consequence": "Costs a day of labeling real documents; makes the false-accept rate a measured number instead of a feeling."
+        },
+        {
+          "choice": "vendor-default",
+          "when": "Only for documents where a wrong match is cheap and self-correcting.",
+          "consequence": "Zero setup; an unquantified false-accept rate that surfaces later as downstream disputes."
+        }
+      ],
+      "default": "tuned-on-labeled-set",
+      "default_because": "The threshold encodes the client's sender mix, not the extraction model. It is client-specific by construction — never copy a threshold between clients, and record the labeled-set numbers in the decision."
+    },
+    {
+      "id": "multi-item-messages",
+      "question": "One message carrying documents for several records — split automatically, or route to review?",
+      "options": [
+        {
+          "choice": "split-up-to-n",
+          "when": "A few senders batch regularly and the batch structure is predictable.",
+          "consequence": "Handles the common case; cap the split and route anything past the cap to review."
+        },
+        {
+          "choice": "always-review",
+          "when": "Batching is rare or irregular.",
+          "consequence": "Zero code; a small standing queue load."
+        }
+      ],
+      "default": "always-review",
+      "default_because": "Build the splitter when queue data proves it earns its complexity, not before. The queue tells you exactly how often batching happens and who does it."
+    },
+    {
+      "id": "filing-destination",
+      "question": "Where does the matched document land, and is that location load-bearing?",
+      "options": [
+        {
+          "choice": "path-addressed",
+          "when": "The client already retrieves documents by folder convention and will keep doing so.",
+          "consequence": "Humans can browse it unaided; a manual folder reorganization silently strands writes. Record that as a blast-radius note."
+        },
+        {
+          "choice": "id-addressed",
+          "when": "Retrieval is always by record id, through a tool.",
+          "consequence": "Immune to reorganization; humans need a lookup tool to find anything."
+        }
+      ],
+      "default": "path-addressed",
+      "default_because": "Meeting the client's existing retrieval habit usually beats theoretical robustness — adoption is the scarce resource. But the stranded-writes risk goes in the manifest the day you choose it."
+    }
+  ],
+  "glue_checklist": [
+    {
+      "question": "What is the join identifier, and what is the exact scope of its uniqueness?",
+      "why_it_matters": "'Unique' almost never means globally unique. Fiscal-year resets, prefixed variants on paperwork, and reused numbers are the standard traps, and every one of them is a silent mis-file.",
+      "recorded_in": "entities[].identifier and entities[].quirks"
+    },
+    {
+      "question": "Who works the review queue, when are they away, and who covers?",
+      "why_it_matters": "The queue is the flow's pressure-relief valve. Unstaffed, it becomes the backlog that discredits the automation.",
+      "recorded_in": "flows[].lineage (an open queue-operator tenure plus a named backup) and walkthroughs"
+    },
+    {
+      "question": "How far behind live is your read path against the system of record?",
+      "why_it_matters": "Replica lag and cache delay produce false 'record not found' results near the moment of creation — which is exactly when documents tend to arrive.",
+      "recorded_in": "systems[].gotchas"
+    },
+    {
+      "question": "Who are the top ten senders, and what do they actually send?",
+      "why_it_matters": "Sender concentration decides the extraction ladder — and often reveals that a polite request to three senders beats any amount of model work.",
+      "recorded_in": "systems[].gotchas and handoff.recommended_next"
+    },
+    {
+      "question": "What is the retention obligation on these documents, and who imposed it?",
+      "why_it_matters": "Intake paperwork is frequently audit or insurance material; the filing destination inherits the obligation whether anyone says so or not.",
+      "recorded_in": "constraints[]"
+    },
+    {
+      "question": "What happens today when an expected document simply never arrives?",
+      "why_it_matters": "The flow automates arrival; non-arrival chasing is usually an undocumented human process, and automating intake makes it less visible, not more.",
+      "recorded_in": "flows[].known_exceptions or handoff.risks"
+    }
+  ],
+  "human_roles": [
+    {
+      "role": "queue-operator",
+      "does": "Works the review queue; resolves what the machine could not; their resolutions are the tuning data for every threshold.",
+      "cadence": "Daily, mornings. Minutes per item; the queue should fit inside an hour.",
+      "transition_walkthrough_must_cover": [
+        "A live queue session on real items, paired both directions — shadow first, then reversed.",
+        "What the machine's confidence score and best-guess annotations mean, and when to distrust them.",
+        "The known sender quirks and where they are written down.",
+        "Who to tell when the queue's composition shifts — new failure shapes mean something changed upstream."
+      ]
+    },
+    {
+      "role": "steward",
+      "does": "Owns the code, the thresholds, and the labeled set; retunes when sender mix shifts; keeps the credential inventory current.",
+      "cadence": "A weekly glance at metrics; hands-on only on drift or breakage.",
+      "transition_walkthrough_must_cover": [
+        "Where state lives and how to safely replay a single item.",
+        "How the threshold was tuned, and where the labeled set is.",
+        "The credential inventory and each expiry date.",
+        "Why the trigger style was chosen — including the failure mode it exists to avoid."
+      ]
+    }
+  ],
+  "failure_design": [
+    {
+      "failure": "A channel credential expires; intake stops completely and silently.",
+      "response": "Inventory every credential with its expiry in the manifest, and alarm on zero-items-processed over a period the business rhythm says is impossible — because 'no work arrived' and 'we stopped looking' are indistinguishable from inside the flow."
+    },
+    {
+      "failure": "A malformed item crashes processing and blocks everything behind it.",
+      "response": "Per-item isolation with a poison policy: after N failures, route the item to review and move on. A single bad fax must never stop the queue."
+    },
+    {
+      "failure": "Duplicate sends double-file the same document.",
+      "response": "Deduplicate on join identifier plus content hash. Keep genuine near-duplicates — amended documents — and surface them to review rather than silently discarding either."
+    },
+    {
+      "failure": "The upstream record lags the document's arrival, producing false non-matches.",
+      "response": "A pending-retry state with a window matched to the measured lag. Only after the window expires does an item count as unmatched."
+    },
+    {
+      "failure": "The review queue quietly stops being worked.",
+      "response": "Depth and age alarms owned by the flow, not by the operator's diligence — see the human-review-queue pattern, which exists for this."
+    }
+  ],
+  "manifest_bindings": {
+    "systems": "The intake channel, the extraction service, the system of record, and the filing destination — each with access, gotchas, and last_verified.",
+    "entities": "The matched record and the document itself, including source_of_truth and the identifier's full uniqueness caveats — the caveats are what the matcher is built against.",
+    "decisions_expected": [
+      {
+        "topic": "Trigger style (poll versus subscription)",
+        "tension": "Latency versus invisible failure, weighed against who is actually watching."
+      },
+      {
+        "topic": "Confidence threshold value",
+        "tension": "Queue size versus false-match rate. Record the labeled-set numbers, not the feeling."
+      },
+      {
+        "topic": "State store location",
+        "tension": "Visibility inside the client's own system versus blast radius on their system of record."
+      }
+    ],
+    "constraints_expected": [
+      "The document retention obligation and its source.",
+      "Any write-prohibition on the system of record."
+    ]
+  },
+  "metrics": [
+    {
+      "metric": "Median hours from arrival to filed",
+      "direction": "down"
+    },
+    {
+      "metric": "Percent auto-matched",
+      "direction": "up",
+      "note": "The ceiling is set by sender quality, not model quality — track it per sender before trying to model past it."
+    },
+    {
+      "metric": "False-match rate",
+      "direction": "down",
+      "note": "The one that must stay near zero. It does not self-report; measure it by auditing samples through the review queue."
+    },
+    {
+      "metric": "Review queue depth",
+      "direction": "flat"
+    }
+  ],
+  "instantiations": [
+    {
+      "client": "Meridian Freight Group (fictional reference example)",
+      "manifest": "fde-hub/examples/meridian-freight.manifest.json",
+      "flow_id": "pod-intake",
+      "deviations": [
+        "Split cap at 6 documents per message; beyond it routes to review — only two carriers batch, so the general splitter was not built.",
+        "Non-English documents excluded entirely and routed to manual.",
+        "Queue staffing survives on one person — recorded there as a risk, and the reason this pattern's queue-operator role now requires a named backup."
+      ]
+    }
+  ],
+  "maturity": {
+    "status": "extracted",
+    "evidence": "One shipped deployment (Meridian POD intake) plus the manual process it replaced. The defaults are honest but singular — treat them as strong hypotheses until a third instantiation confirms or corrects them."
+  }
+}

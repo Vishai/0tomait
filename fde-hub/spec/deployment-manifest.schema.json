@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://0tomait.com/spec/deployment-manifest/v0.1.json",
+  "$id": "https://0tomait.com/spec/deployment-manifest/v0.2.json",
   "title": "FDE Deployment Manifest",
   "description": "A machine-readable description of a client environment and everything deployed into it. Written to be read cold by a human or an agent who was not present for the original engagement.",
   "type": "object",
@@ -27,8 +27,8 @@
       "properties": {
         "spec_version": {
           "type": "string",
-          "const": "0.1",
-          "description": "Version of the deployment-manifest spec this document conforms to."
+          "enum": ["0.1", "0.2"],
+          "description": "Version of the deployment-manifest spec this document conforms to. 0.2 adds the stewardship layer: spaces, lineage, and walkthroughs."
         },
         "updated": {
           "$ref": "#/$defs/date",
@@ -306,6 +306,18 @@
       }
     },
 
+    "spaces": {
+      "type": "array",
+      "description": "Business domains the deployment lives in, each with a named decision maker. Added in v0.2. A space answers the question a successor cannot answer from code: who do you ask before changing this part of the client's world?",
+      "items": { "$ref": "#/$defs/space" }
+    },
+
+    "walkthroughs": {
+      "type": "array",
+      "description": "Transition assets — recordings, documents, pairing scripts — that move knowledge from a person into a role. Added in v0.2. Referenced from lineage tenures via trained_via, so every handover leaves a trace.",
+      "items": { "$ref": "#/$defs/walkthrough" }
+    },
+
     "glossary": {
       "type": "array",
       "description": "Client-specific vocabulary. Almost always omitted, and almost always the reason an outsider misreads the domain.",
@@ -333,6 +345,108 @@
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
       "description": "ISO-8601 calendar date, YYYY-MM-DD."
+    },
+
+    "tenure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "person", "from"],
+      "description": "One person holding one role for a period. Roles are the stable unit — defined by the flow's pattern and the work itself; people rotate through them. The lineage of a flow or system is its list of tenures.",
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 2,
+          "description": "The role held, not the job title: steward, queue-operator, approver, drift-adjudicator, administrator. Matches the role names in the flow's pattern where one exists."
+        },
+        "person": { "type": "string", "minLength": 1 },
+        "org": { "type": "string", "description": "Client, vendor, or your own firm." },
+        "from": { "$ref": "#/$defs/date" },
+        "to": {
+          "$ref": "#/$defs/date",
+          "description": "Unset means the tenure is open — this person holds the role today."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["built", "inherited", "covering"],
+          "description": "built: the original author of the thing. inherited: took over as the standing holder. covering: temporary, with an expected return."
+        },
+        "trained_via": {
+          "$ref": "#/$defs/id",
+          "description": "Walkthrough id used for the handover into this tenure. Its absence on an open inherited tenure is a finding: the knowledge transferred only in conversation, if at all."
+        },
+        "exit_note": {
+          "type": "string",
+          "description": "How the tenure ended and what was lost or learned in the transition. The most honest field in the family tree — write it when it happens, not later."
+        }
+      }
+    },
+
+    "walkthrough": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "kind", "location", "audience_role", "last_updated"],
+      "description": "A transition asset: the thing that moves a role from one person to the next. A pattern's transition_walkthrough_must_cover list is the outline; this is the client-specific instance.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["recording", "document", "pairing-script", "checklist"]
+        },
+        "location": {
+          "type": "string",
+          "minLength": 3,
+          "description": "Where the asset lives. A pointer — like secrets, walkthrough content is stored elsewhere."
+        },
+        "audience_role": {
+          "type": "string",
+          "description": "The role this trains someone into, matching lineage role names."
+        },
+        "covers": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flows": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+            "systems": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+          }
+        },
+        "duration": { "type": "string", "description": "What it costs to receive: '45 minutes', 'one morning shadowing, one reversed'." },
+        "prerequisites": { "type": "array", "items": { "type": "string" } },
+        "last_updated": {
+          "$ref": "#/$defs/date",
+          "description": "A walkthrough that predates the system it describes trains people wrong with confidence. The validator warns past 180 days."
+        }
+      }
+    },
+
+    "space": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "decision_maker"],
+      "description": "A business domain with a named decision maker: the person whose yes is required before changing anything inside it.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "purpose": {
+          "type": "string",
+          "minLength": 15,
+          "description": "What part of the client's world this is, in their terms."
+        },
+        "decision_maker": {
+          "$ref": "#/$defs/contact",
+          "description": "One name, not a committee. If two people must both agree, that fact belongs in notes — but one of them still answers the phone first."
+        },
+        "delegate": {
+          "$ref": "#/$defs/contact",
+          "description": "Who answers when the decision maker is unavailable, and the limit of what they can approve."
+        },
+        "flows": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "systems": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "notes": {
+          "type": "string",
+          "description": "The politics of the space that do not fit in constraints — where the delegate's authority ends, which changes are radioactive."
+        }
+      }
     },
 
     "contact": {
@@ -396,6 +510,11 @@
             "sandbox_available": { "type": "boolean" }
           }
         },
+        "lineage": {
+          "type": "array",
+          "description": "The family tree of this system's administration: who has held it, who holds it now, and how each tenure ended. Tool ownership changes hands more often than anyone documents, and each undocumented handover sheds knowledge.",
+          "items": { "$ref": "#/$defs/tenure" }
+        },
         "gotchas": {
           "type": "array",
           "description": "Hard-won knowledge about this system in this client's configuration. The most expensive field to reconstruct.",
@@ -455,6 +574,15 @@
       "properties": {
         "id": { "$ref": "#/$defs/id" },
         "name": { "type": "string", "minLength": 1 },
+        "pattern": {
+          "type": "string",
+          "description": "Id of the flow pattern this was instantiated from, if any — see patterns/. A provenance link for humans and agents; not validated across files."
+        },
+        "lineage": {
+          "type": "array",
+          "description": "The family tree of this flow: every tenure of a person in a role on it, past and present. An open tenure (no 'to' date) is a current holder. Staffing is fluid; this is where the fluidity becomes visible instead of surprising.",
+          "items": { "$ref": "#/$defs/tenure" }
+        },
         "business_purpose": {
           "type": "string",
           "minLength": 25,

@@ -1,0 +1,215 @@
+{
+  "pattern_version": "0.1",
+  "id": "human-review-queue",
+  "name": "Human review queue",
+  "problem": "Every automation worth deploying has a residue — the cases only a person can judge. Untended, the residue accumulates into the backlog that discredits the whole system: 'the automation doesn't work, Marcus still does it all by hand.' The queue is where deployments actually die, and they die of staffing, not code.",
+  "signals": [
+    "An automation exists or is planned, and someone says 'and the weird ones go to...' without finishing the sentence.",
+    "Exception handling is described as a person's name rather than a process.",
+    "Escalations arrive by someone walking over to a desk."
+  ],
+  "not_for": [
+    "The 'residue' is most of the volume. Then the automation's core is not working, and a queue just relabels the old manual process with extra steps.",
+    "Judgments that must happen in seconds. That is staffing for real-time operations, not a queue — a queue's unit of time is the working session."
+  ],
+  "base_shape": {
+    "trigger_kinds": ["queue"],
+    "steps": [
+      "An item enters carrying full machine context: why it fell out, the machine's best guess with its confidence, and links to the source record and document.",
+      "It lands in one queue, with entry time and age visible — parallel side-channels are how items get lost.",
+      "The operator resolves it with a structured outcome — match-to-X, reject-junk, escalate, new-case-type — never free text alone.",
+      "The outcome writes back to the parent flow as both the resolution and a labeled training example.",
+      "Depth and age alarms fire from the flow itself when the queue stops being worked."
+    ],
+    "state": "The queue itself, per-item machine context, and the outcome history. The outcome history is the most valuable dataset the deployment produces — it is the ground truth for every threshold in the parent flow.",
+    "commitments": [
+      "One queue. The moment exceptions also flow through DMs and hallway asks, the queue is fiction and its metrics are lies.",
+      "Machine context travels with the item. An operator who must re-derive what the machine knew is doing the work twice.",
+      "The queue is a staffed role with a named backup. This pattern treats bus-factor-one as a defect, not a fact of life.",
+      "Alarms belong to the flow, not to the operator's diligence. The queue must be able to complain about being ignored."
+    ]
+  },
+  "variation_points": [
+    {
+      "id": "queue-home",
+      "question": "Where does the queue physically live?",
+      "options": [
+        {
+          "choice": "leave-in-channel",
+          "when": "One operator, and the intake channel already marks state — unread mail, an unmoved file.",
+          "consequence": "The smallest possible build: zero UI, the channel is the queue. Age and depth must still be measured from outside."
+        },
+        {
+          "choice": "shared-tracker",
+          "when": "Multiple operators, no build budget — a sheet or board the team already uses.",
+          "consequence": "Cheap coordination; state drifts from reality unless the flow writes to it, not just people."
+        },
+        {
+          "choice": "dedicated-view",
+          "when": "SLA reporting, multiple operators, or outcome capture justify a built surface.",
+          "consequence": "Best data and habits; a real build with real maintenance, so make it earn its keep first."
+        }
+      ],
+      "default": "leave-in-channel",
+      "default_because": "Start with zero UI — the reference deployment runs its queue as unread mail. The queue's own data tells you when it has outgrown the channel; building the view first is guessing."
+    },
+    {
+      "id": "outcome-vocabulary",
+      "question": "How is the set of structured outcomes chosen?",
+      "options": [
+        {
+          "choice": "minimal-grow-from-other",
+          "when": "Nearly always — you do not yet know the case taxonomy.",
+          "consequence": "Start with three or four outcomes plus 'other'; when 'other' exceeds roughly 15%, the vocabulary is missing a word and the queue data names it."
+        },
+        {
+          "choice": "upfront-taxonomy",
+          "when": "The case types are genuinely known — a regulated process with enumerated exception codes.",
+          "consequence": "Clean data from day one; wrong categories from day one if the enumeration was aspirational."
+        }
+      ],
+      "default": "minimal-grow-from-other",
+      "default_because": "Taxonomies designed before contact with real cases classify imagined cases. Let 'other' accumulate, then read it — it is the cheapest user research the deployment will ever get."
+    },
+    {
+      "id": "sla-source",
+      "question": "Where does the queue's SLA come from?",
+      "options": [
+        {
+          "choice": "downstream-tolerance",
+          "when": "Always, when a real downstream tolerance exists.",
+          "consequence": "The SLA inherits from the manifest's tolerable_downtime — the queue may back up exactly as long as the business genuinely does not feel it."
+        },
+        {
+          "choice": "ambition",
+          "when": "No measurable downstream tolerance exists yet.",
+          "consequence": "Pick a number and mark it provisional; an ambitious SLA nobody resources becomes a dashboard everyone learns to ignore."
+        }
+      ],
+      "default": "downstream-tolerance",
+      "default_because": "SLAs derived from what the business can actually absorb get staffed; SLAs derived from ambition get ignored, and an ignored SLA teaches people to ignore the queue."
+    }
+  ],
+  "glue_checklist": [
+    {
+      "question": "Who operates the queue, when are they away, and does the cover person know they are the cover?",
+      "why_it_matters": "The reference deployment's queue reverted cold to a supervisor when its operator left the company — a two-week backlog, and the origin of this pattern's named-backup requirement. An uninformed backup is a name on a page.",
+      "recorded_in": "flows[].lineage (operator and backup-operator tenures) and walkthroughs"
+    },
+    {
+      "question": "How long can the queue back up before the business feels it?",
+      "why_it_matters": "This number is the SLA's parent and the alarm threshold's parent. Without it, both are decoration.",
+      "recorded_in": "flows[].failure_mode.tolerable_downtime"
+    },
+    {
+      "question": "Are resolutions being captured anywhere today, in any form?",
+      "why_it_matters": "If outcomes go nowhere, the queue never shrinks — the parent flow cannot learn from judgments it never sees. Capture from day one, even unmined.",
+      "recorded_in": "flows[].steps (the outcome write-back) and handoff.recommended_next if deferred"
+    },
+    {
+      "question": "Who has the authority to say the queue is overloaded, and what happens when they do?",
+      "why_it_matters": "Queue overload is a staffing decision, not an engineering one. The escalation path must reach someone who can assign people — the space's decision maker, not the steward.",
+      "recorded_in": "spaces[].decision_maker and flows[].failure_mode.who_notices"
+    }
+  ],
+  "human_roles": [
+    {
+      "role": "operator",
+      "does": "Works the queue on its cadence; resolves items with structured outcomes; flags shifts in what the queue contains.",
+      "cadence": "Daily, a bounded session — if the queue does not fit in the session, that is an alarm, not overtime.",
+      "transition_walkthrough_must_cover": [
+        "A paired live session on real items — shadow one session, run the next reversed.",
+        "The outcome vocabulary and the judgment line between each pair of outcomes.",
+        "What the machine context means, and which parts of it to distrust.",
+        "The escalation path, and the fact that escalating is always a safe move."
+      ]
+    },
+    {
+      "role": "backup-operator",
+      "does": "Covers planned and unplanned absence. Required by the pattern — an unfilled backup role is a recorded risk, not an acceptable configuration.",
+      "cadence": "At least one real session per quarter, so the coverage is exercised rather than theoretical.",
+      "transition_walkthrough_must_cover": [
+        "The same walkthrough as the operator — no abbreviated version.",
+        "How to tell the primary operator what happened during coverage, so context does not fork."
+      ]
+    },
+    {
+      "role": "steward",
+      "does": "Mines the outcome history: tunes parent-flow thresholds, extends the vocabulary when 'other' grows, and proposes automation for case types that have become routine.",
+      "cadence": "Monthly review of outcome distribution; ad hoc when the operator flags a shift.",
+      "transition_walkthrough_must_cover": [
+        "How outcome data feeds each threshold in the parent flow.",
+        "The history of vocabulary changes and why each word was added.",
+        "Which case types are trending toward automatable, and what evidence would justify it."
+      ]
+    }
+  ],
+  "failure_design": [
+    {
+      "failure": "The queue quietly stops being worked — absence, reassignment, or simple drift.",
+      "response": "Depth and age alarms routed to a channel the space's decision maker sees. Staffing failures escalate to the person who can assign staff, because the steward cannot fix this with code."
+    },
+    {
+      "failure": "A poison item re-enters the queue on every replay or restart.",
+      "response": "Resolutions are sticky: an item resolved 'reject' must stay resolved across replays, keyed by the same identity the dedup uses."
+    },
+    {
+      "failure": "Outcome data is captured as free text and becomes unminable.",
+      "response": "Structured outcomes from day one, with free text as an optional annotation. The structure is what makes the queue a dataset instead of a diary."
+    }
+  ],
+  "manifest_bindings": {
+    "systems": "Wherever the queue lives — the channel, tracker, or built view — with access and the gotchas of using it as a queue.",
+    "entities": "Inherited from the parent flow; the queue adds no entities, only judgments about existing ones.",
+    "decisions_expected": [
+      {
+        "topic": "Queue home",
+        "tension": "Zero-build channel reuse versus data quality and multi-operator coordination."
+      },
+      {
+        "topic": "The SLA and its alarm thresholds",
+        "tension": "Downstream tolerance versus ambition — and who is on the hook when the alarm fires."
+      }
+    ],
+    "constraints_expected": [
+      "Any sensitivity constraint on queue contents — review queues concentrate exactly the documents that are confidential."
+    ]
+  },
+  "metrics": [
+    {
+      "metric": "Queue depth",
+      "direction": "flat"
+    },
+    {
+      "metric": "Item age, 90th percentile",
+      "direction": "down",
+      "note": "Measured against the SLA, which is derived from downstream tolerance, not ambition."
+    },
+    {
+      "metric": "Queue entries as percent of parent-flow volume",
+      "direction": "down",
+      "note": "The queue shrinking is the automation improving. This is the single best number for the health of the whole deployment."
+    },
+    {
+      "metric": "Share of outcomes recorded as 'other'",
+      "direction": "down",
+      "note": "Above roughly 15%, the outcome vocabulary is missing a word — read the 'other' annotations and add it."
+    }
+  ],
+  "instantiations": [
+    {
+      "client": "Meridian Freight Group (fictional reference example)",
+      "manifest": "fde-hub/examples/meridian-freight.manifest.json",
+      "flow_id": "pod-intake",
+      "deviations": [
+        "Lives directly in the mailbox as unread mail — the leave-in-channel option at its most minimal.",
+        "Outcome capture is partial: resolutions happen but are not yet structured, recorded upstream as a recommended next step.",
+        "The backup-operator role went unfilled, and the resulting two-week backlog is why this pattern now requires it."
+      ]
+    }
+  ],
+  "maturity": {
+    "status": "extracted",
+    "evidence": "Extracted from one deployment where it ran as a sub-component of document intake, plus one painful staffing transition that shaped the backup-operator requirement. The alarm thresholds and the 15% 'other' heuristic are placeholders until more instantiations exist."
+  }
+}

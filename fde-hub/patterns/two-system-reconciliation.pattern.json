@@ -1,0 +1,189 @@
+{
+  "pattern_version": "0.1",
+  "id": "two-system-reconciliation",
+  "name": "Two-system reconciliation",
+  "problem": "The same business object lives in two or more systems, each edited by different people on different rhythms. The copies drift, nobody notices until a total fails to tie out at close, and then someone spends days playing detective across exports.",
+  "signals": [
+    "A recurring 'true-up' spreadsheet exists, and one person knows how to produce it.",
+    "Two departments quote different numbers for the same thing, and both are right in their own system.",
+    "Someone maintains a mental list of records that are 'known to be off'."
+  ],
+  "not_for": [
+    "One of the systems can simply be retired. Reconciliation is life support for a migration that should just happen — price the migration before building the machine that papers over its absence.",
+    "A vendor-supported real-time sync exists and fits. Buy it, and spend the engagement on something the market has not solved.",
+    "The systems disagree on meaning, not values. If two departments define the object differently, that is the glossary's problem first — reconciliation code will faithfully propagate the confusion at machine speed."
+  ],
+  "base_shape": {
+    "trigger_kinds": ["schedule"],
+    "steps": [
+      "Enumerate records from the source of truth over the reconciliation window.",
+      "Fetch counterparts from each copy by the join key, applying the entity's identifier caveats.",
+      "Compare field-by-field over the compared set — an explicit list of fields, never 'everything'.",
+      "Classify each difference: missing-copy, stale-copy, conflicting-edit, or orphan.",
+      "Auto-apply only the classes declared safe, always in the direction of authority.",
+      "Queue conflicting-edits and orphans for the human adjudicator with both versions side by side.",
+      "Publish a drift report with the trend, not just the count."
+    ],
+    "state": "The last window reconciled, per-record fingerprints for cheap diffing, and the adjudication queue. Fingerprints let incremental runs skip the unchanged majority.",
+    "commitments": [
+      "Authority has a direction, declared per entity in the manifest (source_of_truth) — never inferred at runtime, never bidirectional.",
+      "Conflicting human edits are never auto-resolved. The machine detects; a person adjudicates; the pattern of adjudications teaches the process.",
+      "The drift rate is the product. Rising drift means an upstream process changed — the report is an early-warning instrument, not a cleanup log."
+    ]
+  },
+  "variation_points": [
+    {
+      "id": "window",
+      "question": "Full sweep every run, or incremental with fingerprints?",
+      "options": [
+        {
+          "choice": "incremental",
+          "when": "Volume makes full sweeps slow or expensive against rate limits.",
+          "consequence": "Fast and cheap; fingerprint drift and deleted records can hide until a full pass."
+        },
+        {
+          "choice": "full-sweep",
+          "when": "Volume is small enough to compare everything every time.",
+          "consequence": "Nothing hides; runtime and API cost grow linearly with the dataset forever."
+        }
+      ],
+      "default": "incremental",
+      "default_because": "Incremental with a periodic full sweep — weekly or monthly — gets both properties: cheap routine runs, and a bounded window in which deletions and fingerprint drift can hide."
+    },
+    {
+      "id": "write-mode",
+      "question": "Fix safe drift classes automatically, or report everything first?",
+      "options": [
+        {
+          "choice": "report-only",
+          "when": "Always, for the first weeks of a new instantiation.",
+          "consequence": "No risk; humans still do the fixing while the report earns trust and reveals which classes are actually safe."
+        },
+        {
+          "choice": "auto-fix-safe-classes",
+          "when": "The report has run long enough to show which classes are mechanical and which hide judgment.",
+          "consequence": "The toil disappears; a misclassified class now propagates errors in the direction of authority, so the classification itself needs a decision entry."
+        }
+      ],
+      "default": "report-only",
+      "default_because": "You do not yet know which drift classes are safe — the report is how you learn. Graduating a class to auto-fix should be a recorded decision with the evidence attached."
+    },
+    {
+      "id": "adjudication-home",
+      "question": "Where does the conflict queue live?",
+      "options": [
+        {
+          "choice": "piggyback-existing-queue",
+          "when": "The client already has a worked review queue from another flow.",
+          "consequence": "One queue, one habit, one staffing problem instead of two."
+        },
+        {
+          "choice": "dedicated-queue",
+          "when": "The adjudicator is a different person with different authority than existing queue operators.",
+          "consequence": "Clean separation; a second queue that can be forgotten — instantiate human-review-queue properly, alarms included."
+        }
+      ],
+      "default": "piggyback-existing-queue",
+      "default_because": "Every additional queue is an additional staffing dependency with its own bus factor. Consolidate until authority boundaries force separation."
+    }
+  ],
+  "glue_checklist": [
+    {
+      "question": "How reliable is the join key, really?",
+      "why_it_matters": "The entity's identifier caveats decide feasibility. A reused or scoped identifier makes naive reconciliation actively destructive — it will 'fix' records into the wrong counterparts.",
+      "recorded_in": "entities[].identifier and entities[].quirks"
+    },
+    {
+      "question": "Which fields actually need to agree?",
+      "why_it_matters": "Reconciling fields nobody reads is pure alarm noise, and noise is how drift reports get ignored. The compared set should be the fields a discrepancy in which costs money or trust.",
+      "recorded_in": "decisions[] (the compared-set decision, with what was deliberately excluded)"
+    },
+    {
+      "question": "What do void, cancelled, and deleted mean in each system?",
+      "why_it_matters": "Soft-deleted records that still appear in queries are the classic double-count — the reference manifest's VOID-loads quirk is the canonical example. A tombstone in one system and a live record in the other is drift only if you have defined which one is right.",
+      "recorded_in": "entities[].quirks"
+    },
+    {
+      "question": "Who adjudicates conflicts, and with what authority?",
+      "why_it_matters": "Conflicting-edit resolution is a business decision wearing a technical costume. The adjudicator needs the standing to overrule whichever department made the losing edit.",
+      "recorded_in": "flows[].lineage (drift-adjudicator role) and spaces[].decision_maker"
+    }
+  ],
+  "human_roles": [
+    {
+      "role": "drift-adjudicator",
+      "does": "Decides conflicting edits and orphans. Their pattern of decisions IS the missing business rule — mine it, then propose automating the stable part.",
+      "cadence": "After each run; volume should trend toward zero as upstream causes get fixed.",
+      "transition_walkthrough_must_cover": [
+        "The drift classes and what each one implies about where the error was born.",
+        "The direction of authority per entity, and the standing exceptions to it.",
+        "How past adjudications were decided — the queue history is the case law."
+      ]
+    },
+    {
+      "role": "steward",
+      "does": "Owns the compared set, the classification rules, and the safe-class list; watches the drift trend for upstream change.",
+      "cadence": "Weekly trend review; hands-on when a class graduates to auto-fix or a new class appears.",
+      "transition_walkthrough_must_cover": [
+        "Why each auto-fixed class was declared safe, and the evidence behind it.",
+        "The fingerprint mechanism and when a full sweep is required.",
+        "How to read a drift-trend step change as an upstream process announcement."
+      ]
+    }
+  ],
+  "failure_design": [
+    {
+      "failure": "A fetch failure reads as mass drift — everything unreachable looks missing.",
+      "response": "Distinguish 'absent' from 'unreachable' at the fetch layer. An outage must abort the comparison, not file thousands of missing-copy findings."
+    },
+    {
+      "failure": "The adjudication queue backs up and drift findings go stale.",
+      "response": "Depth and age alarms per the human-review-queue pattern; stale findings get re-verified before action, since either side may have changed since detection."
+    },
+    {
+      "failure": "People edit the copy because it is easier than editing the source of truth, and auto-fix keeps reverting them.",
+      "response": "Report edits-against-authority per user as a trend. It is a training signal for the client's process owner, not a policing tool — and sometimes it is evidence the declared authority direction is wrong."
+    }
+  ],
+  "manifest_bindings": {
+    "systems": "Every system holding a copy, each with access, rate limits (reconciliation is read-heavy), and gotchas about lag and soft-deletion.",
+    "entities": "The reconciled entity with source_of_truth and also_lives_in filled honestly — this pattern is those two fields turned into a machine.",
+    "decisions_expected": [
+      {
+        "topic": "The compared set",
+        "tension": "Coverage versus alarm noise — what was deliberately excluded and why."
+      },
+      {
+        "topic": "Safe-class graduation",
+        "tension": "Removing toil versus propagating a misclassification at machine speed, in the direction of authority."
+      },
+      {
+        "topic": "Direction of authority",
+        "tension": "The declared source of truth versus where edits actually happen day to day."
+      }
+    ],
+    "constraints_expected": [
+      "Any prohibition on writing to either system, and which side of it this flow sits."
+    ]
+  },
+  "metrics": [
+    {
+      "metric": "Drift rate trend",
+      "direction": "flat",
+      "note": "Flat and low is health. A rising trend is an upstream process change announcing itself — the single most valuable signal this pattern produces."
+    },
+    {
+      "metric": "Time from drift occurring to drift detected",
+      "direction": "down"
+    },
+    {
+      "metric": "Adjudication queue age",
+      "direction": "down"
+    }
+  ],
+  "instantiations": [],
+  "maturity": {
+    "status": "provisional",
+    "evidence": "Designed from the reconciliation halves of intake and batch-action work, not yet shipped standalone. The shape is conservative on purpose — report-only default, no bidirectional writes. Expect the drift-classification taxonomy to be wrong in an instructive way on first contact with a real client."
+  }
+}

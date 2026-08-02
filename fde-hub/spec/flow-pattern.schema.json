@@ -1,0 +1,256 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://0tomait.com/spec/flow-pattern/v0.1.json",
+  "title": "FDE Flow Pattern",
+  "description": "A reusable flow shape extracted from real deployments. A pattern ships the stable 80% — the shape, the design commitments, the staffing roles, and the interview checklist for discovering the client-specific 20% — and deliberately never ships finished code. The 20% is the engagement.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pattern_version",
+    "id",
+    "name",
+    "problem",
+    "signals",
+    "not_for",
+    "base_shape",
+    "variation_points",
+    "glue_checklist",
+    "human_roles",
+    "failure_design",
+    "manifest_bindings",
+    "metrics",
+    "maturity"
+  ],
+  "properties": {
+    "pattern_version": {
+      "type": "string",
+      "const": "0.1",
+      "description": "Version of the flow-pattern spec this document conforms to."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable kebab-case identifier. Manifests reference this from flows[].pattern."
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "problem": {
+      "type": "string",
+      "minLength": 40,
+      "description": "The business pain this shape addresses, in the words a client would use to describe it. Not an architecture summary."
+    },
+    "signals": {
+      "type": "array",
+      "minItems": 2,
+      "description": "Observable symptoms that this pattern applies — things you would actually see or hear at the client. Most should be true before reaching for the pattern.",
+      "items": { "type": "string", "minLength": 15 }
+    },
+    "not_for": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Situations where this pattern looks right and is wrong. The most valuable list in the file: patterns fail by being applied, not by being unknown.",
+      "items": { "type": "string", "minLength": 15 }
+    },
+    "base_shape": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trigger_kinds", "steps", "state", "commitments"],
+      "description": "The stable 80%: the path, what the flow must own, and the design rules that are not up for negotiation.",
+      "properties": {
+        "trigger_kinds": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Trigger kinds this shape supports, using the manifest's trigger vocabulary.",
+          "items": {
+            "type": "string",
+            "enum": ["schedule", "webhook", "file-drop", "email", "manual", "queue", "polling"]
+          }
+        },
+        "steps": {
+          "type": "array",
+          "minItems": 3,
+          "description": "The canonical path, at the altitude a manifest flow's steps are written at. These become the starting steps of an instantiated flow.",
+          "items": { "type": "string", "minLength": 10 }
+        },
+        "state": {
+          "type": "string",
+          "minLength": 20,
+          "description": "What the flow must track in a store it owns, and why that store is not the client's system of record."
+        },
+        "commitments": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Design rules that hold across every instantiation. Violating one is not customization, it is a different pattern.",
+          "items": { "type": "string", "minLength": 15 }
+        }
+      }
+    },
+    "variation_points": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The named knobs — decisions every instantiation must make. Each choice made at a client should be recorded as a manifest decision with the rejected options.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "question", "options", "default", "default_because"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "question": { "type": "string", "minLength": 10 },
+          "options": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["choice", "when", "consequence"],
+              "properties": {
+                "choice": { "type": "string", "minLength": 2 },
+                "when": { "type": "string", "minLength": 10, "description": "The client condition under which this option is right." },
+                "consequence": { "type": "string", "minLength": 10, "description": "What choosing it costs or commits you to." }
+              }
+            }
+          },
+          "default": {
+            "type": "string",
+            "description": "The option to take absent evidence. Must be one of the listed choices; the validator checks."
+          },
+          "default_because": {
+            "type": "string",
+            "minLength": 20,
+            "description": "Why this is the default, ideally traceable to a real deployment's recorded decision or debt."
+          }
+        }
+      }
+    },
+    "glue_checklist": {
+      "type": "array",
+      "minItems": 3,
+      "description": "The interview for discovering the client-specific 20%. Every answer has a home in the manifest — the checklist and the manifest are two views of the same discipline.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["question", "why_it_matters", "recorded_in"],
+        "properties": {
+          "question": { "type": "string", "minLength": 10 },
+          "why_it_matters": { "type": "string", "minLength": 20, "description": "The failure that happens when this goes unasked." },
+          "recorded_in": { "type": "string", "minLength": 5, "description": "The manifest path where the answer belongs." }
+        }
+      }
+    },
+    "human_roles": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The staffing surface. Roles are the stable unit — people rotate through them as tenures in a manifest flow's lineage. Each role's walkthrough outline is the template for the client-specific walkthrough asset.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["role", "does", "cadence", "transition_walkthrough_must_cover"],
+        "properties": {
+          "role": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]*$",
+            "description": "Kebab-case role name, matching the role field of lineage tenures in manifests that instantiate this pattern."
+          },
+          "does": { "type": "string", "minLength": 15 },
+          "cadence": { "type": "string", "minLength": 5, "description": "How often and how long. This is what makes the role staffable." },
+          "transition_walkthrough_must_cover": {
+            "type": "array",
+            "minItems": 2,
+            "description": "What a handover into this role must transfer. Instantiate as a walkthrough in the client manifest and reference it from the incoming tenure's trained_via.",
+            "items": { "type": "string", "minLength": 10 }
+          }
+        }
+      }
+    },
+    "failure_design": {
+      "type": "array",
+      "minItems": 2,
+      "description": "The failures this shape is known to meet, each paired with the design response. These are pre-answered so instantiations do not rediscover them in production.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["failure", "response"],
+        "properties": {
+          "failure": { "type": "string", "minLength": 15 },
+          "response": { "type": "string", "minLength": 15 }
+        }
+      }
+    },
+    "manifest_bindings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["systems", "entities", "decisions_expected"],
+      "description": "What instantiating this pattern obligates you to create in the client's deployment manifest.",
+      "properties": {
+        "systems": { "type": "string", "minLength": 15, "description": "Which system entries must exist, described generically." },
+        "entities": { "type": "string", "minLength": 15, "description": "Which entity entries must exist, including what their identifier caveats must cover." },
+        "decisions_expected": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Decisions every instantiation will inevitably make. Naming them here is what gets them recorded instead of merely made.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["topic", "tension"],
+            "properties": {
+              "topic": { "type": "string", "minLength": 5 },
+              "tension": { "type": "string", "minLength": 10, "description": "The trade-off being resolved — what pulls in each direction." }
+            }
+          }
+        },
+        "constraints_expected": {
+          "type": "array",
+          "description": "Constraint entries an instantiation should expect to record.",
+          "items": { "type": "string", "minLength": 10 }
+        }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "minItems": 2,
+      "description": "What to baseline before building and measure after. These feed the engagement's outcomes section.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["metric", "direction"],
+        "properties": {
+          "metric": { "type": "string", "minLength": 5 },
+          "direction": { "type": "string", "enum": ["up", "down", "flat"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "instantiations": {
+      "type": "array",
+      "description": "The pattern's own family tree: every deployment it was extracted from or applied to, with how each deviated. Deviations are data — three instantiations deviating the same way means the pattern is wrong, not the clients.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["client", "manifest", "flow_id"],
+        "properties": {
+          "client": { "type": "string", "minLength": 1 },
+          "manifest": { "type": "string", "minLength": 5, "description": "Path or URL of the deployment manifest." },
+          "flow_id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+          "deviations": { "type": "array", "items": { "type": "string", "minLength": 10 } }
+        }
+      }
+    },
+    "maturity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence"],
+      "description": "Honest provenance. A pattern with no deployments behind it is a sketch, and must say so.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["extracted", "provisional"],
+          "description": "extracted: distilled from at least one shipped deployment. provisional: designed, not yet proven — every default is a hypothesis."
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 20,
+          "description": "What the status rests on: which deployments, and which parts remain unproven."
+        }
+      }
+    }
+  }
+}

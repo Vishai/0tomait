@@ -18,7 +18,9 @@ const fs = require('fs');
 const path = require('path');
 
 const SCHEMA_PATH = path.join(__dirname, '..', 'spec', 'deployment-manifest.schema.json');
+const PATTERN_SCHEMA_PATH = path.join(__dirname, '..', 'spec', 'flow-pattern.schema.json');
 const STALE_AFTER_DAYS = 90;
+const WALKTHROUGH_STALE_DAYS = 180;
 const EXPIRY_WARN_DAYS = 60;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -160,6 +162,8 @@ function lint(manifest, now) {
     ['flows', flows],
     ['decisions', manifest.decisions || []],
     ['constraints', manifest.constraints || []],
+    ['spaces', manifest.spaces || []],
+    ['walkthroughs', manifest.walkthroughs || []],
   ];
   for (const [name, items] of collections) {
     const seen = new Set();
@@ -271,6 +275,113 @@ function lint(manifest, now) {
     warn('glossary', 'is empty. Client vocabulary is the most common thing an outsider silently misreads.');
   }
 
+  // Stewardship layer (spec 0.2): spaces, lineage, walkthroughs. Staffing is
+  // where deployments actually die, so its gaps are surfaced like any other.
+  const spaces = manifest.spaces || [];
+  const walkthroughs = manifest.walkthroughs || [];
+  const walkthroughIds = new Set(walkthroughs.map((w) => w.id));
+
+  spaces.forEach((s, i) => {
+    (s.flows || []).forEach((id, j) => ref(`spaces[${i}].flows[${j}]`, id, flowIds, 'flow'));
+    (s.systems || []).forEach((id, j) => ref(`spaces[${i}].systems[${j}]`, id, systemIds, 'system'));
+  });
+  if (spaces.length) {
+    const claimed = new Set(spaces.flatMap((s) => s.flows || []));
+    flows.forEach((f, i) => {
+      if (!claimed.has(f.id)) {
+        warn(`flows[${i}] (${f.id})`, 'belongs to no space — no decision maker is on record for changes to it.');
+      }
+    });
+  }
+
+  walkthroughs.forEach((w, i) => {
+    ((w.covers || {}).flows || []).forEach((id, j) =>
+      ref(`walkthroughs[${i}].covers.flows[${j}]`, id, flowIds, 'flow')
+    );
+    ((w.covers || {}).systems || []).forEach((id, j) =>
+      ref(`walkthroughs[${i}].covers.systems[${j}]`, id, systemIds, 'system')
+    );
+    const age = daysBetween(w.last_updated, now);
+    if (age !== null && age > WALKTHROUGH_STALE_DAYS) {
+      warn(
+        `walkthroughs[${i}] (${w.id})`,
+        `not updated in ${age} days. A stale walkthrough trains people wrong with confidence — re-verify it against the current system.`
+      );
+    }
+  });
+
+  const lintLineage = (at, lineage, hasHumanSteps) => {
+    const open = [];
+    (lineage || []).forEach((t, i) => {
+      if (t.to !== undefined) {
+        const span = daysBetween(t.from, Date.parse(`${t.to}T00:00:00Z`));
+        if (span !== null && span < 0) {
+          err(`${at}.lineage[${i}]`, `tenure ends (${t.to}) before it begins (${t.from})`);
+        }
+      } else {
+        open.push(t);
+      }
+      if (t.trained_via !== undefined && !walkthroughIds.has(t.trained_via)) {
+        err(`${at}.lineage[${i}]`, `trained_via references unknown walkthrough '${t.trained_via}'`);
+      }
+      if (t.to === undefined && t.mode === 'inherited' && t.trained_via === undefined) {
+        note(
+          `${at}.lineage[${i}]`,
+          `${t.person} inherited '${t.role}' with no walkthrough on record. If the handover happened informally, that knowledge now exists only in conversation.`
+        );
+      }
+    });
+    if (lineage && lineage.length && !open.length) {
+      warn(at, 'lineage records only closed tenures — every role here is currently unheld. That is an orphaned deployment, not a documentation gap.');
+    }
+    if (hasHumanSteps && open.length) {
+      const operators = new Set(open.filter((t) => t.role !== 'steward').map((t) => t.person));
+      if (operators.size === 1) {
+        note(at, `every human step runs through one person (${[...operators][0]}). The family tree shows no backup — a planned absence becomes an outage.`);
+      }
+    }
+  };
+  flows.forEach((f, i) => lintLineage(`flows[${i}] (${f.id})`, f.lineage, (f.human_in_the_loop || []).length > 0));
+  systems.forEach((s, i) => lintLineage(`systems[${i}] (${s.id})`, s.lineage, false));
+
+  if ((manifest.manifest || {}).spec_version === '0.2') {
+    flows.forEach((f, i) => {
+      if (!f.lineage || !f.lineage.length) {
+        note(`flows[${i}] (${f.id})`, "has no lineage recorded. Even 'built and still held by the author' is worth a line — it is the start of the family tree.");
+      }
+    });
+  }
+
+  return { errors, warnings, notes };
+}
+
+// Pattern files get a lighter pass: schema conformance plus the checks that
+// keep a pattern honest about itself.
+function lintPattern(pattern) {
+  const errors = [];
+  const warnings = [];
+  const notes = [];
+
+  const seen = new Set();
+  (pattern.variation_points || []).forEach((v, i) => {
+    if (seen.has(v.id)) errors.push({ at: `variation_points[${i}]`, message: `duplicate id '${v.id}'` });
+    seen.add(v.id);
+    const choices = (v.options || []).map((o) => o.choice);
+    if (v.default !== undefined && !choices.includes(v.default)) {
+      errors.push({
+        at: `variation_points[${i}] (${v.id})`,
+        message: `default '${v.default}' is not one of the listed options (${choices.join(', ')})`,
+      });
+    }
+  });
+
+  if ((pattern.maturity || {}).status === 'provisional') {
+    notes.push({ at: 'maturity', message: 'provisional — designed, not yet extracted from a shipped deployment. Treat every default as a hypothesis.' });
+  }
+  if (!(pattern.instantiations || []).length) {
+    notes.push({ at: 'instantiations', message: 'no instantiations recorded. A pattern with no deployments behind it is a sketch; say so when reaching for it.' });
+  }
+
   return { errors, warnings, notes };
 }
 
@@ -290,11 +401,13 @@ function main() {
   const files = args.filter((a) => !a.startsWith('--'));
 
   if (!files.length) {
-    console.error('usage: node validate.js [--strict] <manifest.json> [...]');
+    console.error('usage: node validate.js [--strict] <manifest-or-pattern.json> [...]');
+    console.error('       pattern files are detected by their pattern_version field');
     process.exit(2);
   }
 
   const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
+  const patternSchema = JSON.parse(fs.readFileSync(PATTERN_SCHEMA_PATH, 'utf8'));
   const now = Date.now();
   let failed = false;
 
@@ -310,13 +423,17 @@ function main() {
       continue;
     }
 
+    const isPattern = manifest.pattern_version !== undefined;
+    const activeSchema = isPattern ? patternSchema : schema;
     const schemaErrors = [];
-    validateSchema(manifest, schema, schema, '$', schemaErrors);
+    validateSchema(manifest, activeSchema, activeSchema, '$', schemaErrors);
 
-    // Lint against a structurally broken manifest produces noise, not signal.
+    // Lint against a structurally broken document produces noise, not signal.
     const { errors, warnings, notes } = schemaErrors.length
       ? { errors: [], warnings: [], notes: [] }
-      : lint(manifest, now);
+      : isPattern
+        ? lintPattern(manifest)
+        : lint(manifest, now);
 
     report('schema errors', schemaErrors, '✗');
     report('errors', errors, '✗');

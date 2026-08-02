@@ -1,4 +1,4 @@
-# Deployment Manifest — spec v0.1
+# Deployment Manifest — spec v0.2
 
 A deployment manifest describes a client environment and everything deployed into it, in a
 form that can be read cold by an engineer or an agent who was not present for the original
@@ -228,6 +228,69 @@ Include terms whose meaning is client-specific, terms that collide with technica
 vocabulary, and terms two departments use differently. `not_to_be_confused_with` is for the
 collisions, which are the expensive ones.
 
+## The stewardship layer *(v0.2)*
+
+Deployments die of staffing more often than of code. v0.2 adds three sections that make
+staffing fluidity visible instead of surprising, built on one idea: **roles are stable,
+people are tenures, walkthroughs are the transition edges.**
+
+The progression this supports is the one every deployment should make:
+
+1. **Person-shaped** — the job is "ask Marcus". This is where every deployment starts and
+   where most of them die.
+2. **Role-shaped** — the job is "the queue-operator, currently Marcus". The role is named,
+   its cadence and duties are written down (usually inherited from the flow's pattern),
+   and Marcus holds it as an open tenure.
+3. **Transferable** — the role plus a walkthrough plus tenure mechanics. A staffing change
+   is now a procedure, not a crisis: close the outgoing tenure with an `exit_note`, open
+   the incoming one, deliver the walkthrough and record it in `trained_via`.
+
+### `spaces` *(v0.2)*
+
+Business domains, each with a named decision maker: the person whose yes is required
+before changing anything inside it. This answers the question a successor cannot answer
+from code — *who do I ask?* — and it is where staffing escalations land, because queue
+overload and unfilled roles are staffing decisions, which belong to the space's decision
+maker rather than to the engineer.
+
+`decision_maker` is one name, not a committee. `delegate` records who answers in their
+absence *and the limit of what the delegate can approve* — the limit is the useful part.
+A space with no delegate is a real configuration (the reference manifest's client-it space
+has exactly one gatekeeper); record it and plan around it.
+
+Every flow should belong to a space. The validator warns about flows no space claims.
+
+### `lineage` — the family tree *(v0.2)*
+
+On every flow and system: the list of tenures — who has held which role on it, from when
+to when, and how each tenure ended. An open tenure (no `to` date) is a current holder.
+
+The two most valuable fields are the uncomfortable ones. `exit_note` records how a tenure
+ended and what was lost — write it when it happens, because the sanitized version written
+later is useless. `trained_via` links the tenure to the walkthrough that transferred the
+role; its *absence* on an inherited tenure is itself a finding, and the validator says so:
+the knowledge moved in conversation, if at all.
+
+Role names come from the flow's pattern where one exists (`steward`, `queue-operator`,
+`approver`, …), which is what lets a plug-in engineer read a manifest and know what each
+role means without asking.
+
+### `walkthroughs` *(v0.2)*
+
+The transition assets — recordings, documents, pairing scripts, checklists — that move a
+role from one person to the next. Each is a pointer to where the asset lives, not the
+content itself, with the role it trains into and what it covers.
+
+`last_updated` matters more than it looks: a walkthrough that predates the system it
+describes trains people wrong *with confidence*, which is worse than no walkthrough. The
+validator warns past 180 days.
+
+The outline for a walkthrough comes from the pattern: every pattern role carries
+`transition_walkthrough_must_cover`, and the client walkthrough is that outline made
+specific. Build it before it is needed — the reference manifest's family tree records a
+departure that happened before the walkthrough existed, and the two-week backlog that
+followed.
+
 ## Validation
 
 ```
@@ -247,11 +310,21 @@ Beyond the schema, the validator checks:
 - **Time bombs** — credential `expires` and risk `trigger_date` past or within 60 days.
 - **Handover smells** — flows nobody monitors, systems no flow references, deployed flows
   with no recorded decisions, an empty glossary.
+- **Stewardship smells** *(v0.2)* — flows no space claims; lineages with only closed
+  tenures (an orphaned deployment); inherited tenures with no walkthrough on record;
+  every human step running through a single person; stale walkthroughs; tenure dates that
+  end before they begin.
 
-The example manifest is expected to emit two warnings. Both are deliberate: one system is
-past its verification window, and one flow records that nobody watches its alerts on
-weekends. They demonstrate that the checks fire on real content rather than only on
-malformed input.
+The validator also accepts flow pattern files (detected by their `pattern_version` field),
+checking them against `flow-pattern.schema.json` plus pattern-specific lint: defaults must
+be listed options, and provisional or uninstantiated patterns are flagged as sketches.
+
+The example manifest is expected to emit two warnings and a handful of notes, all
+deliberate: a system past its verification window, a flow nobody watches on weekends,
+human steps concentrated in one person, and handovers that happened without walkthroughs.
+They demonstrate that the checks fire on real content rather than only on malformed input
+— and that the family tree mechanically surfaces the same risks the prose sections could
+only assert.
 
 Wire it into CI so the document is validated rather than trusted.
 
@@ -262,3 +335,13 @@ successor would be materially worse off without it. Do not add fields speculativ
 spec earns its keep by being short enough that people actually complete it.
 
 Bump `spec_version` on any change that would invalidate an existing manifest.
+
+## Changelog
+
+**0.2** — the stewardship layer. Adds `spaces` (business domains with named decision
+makers), `lineage` on flows and systems (the family tree of tenures), `walkthroughs`
+(transition assets, referenced from tenures via `trained_via`), and `pattern` on flows
+(provenance link to the pattern library). All additions are optional: a valid 0.1 manifest
+remains valid under 0.2.
+
+**0.1** — initial spec.
