@@ -336,6 +336,166 @@
                 color: #64748b;
             }
 
+            /* Field shots: stylized recreations of the tools in use */
+            .shot {
+                background: var(--card);
+                border: 1px solid var(--line);
+                border-radius: 6px;
+                overflow: hidden;
+                margin: 28px 0 6px;
+            }
+
+            .shot-bar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 9px 18px;
+                border-bottom: 1px solid var(--line);
+                background: var(--paper);
+            }
+
+            .shot-bar span {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 11.5px;
+                letter-spacing: 0.5px;
+                color: var(--ink-faint);
+            }
+
+            .shot-bar span:last-child {
+                color: var(--muted);
+            }
+
+            .shot-caption {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12px;
+                color: var(--ink-faint);
+                margin: 0 0 28px;
+                line-height: 1.6;
+            }
+
+            .msg {
+                display: grid;
+                grid-template-columns: 34px 1fr;
+                gap: 12px;
+                padding: 14px 18px;
+            }
+
+            .msg + .msg {
+                padding-top: 0;
+            }
+
+            .avatar {
+                width: 32px;
+                height: 32px;
+                border-radius: 4px;
+                background: var(--terminal);
+                color: #5eead4;
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12px;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .avatar.human {
+                background: var(--accent);
+                color: #fff;
+            }
+
+            .msg-head {
+                font-size: 13.5px;
+                font-weight: 600;
+            }
+
+            .msg-head .app {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 9.5px;
+                font-weight: 500;
+                background: var(--line);
+                color: var(--ink-faint);
+                padding: 1px 5px;
+                border-radius: 2px;
+                margin-left: 6px;
+                vertical-align: 1px;
+            }
+
+            .msg-head time {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 11px;
+                color: var(--muted);
+                font-weight: 400;
+                margin-left: 8px;
+            }
+
+            .msg-body {
+                font-size: 14px;
+                color: var(--ink-soft);
+                margin-top: 2px;
+            }
+
+            .msg-body .line {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 12.5px;
+                display: block;
+                margin-top: 5px;
+            }
+
+            .msg-body .skip {
+                color: var(--amber);
+            }
+
+            .msg-body .okv {
+                color: var(--accent-dark);
+            }
+
+            .mrow {
+                display: grid;
+                grid-template-columns: 1fr auto;
+                gap: 16px;
+                padding: 13px 18px;
+                border-bottom: 1px solid var(--line);
+                align-items: center;
+            }
+
+            .mrow:last-child {
+                border-bottom: none;
+            }
+
+            .mrow .from {
+                font-size: 14px;
+                font-weight: 600;
+            }
+
+            .mrow.read .from {
+                font-weight: 400;
+                color: var(--ink-soft);
+            }
+
+            .mrow .subj {
+                font-size: 13px;
+                color: var(--ink-faint);
+                margin-top: 1px;
+            }
+
+            .chip {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 11px;
+                padding: 3px 9px;
+                border-radius: 3px;
+                white-space: nowrap;
+            }
+
+            .chip.filed {
+                background: rgba(13, 148, 136, 0.09);
+                color: var(--accent-dark);
+            }
+
+            .chip.review {
+                background: rgba(180, 83, 9, 0.09);
+                color: var(--amber);
+            }
+
             /* Field rows */
             .rows {
                 border-top: 1px solid var(--line);
@@ -526,11 +686,13 @@
             <p class="fictional-note">
                 note: Meridian Freight is fictional, built as the worked
                 example for the published method. The discipline shown here is
-                the real product, and every artifact on this page sits in the
+                the real product, and every manifest artifact on this page sits
+                in the
                 <a href="https://github.com/Vishai/0tomait/tree/main/fde-hub"
                     >public repository</a
                 >
-                where you can read it in full.
+                where you can read it in full. The tool views are stylized
+                recreations, marked as such.
             </p>
 
             <div class="setup">
@@ -621,14 +783,104 @@
                 <div class="kicker"><span class="idx">PHASE 2 /</span> SHIP</div>
                 <h2>Automation on the client's rhythm</h2>
                 <p>
-                    Two flows went live. One watches the billing mailbox,
-                    extracts load numbers from carrier paperwork, and files
-                    each document against its load. The other runs on
-                    Meridian's twice-weekly billing rhythm and raises the
-                    invoices. Both fail closed: an item that errors is skipped
-                    and reported, never half-executed. Invoices over $25,000
-                    stay human-approved, because the whole project was approved
-                    on that condition.
+                    Two flows went live. One watches the billing mailbox and
+                    files carrier paperwork against its load. Here is what that
+                    looks like in the field, minutes after the morning trucks
+                    report in:
+                </p>
+                <div class="shot">
+                    <div class="shot-bar">
+                        <span>billing@meridianfreight &middot; inbox &middot; polled every 3 min</span>
+                        <span>recreation</span>
+                    </div>
+                    <div class="mrow read">
+                        <div>
+                            <div class="from">Swift Haul LLC</div>
+                            <div class="subj">
+                                POD Load ML-471198 &middot; signed_pod.pdf
+                            </div>
+                        </div>
+                        <span class="chip filed">filed &middot; match 0.97</span>
+                    </div>
+                    <div class="mrow read">
+                        <div>
+                            <div class="from">Baker Logistics</div>
+                            <div class="subj">
+                                delivery paperwork, 4 loads &middot; pods.pdf
+                            </div>
+                        </div>
+                        <span class="chip filed">split &middot; filed 4/4</span>
+                    </div>
+                    <div class="mrow">
+                        <div>
+                            <div class="from">TNT Carriers</div>
+                            <div class="subj">
+                                RE: RE: paperwork &middot; IMG_2291.jpg
+                            </div>
+                        </div>
+                        <span class="chip review">queue &middot; handwritten 0.61</span>
+                    </div>
+                </div>
+                <p class="shot-caption">
+                    unread mail is the review queue: nothing is ever lost, it
+                    stays visible until a human clears it
+                </p>
+                <p>
+                    The other flow runs on Meridian's twice-weekly billing
+                    rhythm and raises the invoices. Both fail closed: an item
+                    that errors is skipped whole and reported, never
+                    half-executed. The operator's interface is the run summary:
+                </p>
+                <div class="shot">
+                    <div class="shot-bar">
+                        <span>#meridian-alerts</span>
+                        <span>recreation</span>
+                    </div>
+                    <div class="msg">
+                        <div class="avatar">mb</div>
+                        <div>
+                            <div class="msg-head">
+                                meridian-billing<span class="app">APP</span>
+                                <time>Thu 2:03 PM</time>
+                            </div>
+                            <div class="msg-body">
+                                The sweep is done.
+                                <span class="line okv"
+                                    >invoiced 214 loads &middot; $407,180</span
+                                >
+                                <span class="line skip"
+                                    >skipped 3: 471544 customer-not-mapped
+                                    &middot; 471561 credit-hold &middot; 471580
+                                    split-load &rarr; manual</span
+                                >
+                                <span class="line"
+                                    >1 draft over $25,000 awaiting review:
+                                    INV-8841 ($31,400)</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="msg">
+                        <div class="avatar human">M</div>
+                        <div>
+                            <div class="msg-head">
+                                Marcus Bell <time>Thu 2:11 PM</time>
+                            </div>
+                            <div class="msg-body">
+                                Added the QuickBooks mapping for Brightline
+                                Foods. 471544 will catch on the next run.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <p class="shot-caption">
+                    every skip carries its reason, and skips self-heal: fix the
+                    cause and the next run picks them up
+                </p>
+                <p>
+                    Invoices over $25,000 stay human-approved, because the
+                    whole project was approved on that condition. And the
+                    manifest records how the intake flow fails, honestly:
                 </p>
                 <div class="panel">
                     <div class="panel-bar">
@@ -645,9 +897,8 @@
                 </div>
                 <p>
                     That last line is deliberate. Weekend coverage was priced,
-                    declined by the client, and recorded. Honest gaps in the
-                    document beat comfortable silence, and the tooling is about
-                    to prove it.
+                    declined by the client, and recorded. Honest gaps beat
+                    comfortable silence.
                 </p>
             </div>
 
