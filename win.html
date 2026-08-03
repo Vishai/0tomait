@@ -3,10 +3,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>2 AI Prompts That Save Hours | 0tomait</title>
+        <title>Does Your Automation Survive Its Engineer? | 0tomait</title>
         <meta
             name="description"
-            content="Two copy-paste prompts that make you look more prepared and professional. Try them in 5 minutes."
+            content="The Automation Survival Audit: ten yes-or-no questions that tell you whether the systems your business runs on would survive losing the person who built them. Five minutes, scored on the spot."
         />
         <link rel="canonical" href="https://0tomait.com/win.html" />
         <link
@@ -18,11 +18,11 @@
         <meta property="og:url" content="https://0tomait.com/win.html" />
         <meta
             property="og:title"
-            content="2 AI Prompts That Save Hours | 0tomait"
+            content="Does Your Automation Survive Its Engineer? | 0tomait"
         />
         <meta
             property="og:description"
-            content="Two copy-paste prompts that make you look more prepared and professional. Try them in 5 minutes."
+            content="Ten yes-or-no questions that tell you whether the systems your business runs on would survive losing the person who built them. Five minutes, scored on the spot."
         />
         <meta property="og:site_name" content="0tomait" />
         <meta name="twitter:card" content="summary" />
@@ -53,7 +53,9 @@
                 --accent-dark: #0f766e;
                 --terminal: #0f172a;
                 --terminal-ink: #cbd5e1;
-                --ok: #22c55e;
+                --amber: #b45309;
+                --red: #b91c1c;
+                --ok: #15803d;
             }
 
             body {
@@ -134,160 +136,184 @@
                 line-height: 1.12;
                 letter-spacing: -1px;
                 margin-bottom: 14px;
+                max-width: 680px;
                 text-wrap: balance;
             }
 
             .lede {
                 font-size: 17px;
                 color: var(--ink-soft);
-                max-width: 560px;
-                margin-bottom: 56px;
+                max-width: 620px;
+                margin-bottom: 10px;
             }
 
-            /* Prompt entries */
-            .prompt {
+            .lede-note {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 13px;
+                color: var(--ink-faint);
+                max-width: 620px;
+                margin-bottom: 48px;
+                line-height: 1.7;
+            }
+
+            /* Questions */
+            .audit {
                 border-top: 1px solid var(--line);
-                padding: 40px 0;
             }
 
-            .prompt-id {
+            .q {
+                display: grid;
+                grid-template-columns: 56px 1fr 150px;
+                gap: 20px;
+                padding: 24px 0;
+                border-bottom: 1px solid var(--line);
+                align-items: start;
+            }
+
+            .q-id {
                 font-family: "IBM Plex Mono", ui-monospace, monospace;
                 font-size: 12px;
                 color: var(--muted);
-                margin-bottom: 8px;
+                padding-top: 3px;
             }
 
-            .prompt h2 {
-                font-size: 21px;
-                font-weight: 700;
-                letter-spacing: -0.3px;
-                margin-bottom: 8px;
+            .q-text {
+                font-size: 16px;
+                font-weight: 500;
+                max-width: 540px;
             }
 
-            .prompt-desc {
-                color: var(--ink-soft);
-                font-size: 15.5px;
-                max-width: 600px;
-                margin-bottom: 22px;
+            .q-map {
+                display: block;
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 11.5px;
+                font-weight: 400;
+                color: var(--accent-dark);
+                margin-top: 8px;
             }
 
-            .panel {
+            .q-controls {
+                display: flex;
+                gap: 8px;
+                justify-content: flex-end;
+            }
+
+            .ans {
+                font-family: "IBM Plex Mono", ui-monospace, monospace;
+                font-size: 13px;
+                font-weight: 500;
+                background: var(--card);
+                color: var(--ink-faint);
+                border: 1px solid var(--line);
+                border-radius: 3px;
+                padding: 8px 18px;
+                cursor: pointer;
+            }
+
+            .ans:hover {
+                border-color: var(--muted);
+                color: var(--ink);
+            }
+
+            .ans[aria-pressed="true"][data-v="1"] {
+                background: var(--accent);
+                border-color: var(--accent);
+                color: #fff;
+            }
+
+            .ans[aria-pressed="true"][data-v="0"] {
+                background: var(--ink);
+                border-color: var(--ink);
+                color: #fff;
+            }
+
+            /* Result */
+            .result {
                 background: var(--terminal);
                 border-radius: 6px;
                 overflow: hidden;
+                margin: 40px 0 56px;
             }
 
-            .panel-bar {
+            .result-bar {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding: 8px 10px 8px 18px;
+                padding: 10px 18px;
                 border-bottom: 1px solid rgba(148, 163, 184, 0.15);
             }
 
-            .panel-bar span {
+            .result-bar span {
                 font-family: "IBM Plex Mono", ui-monospace, monospace;
                 font-size: 11.5px;
                 letter-spacing: 0.5px;
                 color: #64748b;
             }
 
-            .copy-button {
+            .result-bar .dot {
+                width: 9px;
+                height: 9px;
+                border-radius: 50%;
+                background: #64748b;
+            }
+
+            .result-bar .dot.live {
+                background: #22c55e;
+            }
+
+            .result-body {
+                padding: 26px 28px;
+            }
+
+            .score-line {
                 font-family: "IBM Plex Mono", ui-monospace, monospace;
-                background: transparent;
-                color: #5eead4;
-                border: 1px solid rgba(94, 234, 212, 0.3);
-                padding: 6px 14px;
-                border-radius: 3px;
-                font-weight: 500;
-                font-size: 12px;
-                cursor: pointer;
-            }
-
-            .copy-button:hover {
-                border-color: #5eead4;
-            }
-
-            .copy-button.copied {
-                color: var(--ok);
-                border-color: rgba(34, 197, 94, 0.5);
-            }
-
-            .prompt-text {
-                padding: 20px 22px;
-                font-family: "IBM Plex Mono", ui-monospace, monospace;
-                font-size: 13px;
-                line-height: 1.7;
-                color: var(--terminal-ink);
-                white-space: pre-wrap;
-                max-height: 300px;
-                overflow-y: auto;
-            }
-
-            /* How to */
-            .how-to {
-                border-top: 1px solid var(--line);
-                padding: 40px 0 48px;
-            }
-
-            .how-to h3 {
-                font-family: "IBM Plex Mono", ui-monospace, monospace;
-                font-size: 12.5px;
-                font-weight: 500;
-                letter-spacing: 1.5px;
-                color: var(--accent-dark);
-                margin-bottom: 20px;
-            }
-
-            .how-to ol {
-                list-style: none;
-                counter-reset: howto;
-                max-width: 560px;
-            }
-
-            .how-to li {
-                counter-increment: howto;
-                display: grid;
-                grid-template-columns: 40px 1fr;
-                gap: 14px;
-                padding: 12px 0;
-                border-bottom: 1px solid var(--line);
-                color: var(--ink-soft);
                 font-size: 15px;
-            }
-
-            .how-to li::before {
-                content: counter(howto) ".";
-                font-family: "IBM Plex Mono", ui-monospace, monospace;
-                color: var(--accent);
-                font-weight: 600;
+                color: #64748b;
                 font-variant-numeric: tabular-nums;
             }
 
-            .how-to a {
-                color: var(--accent-dark);
+            .score-line .big {
+                font-size: 40px;
+                font-weight: 600;
+                color: #f8fafc;
+                line-height: 1.1;
+                display: block;
+                margin: 6px 0 2px;
             }
 
-            /* Closing */
-            .closing {
-                background: var(--terminal);
-                border-radius: 6px;
-                padding: 44px 40px;
-                color: #e2e8f0;
+            .verdict {
+                margin-top: 18px;
+                display: none;
             }
 
-            .closing .kicker {
+            .verdict.show {
+                display: block;
+            }
+
+            .verdict h2 {
+                font-size: 21px;
+                font-weight: 700;
+                color: #f8fafc;
+                margin-bottom: 8px;
+            }
+
+            .verdict h2.v-ok {
                 color: #5eead4;
             }
 
-            .closing p {
-                color: #94a3b8;
-                max-width: 540px;
-                margin-bottom: 26px;
+            .verdict h2.v-mid {
+                color: #fbbf24;
             }
 
-            .closing p strong {
-                color: #f8fafc;
+            .verdict h2.v-bad {
+                color: #fca5a5;
+            }
+
+            .verdict p {
+                color: #94a3b8;
+                max-width: 580px;
+                font-size: 15.5px;
+                margin-bottom: 20px;
             }
 
             .btn {
@@ -305,17 +331,35 @@
                 background: var(--accent-dark);
             }
 
-            .closing .back {
+            .verdict .spec-link {
                 font-family: "IBM Plex Mono", ui-monospace, monospace;
                 display: inline-block;
                 margin-left: 22px;
                 font-size: 13px;
-                color: #64748b;
+                color: #5eead4;
                 text-decoration: none;
+                border-bottom: 1px solid rgba(94, 234, 212, 0.3);
+                padding-bottom: 2px;
             }
 
-            .closing .back:hover {
-                color: #94a3b8;
+            .verdict .spec-link:hover {
+                border-color: #5eead4;
+            }
+
+            /* Footnote */
+            .also {
+                border-top: 1px solid var(--line);
+                padding: 36px 0 8px;
+            }
+
+            .also p {
+                color: var(--ink-soft);
+                font-size: 15px;
+                max-width: 620px;
+            }
+
+            .also a {
+                color: var(--accent-dark);
             }
 
             footer {
@@ -329,11 +373,15 @@
                 color: var(--muted);
             }
 
-            @media (max-width: 640px) {
-                .closing {
-                    padding: 32px 24px;
+            @media (max-width: 680px) {
+                .q {
+                    grid-template-columns: 44px 1fr;
                 }
-                .closing .back {
+                .q-controls {
+                    grid-column: 2;
+                    justify-content: flex-start;
+                }
+                .verdict .spec-link {
                     display: block;
                     margin: 18px 0 0;
                 }
@@ -351,134 +399,184 @@
         </nav>
 
         <main>
-            <div class="kicker">2 FREE AI PROMPTS</div>
-            <h1>Save Hours This Week</h1>
+            <div class="kicker">THE AUTOMATION SURVIVAL AUDIT</div>
+            <h1>Does your automation survive its engineer?</h1>
             <p class="lede">
-                Copy, paste into ChatGPT or Claude, and watch the magic. Pick
-                one or try both.
+                Ten yes-or-no questions about the systems your business already
+                runs: the automations, the integrations, the spreadsheet only
+                one person understands. Answer honestly and get your score on
+                the spot. Five minutes.
+            </p>
+            <p class="lede-note">
+                note: each question maps to a field in the deployment manifest
+                spec, the open standard this practice runs on. The audit is the
+                method, worn as a checklist.
             </p>
 
-            <!-- Prompt 1: Client Research -->
-            <div class="prompt">
-                <div class="prompt-id">prompt/1</div>
-                <h2>Instant Client Research Brief</h2>
-                <p class="prompt-desc">
-                    Paste a prospect's website or LinkedIn "About" section
-                    &rarr; get talking points, pain points, and smart questions
-                    for your call.
-                </p>
-                <div class="panel">
-                    <div class="panel-bar">
-                        <span>client-research-brief.prompt</span>
-                        <button
-                            class="copy-button"
-                            onclick="copyPrompt('prompt1', this)"
-                        >
-                            copy
-                        </button>
+            <div class="audit" id="audit">
+                <div class="q">
+                    <span class="q-id">q/01</span>
+                    <div class="q-text">
+                        If the person who built your automation left tomorrow,
+                        would everything keep working a month later?
+                        <span class="q-map">manifest: handoff</span>
                     </div>
-                    <div class="prompt-text" id="prompt1">
-                        You're a sales strategist helping me prepare for a
-                        prospect meeting. Here's information about the
-                        company/person I'm meeting with: [PASTE THEIR WEBSITE
-                        ABOUT PAGE OR LINKEDIN SUMMARY HERE] My business: [ONE
-                        SENTENCE ABOUT WHAT YOU DO] Please give me: 1.
-                        **Company/Person Snapshot** (3 bullets max) - What they
-                        do, who they serve, their apparent priorities 2.
-                        **Likely Pain Points** - Based on their industry and
-                        size, what problems do they probably face that I could
-                        help with? 3. **Talking Points That Show I Did My
-                        Homework** - 2-3 specific things I can mention to show I
-                        understand their world 4. **Smart Questions to Ask** -
-                        4-5 questions that will uncover their real needs and
-                        make me look prepared 5. **Potential Objections &
-                        Responses** - What hesitations might they have? How
-                        should I address them? Keep it concise and actionable.
-                        I'm reading this 10 minutes before my call.
+                    <div class="q-controls" data-q="1">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/02</span>
+                    <div class="q-text">
+                        Do you know where every credential and API key lives,
+                        without asking anyone?
+                        <span class="q-map">manifest: systems[].access.secret_location</span>
+                    </div>
+                    <div class="q-controls" data-q="2">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/03</span>
+                    <div class="q-text">
+                        When your automation fails silently, does someone on
+                        your team find out before a customer does?
+                        <span class="q-map">manifest: flows[].failure_mode.who_notices</span>
+                    </div>
+                    <div class="q-controls" data-q="3">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/04</span>
+                    <div class="q-text">
+                        Can more than one person handle the weird cases your
+                        automation hands back to a human?
+                        <span class="q-map">pattern: human-review-queue &middot; backup-operator</span>
+                    </div>
+                    <div class="q-controls" data-q="4">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/05</span>
+                    <div class="q-text">
+                        Could you explain why the system was built this way,
+                        including what was tried and rejected?
+                        <span class="q-map">manifest: decisions[].rejected</span>
+                    </div>
+                    <div class="q-controls" data-q="5">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/06</span>
+                    <div class="q-text">
+                        Are the gaps in your automation deliberate, and written
+                        down as deliberate?
+                        <span class="q-map">manifest: flows[].known_exceptions</span>
+                    </div>
+                    <div class="q-controls" data-q="6">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/07</span>
+                    <div class="q-text">
+                        Has anyone verified in the last 90 days that your
+                        documentation still matches reality?
+                        <span class="q-map">manifest: last_verified</span>
+                    </div>
+                    <div class="q-controls" data-q="7">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/08</span>
+                    <div class="q-text">
+                        If a key operator left for two weeks, is there a
+                        trained backup who has actually done the job?
+                        <span class="q-map">manifest: lineage + walkthroughs</span>
+                    </div>
+                    <div class="q-controls" data-q="8">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/09</span>
+                    <div class="q-text">
+                        Do you know which credentials, contracts, or
+                        certificates expire in the next six months?
+                        <span class="q-map">manifest: access.expires &middot; risks.trigger_date</span>
+                    </div>
+                    <div class="q-controls" data-q="9">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
+                    </div>
+                </div>
+                <div class="q">
+                    <span class="q-id">q/10</span>
+                    <div class="q-text">
+                        Could a competent stranger, or an AI agent, maintain
+                        your system from what is written down today?
+                        <span class="q-map">tools: brief.js &middot; the briefing test</span>
+                    </div>
+                    <div class="q-controls" data-q="10">
+                        <button class="ans" data-v="1" aria-pressed="false">yes</button>
+                        <button class="ans" data-v="0" aria-pressed="false">no</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Prompt 2: Quote Generator -->
-            <div class="prompt">
-                <div class="prompt-id">prompt/2</div>
-                <h2>Rough Notes &rarr; Professional Quote</h2>
-                <p class="prompt-desc">
-                    Paste your messy notes from a client conversation &rarr;
-                    get a formatted proposal you can send in minutes.
-                </p>
-                <div class="panel">
-                    <div class="panel-bar">
-                        <span>notes-to-quote.prompt</span>
-                        <button
-                            class="copy-button"
-                            onclick="copyPrompt('prompt2', this)"
-                        >
-                            copy
-                        </button>
+            <div class="result" aria-live="polite">
+                <div class="result-bar">
+                    <span>survival-audit &middot; result</span>
+                    <span class="dot" id="resultDot"></span>
+                </div>
+                <div class="result-body">
+                    <div class="score-line" id="scoreLine">
+                        answered 0 of 10
+                        <span class="big">&mdash;</span>
+                        your score appears when all ten are answered
                     </div>
-                    <div class="prompt-text" id="prompt2">
-                        You're a business consultant who writes clear,
-                        professional proposals. Here are my rough notes from a
-                        client conversation: [PASTE YOUR MESSY NOTES HERE] My
-                        business: [WHAT YOU DO] My typical rate/pricing
-                        structure: [HOURLY, PROJECT-BASED, ETC.] Please create a
-                        professional quote/proposal with: 1. **Project Summary**
-                        - 2-3 sentences restating what they need (shows I
-                        understood them) 2. **Scope of Work** - Bullet list of
-                        exactly what's included - Be specific enough to prevent
-                        scope creep 3. **What's NOT Included** - 2-3 items that
-                        are explicitly out of scope 4. **Timeline** - Realistic
-                        milestones or delivery date 5. **Investment** - Price
-                        with brief justification - Payment terms (e.g., 50%
-                        upfront, 50% on completion) 6. **Next Steps** - Clear
-                        call to action to move forward Tone: Professional but
-                        warm. Not corporate stiff. Format it so I can copy/paste
-                        into an email.
+                    <div class="verdict" id="verdict">
+                        <h2 id="verdictTitle"></h2>
+                        <p id="verdictText"></p>
+                        <a
+                            href="https://calendar.app.google/cmtRRbjmx9MnxDTr9"
+                            class="btn"
+                            >Book a Free Call, Bring Your Score</a
+                        >
+                        <a
+                            href="https://github.com/Vishai/0tomait/tree/main/fde-hub"
+                            class="spec-link"
+                            >or fix it yourself: the spec is open &rarr;</a
+                        >
                     </div>
                 </div>
             </div>
 
-            <div class="how-to">
-                <h3>HOW TO USE</h3>
-                <ol>
-                    <li>Copy one of the prompts above</li>
-                    <li>
-                        <span>
-                            Open
-                            <a
-                                href="https://chat.openai.com"
-                                target="_blank"
-                                rel="noopener"
-                                >ChatGPT</a
-                            >
-                            or
-                            <a
-                                href="https://claude.ai"
-                                target="_blank"
-                                rel="noopener"
-                                >Claude</a
-                            >
-                        </span>
-                    </li>
-                    <li>Paste and fill in the [BRACKETED] parts</li>
-                    <li>Hit enter &rarr; get your result in 30 seconds</li>
-                </ol>
-            </div>
-
-            <div class="closing">
-                <div class="kicker">NEXT STEP</div>
+            <div class="also">
                 <p>
-                    <strong>These prompts save you maybe an hour.</strong>
-                    What if you could save 5-10 hours every week with
-                    automations built specifically for your workflows?
+                    These double as the questions to ask whoever builds your
+                    next automation, before you sign. A vendor who can answer
+                    all ten is selling you a system. A vendor who can't is
+                    selling you a dependency. The standard behind the audit is
+                    published in full
+                    <a href="https://github.com/Vishai/0tomait/tree/main/fde-hub"
+                        >on GitHub</a
+                    >, and
+                    <a href="demo.html">the worked example</a> shows what the
+                    answers look like when they're all yes.
                 </p>
-                <a
-                    href="https://calendar.app.google/cmtRRbjmx9MnxDTr9"
-                    class="btn"
-                    >Book a Free Discovery Call</a
-                >
-                <a href="index.html" class="back">&larr; back to 0tomait.com</a>
             </div>
         </main>
 
@@ -487,17 +585,79 @@
         </footer>
 
         <script>
-            function copyPrompt(promptId, button) {
-                const promptText = document.getElementById(promptId).innerText;
-                navigator.clipboard.writeText(promptText);
+            const answers = {};
+            const TOTAL = 10;
 
-                button.textContent = "copied";
-                button.classList.add("copied");
+            const verdicts = [
+                {
+                    min: 8,
+                    cls: "v-ok",
+                    title: "Your automation will outlive its engineer.",
+                    text: "This is rare, and it is worth protecting. Your remaining no answers are the exact places to tighten next; each one names the document or the person that is missing.",
+                },
+                {
+                    min: 4,
+                    cls: "v-mid",
+                    title: "Hero-dependent: it works because someone specific is still there.",
+                    text: "Somewhere in your answers you thought of a particular person. That person is where this breaks first, on their vacation before their resignation. The fix is a discipline, and it starts with writing down what only they know.",
+                },
+                {
+                    min: 0,
+                    cls: "v-bad",
+                    title: "You own a black box.",
+                    text: "It runs until it doesn't, and when it stops, nobody on your team can say why it was built the way it was or where the keys live. The good news: every no answer above is a concrete, fixable gap with a name.",
+                },
+            ];
 
-                setTimeout(() => {
-                    button.textContent = "copy";
-                    button.classList.remove("copied");
-                }, 2000);
+            document.querySelectorAll(".q-controls").forEach((ctrl) => {
+                const q = ctrl.dataset.q;
+                ctrl.querySelectorAll(".ans").forEach((btn) => {
+                    btn.addEventListener("click", () => {
+                        answers[q] = Number(btn.dataset.v);
+                        ctrl.querySelectorAll(".ans").forEach((b) =>
+                            b.setAttribute("aria-pressed", b === btn)
+                        );
+                        render();
+                    });
+                });
+            });
+
+            function render() {
+                const done = Object.keys(answers).length;
+                const score = Object.values(answers).reduce(
+                    (a, b) => a + b,
+                    0
+                );
+                const line = document.getElementById("scoreLine");
+                const verdict = document.getElementById("verdict");
+                const dot = document.getElementById("resultDot");
+
+                if (done < TOTAL) {
+                    line.innerHTML =
+                        "answered " +
+                        done +
+                        " of " +
+                        TOTAL +
+                        '<span class="big">&mdash;</span>your score appears when all ten are answered';
+                    verdict.classList.remove("show");
+                    dot.classList.remove("live");
+                    return;
+                }
+
+                const v = verdicts.find((x) => score >= x.min);
+                line.innerHTML =
+                    "survival score" +
+                    '<span class="big">' +
+                    score +
+                    "/" +
+                    TOTAL +
+                    "</span>";
+                const title = document.getElementById("verdictTitle");
+                title.textContent = v.title;
+                title.className = v.cls;
+                document.getElementById("verdictText").textContent = v.text;
+                verdict.classList.add("show");
+                dot.classList.add("live");
             }
         </script>
     </body>
