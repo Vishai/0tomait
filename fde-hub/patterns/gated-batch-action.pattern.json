@@ -1,0 +1,257 @@
+{
+  "pattern_version": "0.1",
+  "id": "gated-batch-action",
+  "name": "Gated batch action",
+  "problem": "On a rhythm — twice a week, month-end — someone assembles the records that are ready, builds an action for each (an invoice, a payment, a filing), and pushes it into an external system by hand. The rhythm is sacred, the assembly is mechanical, and a fraction of the items always needs judgment.",
+  "signals": [
+    "The work happens on named days and the team has a name for the ritual — 'the sweep', 'the run', 'batch day'.",
+    "Eligibility is described as a checklist: delivered AND documented AND not on hold.",
+    "A spreadsheet is exported from one system and rekeyed into another, twice a week, by the same person.",
+    "Some items are 'always done by hand' and everyone knows which ones without being able to state the rule."
+  ],
+  "not_for": [
+    "Event-driven actions, where each record should fire the moment it becomes eligible. That is a different trigger discipline with different failure modes — do not batch what wants to stream.",
+    "Actions that cannot be made idempotent or verified afterwards. If you cannot tell whether an action already happened, batching multiplies the damage of every crash.",
+    "Eligibility that genuinely cannot be stated as a rule. Automate the assembly and keep the decision human — otherwise you encode one person's folklore as policy."
+  ],
+  "base_shape": {
+    "trigger_kinds": ["schedule", "manual"],
+    "steps": [
+      "Select eligible records using an explicit, recorded predicate — never a person's recollection of one.",
+      "Resolve cross-system identity through a maintained mapping.",
+      "Build each action's payload from the system of record.",
+      "Apply the gate: items past the threshold become drafts for a named approver instead of executing.",
+      "Execute per item, idempotently, never partially.",
+      "Write each result to the flow's own ledger.",
+      "Publish a run summary: done, skipped, and — per skip — exactly why, in words the operator can act on."
+    ],
+    "state": "Which records were acted on, with the external system's id for each action — the idempotency ledger. Plus the identity mapping, which is data, not code, because it changes on the client's schedule rather than yours.",
+    "commitments": [
+      "Fail closed, per item. An item that errors is skipped whole and reported; it is never half-acted.",
+      "Skips are self-healing: the next run picks up anything whose cause was fixed, with no replay ceremony.",
+      "The run summary is the product the operator sees. If it does not say why each skip happened in actionable words, the flow is not done.",
+      "The gate is a promise to a person, not a performance tolerance. It is removed by that person's word only."
+    ]
+  },
+  "variation_points": [
+    {
+      "id": "schedule-alignment",
+      "question": "Run on the client's existing rhythm, or on the technically optimal one?",
+      "options": [
+        {
+          "choice": "match-the-ritual",
+          "when": "The rhythm is load-bearing — other processes, and other people, key off it.",
+          "consequence": "Adoption is instant and the mental model transfers; the rhythm's constraints become yours."
+        },
+        {
+          "choice": "continuous",
+          "when": "The ritual was itself a workaround for manual cost, and nothing downstream depends on its timing.",
+          "consequence": "Better latency; every downstream process that quietly keyed off the rhythm must be found first, and they announce themselves by breaking."
+        }
+      ],
+      "default": "match-the-ritual",
+      "default_because": "The ritual encodes dependencies nobody can enumerate on day one. Ship on their rhythm, then earn the right to change it with evidence from the run summaries."
+    },
+    {
+      "id": "gate-placement",
+      "question": "Where does human judgment sit relative to execution?",
+      "options": [
+        {
+          "choice": "draft-approval",
+          "when": "Stakes are money or customer-visible, or the project was approved on the condition of human review.",
+          "consequence": "Adds a human latency step on gated items; builds the trust the whole project runs on."
+        },
+        {
+          "choice": "post-hoc-review",
+          "when": "Actions are reversible and volume makes pre-approval impractical.",
+          "consequence": "Full speed; errors reach the outside world before a human sees them, so the undo path must be real."
+        },
+        {
+          "choice": "no-gate",
+          "when": "Stakes are low and every action is trivially reversible.",
+          "consequence": "Fastest; removes the trust-building surface. Confirm nobody's approval of the project was conditioned on a gate before choosing this."
+        }
+      ],
+      "default": "draft-approval",
+      "default_because": "The gate is usually the political condition the project was approved under. Treat it as a constraint with a named source, record it in the manifest, and no successor will optimize it away by accident."
+    },
+    {
+      "id": "identity-map-home",
+      "question": "Where does the cross-system identity mapping live?",
+      "options": [
+        {
+          "choice": "repo-file",
+          "when": "The mapping changes rarely and an engineer is on retainer to change it.",
+          "consequence": "Every change is a deploy. Fine until the retainer shrinks — then it is a bottleneck with a billing rate."
+        },
+        {
+          "choice": "editable-table",
+          "when": "The mapping changes whenever the client's business grows.",
+          "consequence": "About two extra days to build, plus validation so a bad row cannot break a run. Removes the engineer from routine change."
+        }
+      ],
+      "default": "editable-table",
+      "default_because": "'Nearly static' mappings are not. The reference deployment's mapping changed four times in five months, each change needing an engineer and a deploy — that recorded debt entry is what inverted this default."
+    },
+    {
+      "id": "execution-idempotency",
+      "question": "How is double-execution prevented?",
+      "options": [
+        {
+          "choice": "natural-key",
+          "when": "The external system accepts a client-supplied reference and rejects duplicates.",
+          "consequence": "Replays are free; the external system is the ledger of record for what happened."
+        },
+        {
+          "choice": "ledger-check",
+          "when": "The external system offers no idempotency support.",
+          "consequence": "Check-then-act against your own ledger, and reconcile ledger against external system on startup — the crash window between act and record is where doubles are born."
+        }
+      ],
+      "default": "natural-key",
+      "default_because": "Use the external system's idempotency whenever it exists; your own ledger then becomes a cross-check instead of a single point of truth."
+    }
+  ],
+  "glue_checklist": [
+    {
+      "question": "State the eligibility predicate — then reconcile it against historical data before writing code.",
+      "why_it_matters": "Ask three people and you get three predicates; the data usually contradicts all of them somewhere. Automating an ambiguous rule produces confidently wrong actions at scale. Carve the ambiguous class out instead — the reference manifest's split-loads decision shows the shape of that call.",
+      "recorded_in": "decisions[] with the reconciliation evidence"
+    },
+    {
+      "question": "Whose approval was this project conditioned on, and what exactly did they ask to keep?",
+      "why_it_matters": "The gate threshold is usually a relationship term, not an engineering parameter. Knowing its owner and its reason is the difference between a config value and a betrayal.",
+      "recorded_in": "constraints[] (kind: political) with a named source"
+    },
+    {
+      "question": "What are the blackout windows?",
+      "why_it_matters": "A batch action running during the client's live window turns a bug into an incident with an audience.",
+      "recorded_in": "constraints[] (kind: operational) and the runbook deploy procedure"
+    },
+    {
+      "question": "Who reconciles the skip list, and on what rhythm?",
+      "why_it_matters": "Skips self-heal only if someone fixes their causes. An unreconciled skip list grows silently until a customer calls asking where their invoice is.",
+      "recorded_in": "flows[].lineage (skip-reconciler role) and failure_mode.who_notices"
+    },
+    {
+      "question": "Can the action be undone, and by whom?",
+      "why_it_matters": "Rolling back code does not roll back issued invoices or sent payments. Know the undo path and its owner before the first run, not during the first incident.",
+      "recorded_in": "runbook.procedures (the rollback entry's risk note)"
+    }
+  ],
+  "human_roles": [
+    {
+      "role": "approver",
+      "does": "Reviews and releases gated drafts. Politically load-bearing: this role is often the condition the project exists under.",
+      "cadence": "Each run day; minutes, unless a draft is genuinely contentious — which is the role working as designed.",
+      "transition_walkthrough_must_cover": [
+        "What the machine already verified, so review effort goes to judgment rather than re-checking arithmetic.",
+        "What releasing a draft actually triggers downstream, in the client's terms.",
+        "The escalation path when a draft looks wrong — and that rejecting and telling the steward is always a safe move."
+      ]
+    },
+    {
+      "role": "skip-reconciler",
+      "does": "Owns the skip list from each run summary; fixes causes or routes them to whoever can.",
+      "cadence": "Every run day, immediately after the summary lands.",
+      "transition_walkthrough_must_cover": [
+        "Reading the run summary: each skip reason and its standard fix.",
+        "Which skip classes self-heal on the next run versus which need a human first.",
+        "The known_failures table in the runbook — most skips are already in it."
+      ]
+    },
+    {
+      "role": "steward",
+      "does": "Owns the eligibility predicate, the mapping validation, and the idempotency ledger.",
+      "cadence": "On change; plus a monthly reconciliation of ledger against the external system.",
+      "transition_walkthrough_must_cover": [
+        "The eligibility predicate and the historical evidence it was reconciled against.",
+        "The idempotency mechanism, including the crash-window reconciliation on startup.",
+        "Why the gate exists, who owns it, and why it is not yours to remove."
+      ]
+    }
+  ],
+  "failure_design": [
+    {
+      "failure": "The run crashes midway through the batch.",
+      "response": "Per-item commits against the ledger; on restart, the ledger — not memory — says what remains. The unit of failure is the item, never the run."
+    },
+    {
+      "failure": "The same item is acted on twice, via a crash between act and record.",
+      "response": "A client-supplied idempotency key where the external system honors one; otherwise reconcile ledger against the external system before each run's selection."
+    },
+    {
+      "failure": "Mapping drift: newly onboarded records skip with 'not mapped'.",
+      "response": "Skip loudly with the exact missing key in the run summary, and make the fix a data edit rather than a deploy."
+    },
+    {
+      "failure": "The eligibility predicate silently drifts from reality because an upstream process changed.",
+      "response": "Track the eligible-count trend across runs. A step change in either direction is an upstream change announcement nobody sent you."
+    },
+    {
+      "failure": "The approver is on leave; drafts pile up and the rhythm slips.",
+      "response": "A named delegate with an explicit approval ceiling, recorded in the space definition — and drafts that age visibly in every run summary."
+    }
+  ],
+  "manifest_bindings": {
+    "systems": "The system of record being selected from, the external system being acted on, and wherever the identity mapping lives — each with access, gotchas, and last_verified.",
+    "entities": "The record being acted on and the party it is issued to, with the identifier caveats that make the cross-system mapping necessary in the first place.",
+    "decisions_expected": [
+      {
+        "topic": "The eligibility predicate",
+        "tension": "What people say the rule is versus what historical data shows it was — record the reconciliation, and what was carved out as ambiguous."
+      },
+      {
+        "topic": "Gate threshold and owner",
+        "tension": "Throughput versus the trust condition the project was approved under."
+      },
+      {
+        "topic": "Identity mapping home",
+        "tension": "Engineer-gated correctness versus client-editable speed."
+      },
+      {
+        "topic": "Schedule",
+        "tension": "The client's ritual versus technically optimal timing."
+      }
+    ],
+    "constraints_expected": [
+      "The approval condition, as a political constraint with a named source.",
+      "Blackout windows around the client's live operations."
+    ]
+  },
+  "metrics": [
+    {
+      "metric": "Cycle time from eligible to acted",
+      "direction": "down"
+    },
+    {
+      "metric": "Percent of items skipped per run",
+      "direction": "down",
+      "note": "Spikes are upstream news, not flow failures — read them that way first."
+    },
+    {
+      "metric": "Manually handled items as percent of volume",
+      "direction": "down",
+      "note": "Should fall slowly as carve-outs get resolved into rules. Falling fast usually means someone stopped checking."
+    },
+    {
+      "metric": "Rhythm adherence (runs completed on their scheduled day)",
+      "direction": "flat"
+    }
+  ],
+  "instantiations": [
+    {
+      "client": "Meridian Freight Group (fictional reference example)",
+      "manifest": "fde-hub/examples/meridian-freight.manifest.json",
+      "flow_id": "invoice-issue",
+      "deviations": [
+        "Identity mapping still lives in the repo — recorded there as debt with a cost_to_fix, and the experience that flipped this pattern's default to editable-table.",
+        "Split loads carved out of automation entirely rather than parameterized, because three people described the allocation rule three different ways (see decision split-loads-manual)."
+      ]
+    }
+  ],
+  "maturity": {
+    "status": "extracted",
+    "evidence": "One shipped deployment (Meridian invoice issuance). The editable-table default is a lesson from that deployment's recorded debt rather than something it shipped — flagged so users know which parts are proven and which are corrected hindsight."
+  }
+}

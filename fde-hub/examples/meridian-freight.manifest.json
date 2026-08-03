@@ -1,0 +1,788 @@
+{
+  "manifest": {
+    "spec_version": "0.4",
+    "updated": "2026-08-02",
+    "maintainer": "brandon-armstrong"
+  },
+
+  "people": [
+    {
+      "id": "brandon-armstrong",
+      "name": "Brandon Armstrong",
+      "role": "Forward deployed engineer — built both flows, owns this manifest and the retainer",
+      "org": "0tomait"
+    },
+    {
+      "id": "dana-reyes",
+      "name": "Dana Reyes",
+      "role": "VP Operations — economic buyer; final word on scope and on anything customer-visible or money-moving",
+      "org": "Meridian Freight Group",
+      "notes": "Responds same-day on email, rarely to Slack. Batch decisions that need her — her cadence sets the pace for anything above Marcus's authority."
+    },
+    {
+      "id": "marcus-bell",
+      "name": "Marcus Bell",
+      "role": "Billing supervisor — day-to-day owner of the invoicing flow, controls the QuickBooks chart of accounts and invoice templates, first to report breakage",
+      "org": "Meridian Freight Group",
+      "notes": "Lives in Slack; the fastest route to reality on the floor."
+    },
+    {
+      "id": "priya-chandran",
+      "name": "Priya Chandran",
+      "role": "IT contractor, 10 hrs/week — sole grantor of system access and tenant changes; administers the TMS integration user and its permissions",
+      "org": "External (Northline IT)",
+      "notes": "Reachable Tuesday and Thursday only. Raise access requests at least a week ahead — this is the single most common cause of schedule slip on this account."
+    },
+    {
+      "id": "tina-okafor",
+      "name": "Tina Okafor",
+      "role": "Former billing clerk — worked the review queue March through May 2026",
+      "org": "Meridian Freight Group (departed 2026-05-30)"
+    },
+    {
+      "id": "meridian-inhouse-it",
+      "name": "Meridian in-house IT (function eliminated 2024)",
+      "role": "Former in-house IT function — administered the TMS and its customizations until the position was cut",
+      "org": "Meridian Freight Group"
+    }
+  ],
+
+  "client": {
+    "name": "Meridian Freight Group (FICTIONAL — reference example, not a real company)",
+    "industry": "Third-party logistics / freight brokerage",
+    "size": "51-200",
+    "business_summary": "Meridian brokers truckload freight between shippers and a network of roughly 900 carriers. They make money on the spread between what a shipper pays for a load and what the carrier accepts, so margin per load is thin and volume is everything. Nothing ships without a signed rate confirmation, and nothing gets invoiced without a proof of delivery on file.",
+    "timezone": "America/Chicago",
+    "operating_hours": "Dispatch is staffed 05:00-19:00 CT weekdays, with a skeleton weekend desk. Billing runs Monday and Thursday afternoons.",
+    "communication_norms": "Per-person norms live on their people entries. Cross-cutting: decisions above Marcus's authority wait on Dana's email cadence, so batch them rather than trickling; anything needing Priya must anticipate her Tuesday/Thursday availability a week out."
+  },
+
+  "engagement": {
+    "problem_statement": "Billing was three to nine days behind because invoices could not be cut until someone manually matched a proof of delivery to a load in the TMS. Two staff spent most of their week rekeying paperwork out of email, and the delay was pushing days-sales-outstanding past 45 days, which was costing Meridian real money on their credit line.",
+    "outcomes": [
+      {
+        "metric": "Median hours from delivery to invoice sent",
+        "baseline": "78 hours",
+        "target": "under 12 hours",
+        "actual": "9 hours",
+        "measured_on": "2026-07-21"
+      },
+      {
+        "metric": "Loads requiring manual POD matching",
+        "baseline": "100%",
+        "target": "under 20%",
+        "actual": "23% — short of target, see handoff.unfinished",
+        "measured_on": "2026-07-21"
+      },
+      {
+        "metric": "Days sales outstanding",
+        "baseline": "45 days",
+        "target": "under 35 days",
+        "actual": "not yet measured; finance reports quarterly"
+      }
+    ],
+    "status": "maintenance",
+    "support_posture": "0tomait holds a 12-hour weekday response retainer through 2026-12-31. There is no weekend coverage and no formal on-call rotation. If the flow breaks Friday night, nobody looks at it until Monday and billing absorbs the backlog — Dana has explicitly accepted this tradeoff rather than pay for weekend cover.",
+    "started": "2026-02-09",
+    "budget_notes": "Fixed-bid build, now on a small monthly retainer. Retainer renews 2026-12-31 and Dana has signalled she wants to reduce it, so favor changes that lower maintenance load over changes that add capability."
+  },
+
+  "systems": [
+    {
+      "id": "tms",
+      "name": "McLeod LoadMaster",
+      "vendor": "McLeod Software",
+      "purpose": "System of record for loads, carriers, rates, and settlement. Every operational question at Meridian ultimately resolves to a row in here.",
+      "criticality": "core",
+      "system_owner": "priya-chandran",
+      "access": {
+        "method": "db-credentials",
+        "secret_location": "1Password vault 'Meridian' → item 'TMS read replica (0tomait)'",
+        "rotation": "Rotated by Priya on request only. Last rotated 2026-02-18. No scheduled cadence, which is a standing risk.",
+        "scopes": ["read-only on replica", "no write access — writes go through the API user instead"]
+      },
+      "api": {
+        "docs_url": "Vendor portal, access via Priya — not publicly documented",
+        "rate_limits": "No published limit on the replica. Empirically, queries over ~30s get killed by the vendor's session reaper.",
+        "sandbox_available": false
+      },
+      "gotchas": [
+        "Read access is against a replica that lags production by 5-15 minutes. Any flow that reacts to a status change must tolerate that lag; two early bugs traced back to assuming it was live.",
+        "Load numbers are reused across fiscal years. Joining on load number alone will silently mix a 2025 load with a 2026 one — always pair it with the fiscal year column.",
+        "The vendor pushes upgrades on their own schedule with about two weeks notice, and column names have changed without mention in a minor release before."
+      ],
+      "lineage": [
+        {
+          "role": "administrator",
+          "person": "meridian-inhouse-it",
+          "from": "2019-01-01",
+          "to": "2024-05-31",
+          "mode": "built",
+          "exit_note": "The in-house IT position was cut and administration moved to a 10 hr/week contractor. Institutional knowledge of the TMS's customizations left with it — several of the gotchas above were re-learned the hard way during this engagement."
+        },
+        {
+          "role": "administrator",
+          "person": "priya-chandran",
+          "from": "2024-06-01",
+          "mode": "inherited"
+        }
+      ],
+      "last_verified": "2026-07-24"
+    },
+    {
+      "id": "email-billing",
+      "name": "billing@ shared mailbox (Microsoft 365)",
+      "vendor": "Microsoft",
+      "purpose": "Where carriers send proof-of-delivery paperwork. Functionally this is the intake queue for the entire billing process, despite nobody having designed it that way.",
+      "criticality": "core",
+      "access": {
+        "method": "service-account",
+        "secret_location": "Azure app registration 'otomait-pod-reader'; client secret in 1Password vault 'Meridian' → 'Graph app secret'",
+        "scopes": ["Mail.Read", "Mail.ReadWrite on the billing mailbox only"],
+        "rotation": "Client secret expires and must be rotated before the date below or the whole flow stops.",
+        "expires": "2027-02-14"
+      },
+      "api": {
+        "docs_url": "https://learn.microsoft.com/graph/api/overview",
+        "base_url": "https://graph.microsoft.com/v1.0",
+        "rate_limits": "Graph throttles around 10k requests per 10 minutes per app; nowhere near the ceiling at current volume.",
+        "sandbox_available": true
+      },
+      "gotchas": [
+        "Roughly 15% of carriers send the POD as a photo pasted into the email body rather than an attachment. These are handled by the OCR path, not the attachment path.",
+        "A few large carriers send one email containing PODs for multiple loads. The splitter handles up to 6; beyond that it routes to manual review."
+      ],
+      "last_verified": "2026-07-24"
+    },
+    {
+      "id": "docstore",
+      "name": "SharePoint document library — 'Load Documents'",
+      "vendor": "Microsoft",
+      "purpose": "Where the matched POD PDF is filed so that billing and audit can retrieve it against a load. This is what auditors ask for.",
+      "criticality": "important",
+      "access": {
+        "method": "service-account",
+        "secret_location": "Same Azure app registration as email-billing; see 1Password 'Graph app secret'",
+        "scopes": ["Sites.ReadWrite.All scoped to the Load Documents site"],
+        "rotation": "Shares the expiry of the email-billing secret — rotating one rotates both."
+      },
+      "gotchas": [
+        "Folder structure is by fiscal year then load number, and billing staff rearrange folders by hand from time to time. The flow writes by path, so a manual reorganization can strand documents. Recorded as a risk rather than fixed."
+      ],
+      "last_verified": "2026-07-24"
+    },
+    {
+      "id": "accounting",
+      "name": "QuickBooks Online",
+      "vendor": "Intuit",
+      "purpose": "Issues the customer invoice and holds accounts receivable. The end of the line for this deployment.",
+      "criticality": "core",
+      "system_owner": "marcus-bell",
+      "access": {
+        "method": "oauth2",
+        "secret_location": "Refresh token in AWS Secrets Manager at 'meridian/qbo/refresh-token'",
+        "scopes": ["com.intuit.quickbooks.accounting"],
+        "rotation": "Intuit refresh tokens roll every 100 days and are written back automatically by the flow. If the flow is down for more than 100 days the token dies permanently and requires a human to re-consent through the browser."
+      },
+      "api": {
+        "docs_url": "https://developer.intuit.com/app/developer/qbo/docs/api/accounting/all-entities/invoice",
+        "base_url": "https://quickbooks.api.intuit.com/v3",
+        "rate_limits": "500 requests/minute per realm; 40 concurrent.",
+        "sandbox_available": true
+      },
+      "gotchas": [
+        "QuickBooks customer names do not match TMS customer names for about 30 accounts. The mapping lives in a table in the flow repository, not in either system, and must be updated by hand when Meridian onboards a customer. This is the most likely thing to break for a new engineer who does not know it exists."
+      ],
+      "last_verified": "2026-05-02"
+    },
+    {
+      "id": "ocr",
+      "name": "Document extraction service",
+      "vendor": "0tomait-hosted",
+      "purpose": "Reads scanned and photographed PODs to pull the load number, delivery date, and signature presence.",
+      "criticality": "important",
+      "access": {
+        "method": "api-key",
+        "secret_location": "AWS Secrets Manager at 'meridian/ocr/api-key'",
+        "rotation": "Rotate at will; single consumer, no coordination needed."
+      },
+      "gotchas": [
+        "Confidence below 0.85 on the load number routes to manual review rather than guessing. That threshold was tuned on Meridian's actual carrier mix and should not be copied to another client without retuning.",
+        "Handwritten load numbers on crumpled paper are the dominant failure case and account for most of the residual manual queue."
+      ],
+      "last_verified": "2026-07-24"
+    }
+  ],
+
+  "entities": [
+    {
+      "id": "load",
+      "name": "Load",
+      "definition": "A single shipment moving from a pickup to a delivery under one rate confirmation. Meridian says 'load' where a shipper might say 'shipment' and a carrier might say 'trip' — all three mean this object.",
+      "source_of_truth": "tms",
+      "also_lives_in": ["accounting", "docstore"],
+      "identifier": "Load number, 6 digits, unique only within a fiscal year. The safe key is fiscal_year + load_number. Carriers frequently write it with a 'ML-' prefix on paperwork, which must be stripped before matching.",
+      "sensitivity": "confidential",
+      "volume": "About 1,800 loads per month, growing roughly 4% per quarter.",
+      "quirks": [
+        "Cancelled loads keep their number and stay in the table with status 'VOID'. Any query that forgets to filter status will double-count.",
+        "Roughly 2% of loads are split across two carriers and appear as a parent and one child record. The child has its own load number but bills under the parent."
+      ]
+    },
+    {
+      "id": "pod",
+      "name": "Proof of delivery",
+      "definition": "The signed document proving a load was delivered. Meridian cannot legally invoice without one on file, so this document gates all revenue recognition.",
+      "source_of_truth": "docstore",
+      "also_lives_in": ["email-billing"],
+      "identifier": "Filed as {fiscal_year}/{load_number}/POD-{received_date}.pdf. There is no separate POD id; the load number is the key.",
+      "sensitivity": "confidential",
+      "volume": "Roughly one per delivered load, plus about 8% duplicates from carriers who send twice.",
+      "quirks": [
+        "Duplicates are common and are deduplicated on load number plus file hash. Two genuinely different PODs for one load happen on split loads and are kept.",
+        "Some carriers send the POD before delivery is marked complete in the TMS, so the document can arrive before the load is ready to bill. These are held in a pending queue rather than rejected."
+      ]
+    },
+    {
+      "id": "carrier",
+      "name": "Carrier",
+      "definition": "The trucking company that physically moves the load. Meridian's network is about 900 active carriers, most of them one to five trucks.",
+      "source_of_truth": "tms",
+      "identifier": "MC number (Motor Carrier number, issued by FMCSA). Reliable and stable, unlike company name which changes often.",
+      "sensitivity": "internal",
+      "volume": "~900 active, long tail of thousands inactive.",
+      "quirks": [
+        "Carrier company names change constantly through rebranding and acquisition. Never match on name; always use the MC number."
+      ]
+    },
+    {
+      "id": "customer",
+      "name": "Customer (shipper)",
+      "definition": "The party that pays Meridian. Note the naming collision: dispatch says 'customer' for the shipper, while billing sometimes says 'customer' for the carrier being settled. This document always means the shipper.",
+      "source_of_truth": "tms",
+      "also_lives_in": ["accounting"],
+      "identifier": "TMS customer code. Maps to a QuickBooks customer id through the manual mapping table described in the accounting system gotchas.",
+      "sensitivity": "financial",
+      "volume": "About 240 active customers; the top 20 are roughly 70% of revenue.",
+      "quirks": [
+        "Several large customers have multiple billing entities that must be invoiced separately despite being one company operationally."
+      ]
+    }
+  ],
+
+  "flows": [
+    {
+      "id": "pod-intake",
+      "name": "POD intake and matching",
+      "pattern": "document-intake-match",
+      "business_purpose": "Watches the billing mailbox, pulls proof-of-delivery paperwork off incoming carrier email, works out which load it belongs to, and files it against that load so billing no longer has to read the inbox by hand.",
+      "trigger": {
+        "kind": "polling",
+        "detail": "Polls the billing mailbox every 3 minutes via Microsoft Graph delta query"
+      },
+      "steps": [
+        "Fetch unread messages from the billing mailbox since the last delta token.",
+        "Classify each message: attachment POD, inline-image POD, or not a POD at all.",
+        "Extract the load number — from the subject line where present, otherwise via OCR on the document.",
+        "Resolve the load number against the TMS replica, pairing it with fiscal year to avoid cross-year collisions.",
+        "On a confident match, file the PDF to SharePoint under the load's folder and mark the load POD-complete in the tracking table.",
+        "On low confidence or no match, place the item in the manual review queue and leave the email unread."
+      ],
+      "systems": ["email-billing", "ocr", "tms", "docstore"],
+      "entities": ["pod", "load"],
+      "code": {
+        "location": "github.com/0tomait/meridian-billing — services/pod-intake",
+        "runtime": "AWS Lambda on a 3-minute EventBridge schedule, us-east-2",
+        "language": "TypeScript (Node 22)",
+        "deploy_procedure": "Deploy a flow change"
+      },
+      "human_in_the_loop": [
+        "Manual review queue is worked by Marcus's team each morning. Currently about 23% of PODs land here — mostly handwritten load numbers.",
+        "Nobody has been designated to work the queue when Marcus is on leave. This has caused one backlog already."
+      ],
+      "failure_mode": {
+        "on_failure": "Retries three times with backoff, then leaves the email unread and emits a CloudWatch alarm. Unread mail is the safety net: no POD is ever lost, it just stays in the inbox for a human.",
+        "who_notices": "CloudWatch alarm to the #meridian-alerts Slack channel, which Marcus watches. Nobody watches it on weekends.",
+        "tolerable_downtime": "About 24 hours before the billing run feels it; a full weekend is absorbed but produces a Monday backlog."
+      },
+      "known_exceptions": [
+        "Emails with more than 6 PODs in one message go straight to manual review rather than being split. Deliberate: only two carriers do this and the split logic was not worth the complexity.",
+        "Non-English paperwork is not attempted at all — routed to manual. Meridian has a handful of cross-border loads per month."
+      ],
+      "lineage": [
+        {
+          "role": "steward",
+          "person": "brandon-armstrong",
+          "from": "2026-02-09",
+          "mode": "built"
+        },
+        {
+          "role": "queue-operator",
+          "person": "tina-okafor",
+          "from": "2026-03-02",
+          "to": "2026-05-30",
+          "mode": "inherited",
+          "exit_note": "Left Meridian. No walkthrough existed yet, so the queue reverted to Marcus cold and a two-week backlog followed. The morning-queue pairing script was written as a direct result — the family tree's first lesson."
+        },
+        {
+          "role": "queue-operator",
+          "person": "marcus-bell",
+          "from": "2026-06-02",
+          "mode": "inherited",
+          "trained_via": "wt-queue-morning"
+        }
+      ],
+      "last_verified": "2026-07-24"
+    },
+    {
+      "id": "invoice-issue",
+      "name": "Invoice generation and send",
+      "pattern": "gated-batch-action",
+      "business_purpose": "Once a load has both a delivery confirmation and a POD on file, raises the customer invoice in QuickBooks and sends it, so billing no longer rekeys invoices by hand twice a week.",
+      "trigger": {
+        "kind": "schedule",
+        "detail": "0 14 * * 1-5 America/Chicago — weekday afternoons, after dispatch has settled the morning's deliveries"
+      },
+      "steps": [
+        "Select loads that are delivered, POD-complete, and not yet invoiced.",
+        "Resolve the TMS customer code to a QuickBooks customer id via the mapping table.",
+        "Build the invoice: line items from the rate confirmation, plus any accessorial charges recorded on the load.",
+        "Create the invoice in QuickBooks and attach the POD.",
+        "Send through QuickBooks, then write the invoice number back to the tracking table.",
+        "Post a run summary to #meridian-alerts: count invoiced, count skipped, and why."
+      ],
+      "systems": ["tms", "docstore", "accounting"],
+      "entities": ["load", "customer", "pod"],
+      "code": {
+        "location": "github.com/0tomait/meridian-billing — services/invoice-issue",
+        "runtime": "AWS Lambda on an EventBridge cron, us-east-2",
+        "language": "TypeScript (Node 22)",
+        "deploy_procedure": "Deploy a flow change"
+      },
+      "human_in_the_loop": [
+        "Invoices over $25,000 are created as drafts and require Marcus to review and send. Dana insisted on this and it should not be removed without her explicit approval."
+      ],
+      "failure_mode": {
+        "on_failure": "Fails closed. A load that errors is skipped, left uninvoiced, and reported in the run summary — it is never partially invoiced. Skipped loads are simply picked up by the next run once the cause is fixed.",
+        "who_notices": "Run summary in #meridian-alerts every weekday; Marcus reconciles the skip list.",
+        "tolerable_downtime": "Two business days. Beyond that the Monday/Thursday billing rhythm slips and DSO starts moving."
+      },
+      "known_exceptions": [
+        "Split loads are always skipped and billed manually. The parent/child rate allocation was never specified clearly enough to automate — see decision 'split-loads-manual'.",
+        "Customers on the credit hold list are skipped silently; finance handles those directly."
+      ],
+      "lineage": [
+        {
+          "role": "steward",
+          "person": "brandon-armstrong",
+          "from": "2026-03-20",
+          "mode": "built"
+        },
+        {
+          "role": "approver",
+          "person": "marcus-bell",
+          "from": "2026-04-01",
+          "mode": "inherited",
+          "trained_via": "wt-large-invoice-review"
+        },
+        {
+          "role": "skip-reconciler",
+          "person": "marcus-bell",
+          "from": "2026-04-01",
+          "mode": "inherited"
+        }
+      ],
+      "last_verified": "2026-07-24"
+    }
+  ],
+
+  "decisions": [
+    {
+      "id": "poll-not-webhook",
+      "date": "2026-02-27",
+      "decision": "Poll the billing mailbox on a 3-minute delta query rather than subscribing to Microsoft Graph change notifications.",
+      "context": "Graph webhook subscriptions expire every three days and must be renewed by a running process. Meridian has no weekend coverage and no on-call, so a renewal failure on a Friday would silently stop POD intake until Monday with nothing in the inbox to show for it. Polling is slightly less elegant and costs a trivial amount more, but it has no expiry to miss and it degrades visibly.",
+      "rejected": [
+        {
+          "option": "Graph change notifications (webhooks)",
+          "why_not": "Subscription renewal is a silent single point of failure in an environment with no weekend coverage. The failure mode is invisible, which is the worst property a failure can have here."
+        },
+        {
+          "option": "IMAP polling",
+          "why_not": "Meridian's tenant has basic auth disabled by policy, so IMAP would have required a security exception nobody was willing to sign."
+        }
+      ],
+      "revisit_when": "Meridian establishes real on-call coverage, or POD latency under 3 minutes becomes a business requirement. Neither is true today.",
+      "flow_ids": ["pod-intake"]
+    },
+    {
+      "id": "split-loads-manual",
+      "date": "2026-04-15",
+      "decision": "Exclude split loads from automated invoicing entirely and leave them as a manual process.",
+      "context": "Split loads are about 2% of volume. Three people at Meridian described the parent/child rate allocation rule three different ways, and none matched what the TMS data actually showed. Automating an ambiguous rule would have produced confidently wrong invoices, which is far more expensive to unwind than a small manual queue.",
+      "rejected": [
+        {
+          "option": "Automate using the allocation rule Dana described",
+          "why_not": "Her description contradicted the historical data in roughly a third of past split loads. Encoding it would have generated wrong invoices at scale."
+        },
+        {
+          "option": "Block the project until the rule was pinned down",
+          "why_not": "It would have delayed 98% of the value for 2% of the volume. Shipping the majority and carving out the ambiguity was the better trade."
+        }
+      ],
+      "revisit_when": "Split load volume exceeds roughly 5% of loads, or someone at Meridian documents the allocation rule and it reconciles against historical data.",
+      "flow_ids": ["invoice-issue"]
+    },
+    {
+      "id": "no-tms-writes",
+      "date": "2026-03-05",
+      "decision": "Never write to the TMS. Track POD and invoice state in a small dedicated table owned by the deployment instead.",
+      "context": "The vendor upgrades the TMS on their own schedule with about two weeks notice and has changed column names in a minor release before. Writing into it would have coupled the deployment's correctness to a system we do not control and cannot test against — there is no sandbox. Keeping our own state means a vendor upgrade can break reads, which is visible and recoverable, rather than corrupting the client's system of record.",
+      "rejected": [
+        {
+          "option": "Write POD status back to a custom TMS field",
+          "why_not": "Operations wanted it visible in the TMS, but it would have made a vendor upgrade capable of corrupting the client's system of record. Rejected on blast radius."
+        }
+      ],
+      "revisit_when": "McLeod exposes a supported, versioned write API with a sandbox to test against.",
+      "flow_ids": ["pod-intake", "invoice-issue"]
+    },
+    {
+      "id": "threshold-085",
+      "date": "2026-05-19",
+      "decision": "Set the OCR auto-accept threshold for load numbers at 0.85 confidence, sending everything below it to manual review.",
+      "context": "Tuned against 400 hand-labelled PODs from Meridian's actual carrier mix. At 0.85 the false-accept rate was under 0.5%; dropping to 0.75 would have cut the manual queue by about a third but pushed false accepts near 3%. A wrong load number means an invoice sent to the wrong customer, which costs far more in trust than the manual review costs in time.",
+      "rejected": [
+        {
+          "option": "Lower the threshold to 0.75 to shrink the manual queue",
+          "why_not": "Roughly 3% false accepts. Misdirected invoices are a customer-trust problem, not a throughput problem."
+        },
+        {
+          "option": "Auto-accept everything and reconcile errors afterwards",
+          "why_not": "Meridian has no reconciliation capacity, and the errors would surface as customer complaints."
+        }
+      ],
+      "revisit_when": "The extraction model is upgraded, or Meridian's carrier mix shifts materially. Rerun the labelled set before changing the number — do not adjust it by feel.",
+      "flow_ids": ["pod-intake"]
+    }
+  ],
+
+  "constraints": [
+    {
+      "id": "pod-retention",
+      "kind": "regulatory",
+      "rule": "Retain proof-of-delivery documents for a minimum of three years and keep them retrievable by load number.",
+      "consequence": "Meridian's cargo insurance and customer audits both depend on producing PODs on demand. A gap is an insurance and contractual exposure, not just an inconvenience.",
+      "source": "Dana Reyes, citing Meridian's cargo insurance policy terms"
+    },
+    {
+      "id": "no-prod-tms-writes",
+      "kind": "technical",
+      "rule": "Do not write to the TMS from any deployed flow. Read only, and only against the replica.",
+      "consequence": "The vendor upgrade cycle can change schema without notice; a write path would put the client's system of record at risk. See decision 'no-tms-writes'.",
+      "source": "Agreed with Priya Chandran and Dana Reyes at project kickoff"
+    },
+    {
+      "id": "change-window",
+      "kind": "operational",
+      "rule": "No deploys between 05:00 and 19:00 CT on weekdays, and never on a billing afternoon (Monday or Thursday).",
+      "consequence": "A deploy during the billing run can leave loads half-processed, and dispatch has no tolerance for surprises during staffed hours.",
+      "source": "Marcus Bell"
+    },
+    {
+      "id": "invoice-approval",
+      "kind": "political",
+      "rule": "Invoices over $25,000 must remain human-approved. Do not remove this gate as an optimization.",
+      "consequence": "Dana agreed to the whole project on the condition that large invoices stay under human eyes. Removing it without asking her would damage the relationship well beyond the value of the automation.",
+      "source": "Dana Reyes"
+    }
+  ],
+
+  "runbook": {
+    "environments": [
+      {
+        "name": "production",
+        "purpose": "The live deployment. Serves Meridian's actual billing.",
+        "access": "AWS account 'otomait-clients', role MeridianDeploy. Granted by 0tomait; Priya does not administer this.",
+        "url": "us-east-2"
+      },
+      {
+        "name": "staging",
+        "purpose": "Full copy of both flows pointed at the QuickBooks sandbox and a fixture mailbox. Safe for end-to-end testing.",
+        "access": "Same AWS account, role MeridianDeploy. Note it reads the real TMS replica — staging is not fully isolated.",
+        "url": "us-east-2"
+      }
+    ],
+    "observability": {
+      "logs": "CloudWatch log groups /aws/lambda/meridian-*, 30-day retention. Structured JSON, always includes load_number and flow id.",
+      "metrics": "CloudWatch custom namespace 'Meridian': pods_matched, pods_to_review, invoices_created, invoices_skipped.",
+      "alerting": "CloudWatch alarms to SNS, then to the #meridian-alerts Slack channel. Marcus watches it during business hours. There is no paging and no weekend coverage — this is deliberate and accepted, not an oversight."
+    },
+    "procedures": [
+      {
+        "name": "Deploy a flow change",
+        "when": "Shipping any code change to production.",
+        "steps": [
+          "Confirm the change window: not 05:00-19:00 CT on a weekday, and not a Monday or Thursday billing afternoon.",
+          "Merge to main; CI runs unit and contract tests.",
+          "Deploy to staging and run the end-to-end fixture suite: npm run e2e:staging.",
+          "Deploy to production: npm run deploy:prod.",
+          "Watch #meridian-alerts through the next scheduled run of the affected flow before considering it done."
+        ],
+        "risk": "Deploying during the billing run can leave loads half-processed. The window rule exists for this reason."
+      },
+      {
+        "name": "Roll back",
+        "when": "A production deploy is misbehaving.",
+        "steps": [
+          "npm run deploy:prod -- --version <previous>. Lambda versions are retained for 10 deploys.",
+          "Check the tracking table for loads marked in-flight by the bad version and reset their status to pending.",
+          "Post what happened in #meridian-alerts so Marcus knows whether to expect a short billing delay."
+        ],
+        "risk": "Rollback does not undo invoices already created in QuickBooks. Those must be voided by Marcus by hand."
+      },
+      {
+        "name": "Rotate the Graph app secret",
+        "when": "Before 2027-02-14, or immediately if the secret is believed exposed.",
+        "steps": [
+          "Create a new client secret on the Azure app registration 'otomait-pod-reader'. Requires Priya — book her a week ahead.",
+          "Update the 1Password item and the AWS Secrets Manager entry.",
+          "Redeploy pod-intake and confirm a successful mailbox poll in the logs.",
+          "Delete the old secret from Azure only after a clean poll is observed.",
+          "Update the expires date on the email-billing system entry in this manifest."
+        ],
+        "risk": "If the secret expires unrotated, POD intake stops completely and silently apart from the alarm. Both SharePoint and mailbox access share this secret."
+      },
+      {
+        "name": "Onboard a new engineer",
+        "when": "Someone new is picking up this deployment.",
+        "steps": [
+          "Read this manifest end to end, starting with the glossary and the decisions.",
+          "Request 1Password vault access and the AWS role from 0tomait; request TMS replica access from Priya, allowing a week.",
+          "Run the staging e2e suite to confirm access works before touching anything.",
+          "Sit with Marcus for one morning while he works the manual review queue. Every non-obvious behavior in pod-intake traces back to something visible in that hour.",
+          "Re-verify the systems and flows sections and update their last_verified dates."
+        ]
+      }
+    ],
+    "known_failures": [
+      {
+        "symptom": "invoice-issue run summary reports a spike in skipped loads, all citing 'customer not mapped'.",
+        "cause": "Meridian onboarded a new customer and the TMS-to-QuickBooks mapping table was not updated. It is maintained by hand.",
+        "fix": "Add the mapping in services/invoice-issue/config/customer-map.json, deploy, and the next run picks up the skipped loads automatically.",
+        "flow_id": "invoice-issue",
+        "permanent_fix_tracked_as": "Move the mapping into a table Marcus can edit himself — see handoff.recommended_next"
+      },
+      {
+        "symptom": "pod-intake logs 'load not found' for loads that clearly exist in the TMS.",
+        "cause": "Replica lag. The POD arrived within minutes of the load being created or updated in production.",
+        "fix": "None needed — the retry path handles it. If it persists beyond 15 minutes, check replica health with Priya.",
+        "flow_id": "pod-intake"
+      },
+      {
+        "symptom": "Documents are filed successfully but billing cannot find them in SharePoint.",
+        "cause": "Someone manually reorganized folders in the Load Documents library. The flow writes by path.",
+        "fix": "Locate the moved folder and restore the {fiscal_year}/{load_number} path. Remind the team that the structure is load-bearing.",
+        "flow_id": "pod-intake"
+      }
+    ]
+  },
+
+  "handoff": {
+    "current_owner": "brandon-armstrong",
+    "unfinished": [
+      "Manual POD matching sits at 23% against a 20% target. The gap is almost entirely handwritten load numbers on photographed paperwork.",
+      "Days-sales-outstanding has not been measured post-launch. Finance reports quarterly; the first clean reading should land after Q3 close.",
+      "No runbook entry exists for the QuickBooks re-consent flow, because it has not been exercised yet."
+    ],
+    "debt": [
+      {
+        "what": "The TMS-to-QuickBooks customer mapping is a JSON file in the repository, so adding a customer requires an engineer and a deploy.",
+        "why": "Meridian had no appetite for another admin UI during the build, and the mapping was expected to be nearly static. It has changed four times since launch.",
+        "cost_to_fix": "Roughly two days to move it to a table Marcus can edit, plus a validation step so a bad edit cannot break a billing run.",
+        "flow_id": "invoice-issue"
+      },
+      {
+        "what": "Staging reads the production TMS replica rather than a fixture database.",
+        "why": "There is no TMS sandbox and building a realistic fixture set was out of scope for the fixed bid.",
+        "cost_to_fix": "Three to four days to capture an anonymized fixture set and point staging at it. Worth doing before any significant change to matching logic."
+      },
+      {
+        "what": "The OCR confidence threshold is a constant in code rather than configuration.",
+        "why": "It was expected to be tuned once. Changing it now requires a deploy.",
+        "cost_to_fix": "Half a day. Do it alongside the mapping-table work.",
+        "flow_id": "pod-intake"
+      }
+    ],
+    "risks": [
+      {
+        "risk": "The Graph app secret expires and POD intake stops entirely. Both flows depend on it, and rotation requires Priya, who is available two days a week.",
+        "likelihood": "medium",
+        "impact": "critical",
+        "mitigation": "Calendar reminder set for 2026-12-01 to start the rotation, giving ten weeks of slack. The rotation procedure is in the runbook.",
+        "trigger_date": "2027-02-14"
+      },
+      {
+        "risk": "Nobody works the manual review queue when Marcus is away, so PODs accumulate and billing slips without any alarm firing.",
+        "likelihood": "high",
+        "impact": "medium",
+        "mitigation": "Not yet mitigated. The cheapest fix is a queue-depth alarm that fires above 40 items — recommended below."
+      },
+      {
+        "risk": "A McLeod vendor upgrade renames columns the read queries depend on. This has happened before with about two weeks notice.",
+        "likelihood": "medium",
+        "impact": "high",
+        "mitigation": "Contract tests against the replica fail loudly rather than returning wrong data. Priya forwards upgrade notices; make sure any successor is on that email."
+      },
+      {
+        "risk": "The retainer is not renewed at year end and nobody owns the deployment at all.",
+        "likelihood": "medium",
+        "impact": "high",
+        "mitigation": "This manifest is the mitigation. Keep it current — it is what makes an unowned handover survivable.",
+        "trigger_date": "2026-12-31"
+      }
+    ],
+    "recommended_next": [
+      "Add a manual-review queue-depth alarm at 40 items. Cheapest meaningful risk reduction available; roughly half a day.",
+      "Move the customer mapping to a table Marcus can edit. Removes the most frequent cause of skipped invoices and removes an engineer from the loop.",
+      "Build the anonymized TMS fixture set so staging stops depending on production data. Do this before anyone changes matching logic.",
+      "Revisit the handwritten-load-number cases as a batch: about 60% come from a dozen carriers, so a targeted request that they include the load number in the subject line may beat any modelling work."
+    ],
+    "blast_radius_notes": "The Azure app registration 'otomait-pod-reader' is shared between mailbox access and SharePoint writes. Rotating or revoking it takes down both POD intake and document filing at once, which in turn stalls invoicing within a day. Treat it as the single most sensitive dependency in the deployment. Separately, the SharePoint folder path is load-bearing: manual folder reorganization by billing staff strands documents with no error raised anywhere."
+  },
+
+  "spaces": [
+    {
+      "id": "billing",
+      "name": "Billing & receivables",
+      "purpose": "Everything between a delivered load and cash in the bank: the sweep, the mailbox, the invoices.",
+      "decision_maker": "dana-reyes",
+      "delegate": "marcus-bell",
+      "flows": ["pod-intake", "invoice-issue"],
+      "systems": ["email-billing", "docstore", "accounting", "ocr"],
+      "notes": "Dana's approval condition on large invoices (see constraints) defines the political boundary of this space. The delegate line: changes that stay inside the queue are Marcus's call; changes a customer could notice are Dana's, always."
+    },
+    {
+      "id": "client-it",
+      "name": "Client IT & access",
+      "purpose": "Tenant administration, credentials, DNS, and the TMS. Not a business domain, but a space in its own right because it has exactly one gatekeeper.",
+      "decision_maker": "priya-chandran",
+      "systems": ["tms", "email-billing"],
+      "notes": "There is no delegate. When Priya is unavailable this space is closed — plan around it rather than trying to escalate, because escalation paths do not exist."
+    }
+  ],
+
+  "walkthroughs": [
+    {
+      "id": "wt-queue-morning",
+      "title": "Working the morning review queue",
+      "kind": "pairing-script",
+      "location": "github.com/0tomait/meridian-billing — docs/walkthroughs/queue-morning.md",
+      "audience_role": "queue-operator",
+      "covers": { "flows": ["pod-intake"] },
+      "duration": "One morning shadowing, one morning reversed",
+      "prerequisites": [
+        "SharePoint access to the Load Documents library",
+        "Read access to #meridian-alerts"
+      ],
+      "last_updated": "2026-06-02"
+    },
+    {
+      "id": "wt-large-invoice-review",
+      "title": "Reviewing and releasing large-invoice drafts",
+      "kind": "document",
+      "location": "github.com/0tomait/meridian-billing — docs/walkthroughs/large-invoice-review.md",
+      "audience_role": "approver",
+      "covers": { "flows": ["invoice-issue"] },
+      "duration": "30 minutes to read; first live run supervised",
+      "last_updated": "2026-04-01"
+    },
+    {
+      "id": "wt-system-tour",
+      "title": "Deployment tour for an inheriting engineer",
+      "kind": "recording",
+      "location": "1Password vault 'Meridian' → item 'Loom: system tour' (link only — the recording shows system URLs)",
+      "audience_role": "steward",
+      "covers": {
+        "flows": ["pod-intake", "invoice-issue"],
+        "systems": ["tms", "email-billing", "docstore", "accounting", "ocr"]
+      },
+      "duration": "45 minutes",
+      "prerequisites": ["Read this manifest first — the recording assumes it"],
+      "last_updated": "2026-07-28"
+    }
+  ],
+
+  "field_reports": [
+    {
+      "id": "fr-20260624-1",
+      "date": "2026-06-24",
+      "kind": "bug",
+      "reported_by": "marcus-bell",
+      "channel": "#meridian-alerts",
+      "report": "Same POD filed twice on load 471203. Carrier sent it Tuesday and again Thursday with a cover sheet added, so the file hash differed and dedup let it through.",
+      "flow_id": "pod-intake",
+      "status": "resolved",
+      "resolution": "Dedup now also compares extracted load number plus page count before filing a second document on a non-split load. Second copies land in the review queue instead.",
+      "resolved_on": "2026-06-26"
+    },
+    {
+      "id": "fr-20260710-1",
+      "date": "2026-07-10",
+      "kind": "friction",
+      "reported_by": "marcus-bell",
+      "channel": "morning queue session",
+      "report": "The handwritten ones take three or four times longer than anything else in the queue. Most mornings they are the whole queue.",
+      "flow_id": "pod-intake",
+      "status": "acknowledged"
+    },
+    {
+      "id": "fr-20260722-1",
+      "date": "2026-07-22",
+      "kind": "gap",
+      "reported_by": "dana-reyes",
+      "channel": "email",
+      "report": "I cannot see which delivered loads are still waiting on paperwork without asking Marcus. Before the automation I could at least see the pile on his desk.",
+      "flow_id": "pod-intake",
+      "status": "open"
+    }
+  ],
+
+  "glossary": [
+    {
+      "term": "POD",
+      "means": "Proof of delivery. The signed document confirming a load was delivered. Meridian cannot invoice without one.",
+      "not_to_be_confused_with": "Kubernetes pods — the term appears constantly in this domain and means nothing technical here."
+    },
+    {
+      "term": "BOL",
+      "means": "Bill of lading. The contract of carriage issued at pickup. Often confused with the POD by newcomers; the BOL is issued at the start of a load, the POD at the end.",
+      "not_to_be_confused_with": "POD, which is what this deployment actually keys on"
+    },
+    {
+      "term": "Rate con",
+      "means": "Rate confirmation. The signed agreement fixing what the carrier will be paid for a load. It is the source of the invoice line items."
+    },
+    {
+      "term": "Lane",
+      "means": "A recurring origin-destination pair, such as Dallas to Atlanta. Meridian prices and talks about volume by lane."
+    },
+    {
+      "term": "Accessorial",
+      "means": "An extra charge on top of the base rate — detention, layover, lumper fees. These appear as additional invoice line items and are a frequent source of billing disputes."
+    },
+    {
+      "term": "MC number",
+      "means": "Motor Carrier number issued by the FMCSA. The stable identifier for a carrier, unlike company name."
+    },
+    {
+      "term": "Split load",
+      "means": "A load moved by two carriers under a parent and child record. Deliberately excluded from automated invoicing.",
+      "not_to_be_confused_with": "Partial or LTL freight, which Meridian does not broker"
+    },
+    {
+      "term": "The sweep",
+      "means": "Meridian's internal name for the twice-weekly billing run on Monday and Thursday afternoons. Staff will say 'before the sweep' and mean the deploy freeze window."
+    }
+  ]
+}

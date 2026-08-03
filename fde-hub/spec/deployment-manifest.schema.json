@@ -1,0 +1,760 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://0tomait.com/spec/deployment-manifest/v0.4.json",
+  "title": "FDE Deployment Manifest",
+  "description": "A machine-readable description of a client environment and everything deployed into it. Written to be read cold by a human or an agent who was not present for the original engagement.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest",
+    "client",
+    "engagement",
+    "systems",
+    "entities",
+    "flows",
+    "decisions",
+    "constraints",
+    "runbook",
+    "handoff",
+    "glossary"
+  ],
+  "properties": {
+    "manifest": {
+      "type": "object",
+      "description": "Metadata about this document, not about the client.",
+      "additionalProperties": false,
+      "required": ["spec_version", "updated", "maintainer"],
+      "properties": {
+        "spec_version": {
+          "type": "string",
+          "enum": ["0.1", "0.2", "0.3", "0.4"],
+          "description": "Version of the deployment-manifest spec this document conforms to. 0.2 adds the stewardship layer: spaces, lineage, and walkthroughs. 0.3 adds the people registry. 0.4 adds field reports: the deployment's feedback channel."
+        },
+        "updated": {
+          "$ref": "#/$defs/date",
+          "description": "Date this manifest was last revised. Not the same as the last_verified date on individual records."
+        },
+        "maintainer": {
+          "description": "Who is accountable for this manifest being true today. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
+        },
+        "supersedes": {
+          "type": "string",
+          "description": "Optional path or URL of the manifest revision this one replaces."
+        }
+      }
+    },
+
+    "client": {
+      "type": "object",
+      "description": "Who the client is and how they operate. Context an outsider cannot infer from the code.",
+      "additionalProperties": false,
+      "required": ["name", "industry", "size", "business_summary", "timezone"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "industry": { "type": "string", "minLength": 1 },
+        "size": {
+          "type": "string",
+          "description": "Rough headcount band. Drives how much process to expect.",
+          "enum": ["1-10", "11-50", "51-200", "201-1000", "1000+"]
+        },
+        "business_summary": {
+          "type": "string",
+          "minLength": 40,
+          "description": "How this company actually makes money, in plain language. Two or three sentences. If you cannot write this, you do not understand the deployment."
+        },
+        "timezone": {
+          "type": "string",
+          "description": "IANA timezone of the primary operation, e.g. America/Chicago. Schedules and change windows are meaningless without it."
+        },
+        "operating_hours": {
+          "type": "string",
+          "description": "When the business is live, in the client's own terms. Determines when it is safe to break things."
+        },
+        "contacts": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Legacy (pre-0.3): named humans inline. From 0.3, humans live in the top-level people registry and this field is unnecessary. The lint still insists on humans existing somewhere — a manifest with no people in it is a dead document.",
+          "items": { "$ref": "#/$defs/contact" }
+        },
+        "communication_norms": {
+          "type": "string",
+          "description": "How this client wants to be reached, how fast they answer, and who must be looped in. Saves the next engineer two weeks of friction."
+        }
+      }
+    },
+
+    "engagement": {
+      "type": "object",
+      "description": "What was bought and why. The business case, so the next person can tell whether the system is still worth what it costs.",
+      "additionalProperties": false,
+      "required": ["problem_statement", "outcomes", "status", "support_posture"],
+      "properties": {
+        "problem_statement": {
+          "type": "string",
+          "minLength": 40,
+          "description": "The pain that caused them to spend money, stated as the client would state it."
+        },
+        "outcomes": {
+          "type": "array",
+          "minItems": 1,
+          "description": "The measurable results the work was supposed to produce.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "baseline", "target"],
+            "properties": {
+              "metric": { "type": "string", "minLength": 1 },
+              "baseline": { "type": "string", "description": "Where it stood before the work." },
+              "target": { "type": "string", "description": "Where it was supposed to land." },
+              "actual": { "type": "string", "description": "Where it actually landed. Leave unset if not yet measured; do not guess." },
+              "measured_on": { "$ref": "#/$defs/date" }
+            }
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["scoping", "building", "piloting", "live", "maintenance", "handed-off", "sunset"]
+        },
+        "support_posture": {
+          "type": "string",
+          "description": "What happens when this breaks at 2am. Who is actually on the hook, contractually and in practice.",
+          "minLength": 20
+        },
+        "started": { "$ref": "#/$defs/date" },
+        "budget_notes": {
+          "type": "string",
+          "description": "Commercial context that changes engineering decisions: fixed bid, retainer, hours remaining, renewal date."
+        }
+      }
+    },
+
+    "systems": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Every system the deployment touches or depends on. Inventory first; nothing else in this document makes sense without it.",
+      "items": { "$ref": "#/$defs/system" }
+    },
+
+    "entities": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The business objects that matter and where truth about them lives. This is the client's ontology in miniature: the shared vocabulary that lets a stranger reason about the data without reading every integration.",
+      "items": { "$ref": "#/$defs/entity" }
+    },
+
+    "flows": {
+      "type": "array",
+      "description": "What was actually deployed. May be empty during scoping.",
+      "items": { "$ref": "#/$defs/flow" }
+    },
+
+    "decisions": {
+      "type": "array",
+      "description": "Why the system looks the way it does, including the roads not taken. The single highest-value section: it is the part that cannot be recovered by reading the code.",
+      "items": { "$ref": "#/$defs/decision" }
+    },
+
+    "constraints": {
+      "type": "array",
+      "description": "Rules the next engineer must not discover the hard way. Regulatory, security, contractual, and political.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "rule", "consequence"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "kind": {
+            "type": "string",
+            "enum": ["regulatory", "security", "contractual", "technical", "political", "operational"]
+          },
+          "rule": { "type": "string", "minLength": 10, "description": "The constraint, stated as an imperative." },
+          "consequence": {
+            "type": "string",
+            "minLength": 10,
+            "description": "What breaks, legally or socially, if it is violated. Constraints without stated consequences get ignored."
+          },
+          "source": { "type": "string", "description": "Who imposed it. A named person or document beats 'compliance said so'." }
+        }
+      }
+    },
+
+    "runbook": {
+      "type": "object",
+      "description": "The operational surface. How to observe, change, and repair what is running.",
+      "additionalProperties": false,
+      "required": ["environments", "observability", "procedures"],
+      "properties": {
+        "environments": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "purpose", "access"],
+            "properties": {
+              "name": { "type": "string" },
+              "purpose": { "type": "string" },
+              "access": { "type": "string", "description": "How a new engineer gets in, and who grants it." },
+              "url": { "type": "string" }
+            }
+          }
+        },
+        "observability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["logs", "alerting"],
+          "properties": {
+            "logs": { "type": "string", "description": "Where logs live and how far back they go." },
+            "metrics": { "type": "string" },
+            "alerting": { "type": "string", "description": "What fires, where it lands, and who acknowledges it." }
+          }
+        },
+        "procedures": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Named, repeatable operations. Deploy, roll back, replay, rotate credentials, onboard an engineer.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "when", "steps"],
+            "properties": {
+              "name": { "type": "string" },
+              "when": { "type": "string", "description": "The trigger condition for running this." },
+              "steps": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+              "risk": { "type": "string", "description": "What this can damage if it goes wrong." }
+            }
+          }
+        },
+        "known_failures": {
+          "type": "array",
+          "description": "Failures already seen in production, with their fixes. Turns a 3am page into a lookup.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["symptom", "cause", "fix"],
+            "properties": {
+              "symptom": { "type": "string", "description": "What the operator sees, in the words they will see it." },
+              "cause": { "type": "string" },
+              "fix": { "type": "string" },
+              "flow_id": { "$ref": "#/$defs/id" },
+              "permanent_fix_tracked_as": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+
+    "handoff": {
+      "type": "object",
+      "description": "The state of the world at the moment the original engineer stopped. Written for a successor, in the second person.",
+      "additionalProperties": false,
+      "required": ["current_owner", "unfinished", "debt", "risks", "recommended_next"],
+      "properties": {
+        "current_owner": {
+          "description": "Who owns this today. If nobody does, say so explicitly rather than leaving it implied. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
+        },
+        "unfinished": {
+          "type": "array",
+          "description": "Work that was scoped and not completed. Distinct from debt: this was promised.",
+          "items": { "type": "string" }
+        },
+        "debt": {
+          "type": "array",
+          "description": "Shortcuts taken knowingly, and what it would take to undo them.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["what", "why", "cost_to_fix"],
+            "properties": {
+              "what": { "type": "string" },
+              "why": { "type": "string", "description": "The pressure that justified it at the time." },
+              "cost_to_fix": { "type": "string" },
+              "flow_id": { "$ref": "#/$defs/id" }
+            }
+          }
+        },
+        "risks": {
+          "type": "array",
+          "description": "Things likely to break on their own, without anyone touching them.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["risk", "likelihood", "impact"],
+            "properties": {
+              "risk": { "type": "string" },
+              "likelihood": { "type": "string", "enum": ["low", "medium", "high"] },
+              "impact": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+              "mitigation": { "type": "string" },
+              "trigger_date": {
+                "$ref": "#/$defs/date",
+                "description": "For time-bombs: contract expiry, cert expiry, API deprecation."
+              }
+            }
+          }
+        },
+        "recommended_next": {
+          "type": "array",
+          "description": "What the original engineer would do next if they had another two weeks, in priority order.",
+          "items": { "type": "string" }
+        },
+        "blast_radius_notes": {
+          "type": "string",
+          "description": "Coupling that is not obvious from the code. 'If you change X, Y silently stops.'"
+        }
+      }
+    },
+
+    "people": {
+      "type": "array",
+      "description": "The person registry — the single home for every human in this manifest. Added in v0.3. All person-bearing fields (maintainer, system_owner, decision_maker, delegate, current_owner, tenure.person) reference entries here by id, so a staffing change is one edit, not a scavenger hunt across five sections.",
+      "items": { "$ref": "#/$defs/person" }
+    },
+
+    "spaces": {
+      "type": "array",
+      "description": "Business domains the deployment lives in, each with a named decision maker. Added in v0.2. A space answers the question a successor cannot answer from code: who do you ask before changing this part of the client's world?",
+      "items": { "$ref": "#/$defs/space" }
+    },
+
+    "walkthroughs": {
+      "type": "array",
+      "description": "Transition assets — recordings, documents, pairing scripts — that move knowledge from a person into a role. Added in v0.2. Referenced from lineage tenures via trained_via, so every handover leaves a trace.",
+      "items": { "$ref": "#/$defs/walkthrough" }
+    },
+
+    "field_reports": {
+      "type": "array",
+      "description": "Observations from the people who operate the deployment: bugs, friction, gaps, and usage notes, each with a status and, once closed, a resolution. Added in v0.4. This is the deployment's feedback channel, recorded where the next engineer will find it. Reports cluster before they escalate; several against one flow is a redesign signal.",
+      "items": { "$ref": "#/$defs/field_report" }
+    },
+
+    "glossary": {
+      "type": "array",
+      "description": "Client-specific vocabulary. Almost always omitted, and almost always the reason an outsider misreads the domain.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["term", "means"],
+        "properties": {
+          "term": { "type": "string" },
+          "means": { "type": "string", "minLength": 10 },
+          "not_to_be_confused_with": { "type": "string" }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Stable kebab-case identifier, unique within its collection. Referenced from elsewhere in the manifest."
+    },
+
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "ISO-8601 calendar date, YYYY-MM-DD."
+    },
+
+    "tenure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "person", "from"],
+      "description": "One person holding one role for a period. Roles are the stable unit — defined by the flow's pattern and the work itself; people rotate through them. The lineage of a flow or system is its list of tenures.",
+      "properties": {
+        "role": {
+          "type": "string",
+          "minLength": 2,
+          "description": "The role held, not the job title: steward, queue-operator, approver, drift-adjudicator, administrator. Matches the role names in the flow's pattern where one exists."
+        },
+        "person": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Person id from people[] in 0.3 manifests; a bare name in earlier versions. The lint enforces registry membership whenever a registry exists."
+        },
+        "org": { "type": "string", "description": "Client, vendor, or your own firm." },
+        "from": { "$ref": "#/$defs/date" },
+        "to": {
+          "$ref": "#/$defs/date",
+          "description": "Unset means the tenure is open — this person holds the role today."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["built", "inherited", "covering"],
+          "description": "built: the original author of the thing. inherited: took over as the standing holder. covering: temporary, with an expected return."
+        },
+        "trained_via": {
+          "$ref": "#/$defs/id",
+          "description": "Walkthrough id used for the handover into this tenure. Its absence on an open inherited tenure is a finding: the knowledge transferred only in conversation, if at all."
+        },
+        "exit_note": {
+          "type": "string",
+          "description": "How the tenure ended and what was lost or learned in the transition. The most honest field in the family tree — write it when it happens, not later."
+        }
+      }
+    },
+
+    "walkthrough": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "kind", "location", "audience_role", "last_updated"],
+      "description": "A transition asset: the thing that moves a role from one person to the next. A pattern's transition_walkthrough_must_cover list is the outline; this is the client-specific instance.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "title": { "type": "string", "minLength": 1 },
+        "kind": {
+          "type": "string",
+          "enum": ["recording", "document", "pairing-script", "checklist"]
+        },
+        "location": {
+          "type": "string",
+          "minLength": 3,
+          "description": "Where the asset lives. A pointer — like secrets, walkthrough content is stored elsewhere."
+        },
+        "audience_role": {
+          "type": "string",
+          "description": "The role this trains someone into, matching lineage role names."
+        },
+        "covers": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "flows": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+            "systems": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+          }
+        },
+        "duration": { "type": "string", "description": "What it costs to receive: '45 minutes', 'one morning shadowing, one reversed'." },
+        "prerequisites": { "type": "array", "items": { "type": "string" } },
+        "last_updated": {
+          "$ref": "#/$defs/date",
+          "description": "A walkthrough that predates the system it describes trains people wrong with confidence. The validator warns past 180 days."
+        }
+      }
+    },
+
+    "space": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "decision_maker"],
+      "description": "A business domain with a named decision maker: the person whose yes is required before changing anything inside it.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "purpose": {
+          "type": "string",
+          "minLength": 15,
+          "description": "What part of the client's world this is, in their terms."
+        },
+        "decision_maker": {
+          "description": "One name, not a committee. If two people must both agree, that fact belongs in notes — but one of them still answers the phone first. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
+        },
+        "delegate": {
+          "description": "Who answers when the decision maker is unavailable, and the limit of what they can approve. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
+        },
+        "flows": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "systems": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+        "notes": {
+          "type": "string",
+          "description": "The politics of the space that do not fit in constraints — where the delegate's authority ends, which changes are radioactive."
+        }
+      }
+    },
+
+    "field_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "kind", "reported_by", "report", "status"],
+      "description": "One observation from the field. The lifecycle is open, acknowledged, then resolved or declined. A declined report with its reasoning recorded is a decision in miniature.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "kind": {
+          "type": "string",
+          "enum": ["bug", "friction", "gap", "usage", "idea"],
+          "description": "bug: it misbehaves. friction: it works but fights the person using it. gap: something it should cover and does not. usage: an observation about how it is actually used. idea: a suggestion worth keeping."
+        },
+        "reported_by": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Person id from people[] where a registry exists, otherwise a name. When the steward files on an operator's behalf, credit the operator; reports from the people doing the work carry the most signal."
+        },
+        "channel": {
+          "type": "string",
+          "description": "How it arrived: a queue session, a run summary, a hallway remark. Knowing where feedback surfaces tells you where to listen."
+        },
+        "report": {
+          "type": "string",
+          "minLength": 15,
+          "description": "What was observed, in words close to the reporter's own. Paraphrase flattens the signal."
+        },
+        "flow_id": { "$ref": "#/$defs/id" },
+        "system_id": { "$ref": "#/$defs/id" },
+        "status": {
+          "type": "string",
+          "enum": ["open", "acknowledged", "resolved", "declined"]
+        },
+        "resolution": {
+          "type": "string",
+          "description": "What was done, or why it will not be. The lint requires this once status is resolved or declined."
+        },
+        "resolved_on": { "$ref": "#/$defs/date" }
+      }
+    },
+
+    "person_ref": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "Id of an entry in the people registry."
+    },
+
+    "person": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "role"],
+      "description": "A registry entry: one human, described once. Departed people stay in the registry — their tenures still reference them, and history should not dangle. A defunct team can be modeled as a person when its tenures predate individual attribution.",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1, "description": "Their job, and what they are the decision-maker for." },
+        "org": { "type": "string", "description": "Client, vendor, or your own firm." },
+        "email": { "type": "string" },
+        "notes": { "type": "string", "description": "How to work with them effectively — response habits, availability windows. Kept professional; this document gets read by the client." }
+      }
+    },
+
+    "contact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1, "description": "Their job, and what they are the decision-maker for." },
+        "org": { "type": "string", "description": "Client, vendor, or your own firm." },
+        "email": { "type": "string" },
+        "notes": { "type": "string", "description": "How to work with them effectively. Kept professional; this document gets read by the client." }
+      }
+    },
+
+    "system": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "purpose", "criticality", "access", "last_verified"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "vendor": { "type": "string" },
+        "purpose": { "type": "string", "minLength": 10, "description": "What the business uses it for, not what the vendor says it does." },
+        "criticality": {
+          "type": "string",
+          "enum": ["core", "important", "peripheral"],
+          "description": "core: the business stops without it. Determines change-window discipline."
+        },
+        "system_owner": {
+          "description": "Who at the client controls this system — the person whose approval you need. A person id from people[] (0.3), or an inline contact (legacy).",
+          "anyOf": [{ "$ref": "#/$defs/person_ref" }, { "$ref": "#/$defs/contact" }]
+        },
+        "access": {
+          "type": "object",
+          "description": "How the deployment authenticates. Never the secret itself: only its mechanism and location.",
+          "additionalProperties": false,
+          "required": ["method", "secret_location"],
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["oauth2", "api-key", "basic-auth", "service-account", "sftp-key", "db-credentials", "session-scrape", "none"]
+            },
+            "secret_location": {
+              "type": "string",
+              "minLength": 5,
+              "description": "The vault path or secret-manager reference where the credential lives. A pointer, never a value."
+            },
+            "scopes": { "type": "array", "items": { "type": "string" } },
+            "rotation": { "type": "string", "description": "Rotation cadence and who performs it. 'Unknown' is a valid and useful answer." },
+            "expires": { "$ref": "#/$defs/date" }
+          }
+        },
+        "api": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "docs_url": { "type": "string" },
+            "base_url": { "type": "string" },
+            "rate_limits": { "type": "string" },
+            "sandbox_available": { "type": "boolean" }
+          }
+        },
+        "lineage": {
+          "type": "array",
+          "description": "The family tree of this system's administration: who has held it, who holds it now, and how each tenure ended. Tool ownership changes hands more often than anyone documents, and each undocumented handover sheds knowledge.",
+          "items": { "$ref": "#/$defs/tenure" }
+        },
+        "gotchas": {
+          "type": "array",
+          "description": "Hard-won knowledge about this system in this client's configuration. The most expensive field to reconstruct.",
+          "items": { "type": "string" }
+        },
+        "last_verified": {
+          "$ref": "#/$defs/date",
+          "description": "When someone last confirmed this entry is still true. Staleness here is the main way manifests silently start lying."
+        }
+      }
+    },
+
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "definition", "source_of_truth", "identifier"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "definition": {
+          "type": "string",
+          "minLength": 15,
+          "description": "What this object means to the business. Where the client's usage differs from the industry-standard meaning, say so here."
+        },
+        "source_of_truth": {
+          "$ref": "#/$defs/id",
+          "description": "The id of the system that wins when copies disagree. Must reference a declared system."
+        },
+        "also_lives_in": {
+          "type": "array",
+          "description": "Other systems holding a copy. Each one is a future reconciliation bug.",
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "identifier": {
+          "type": "string",
+          "minLength": 3,
+          "description": "The field used to join this entity across systems, and its format. The single most useful line in the section."
+        },
+        "sensitivity": {
+          "type": "string",
+          "enum": ["public", "internal", "confidential", "pii", "phi", "financial"],
+          "description": "Drives logging, retention, and where this data is allowed to travel."
+        },
+        "volume": { "type": "string", "description": "Rough scale and growth rate. Distinguishes a spreadsheet problem from a database problem." },
+        "quirks": {
+          "type": "array",
+          "description": "Real-world data conditions that break naive implementations: duplicates, nulls, historical format changes.",
+          "items": { "type": "string" }
+        }
+      }
+    },
+
+    "flow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "business_purpose", "trigger", "systems", "code", "failure_mode", "last_verified"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "name": { "type": "string", "minLength": 1 },
+        "pattern": {
+          "type": "string",
+          "description": "Id of the flow pattern this was instantiated from, if any — see patterns/. A provenance link for humans and agents; not validated across files."
+        },
+        "lineage": {
+          "type": "array",
+          "description": "The family tree of this flow: every tenure of a person in a role on it, past and present. An open tenure (no 'to' date) is a current holder. Staffing is fluid; this is where the fluidity becomes visible instead of surprising.",
+          "items": { "$ref": "#/$defs/tenure" }
+        },
+        "business_purpose": {
+          "type": "string",
+          "minLength": 25,
+          "description": "The job this does for the client, in their language. If it reads like a technical description, rewrite it."
+        },
+        "trigger": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "detail"],
+          "properties": {
+            "kind": { "type": "string", "enum": ["schedule", "webhook", "file-drop", "email", "manual", "queue", "polling"] },
+            "detail": { "type": "string", "minLength": 3, "description": "Cron expression, endpoint, watched folder, or who pushes the button." }
+          }
+        },
+        "steps": {
+          "type": "array",
+          "description": "The path through the system at a level a non-author can follow. Not a code walkthrough.",
+          "items": { "type": "string" }
+        },
+        "systems": {
+          "type": "array",
+          "minItems": 1,
+          "description": "System ids this flow touches. Must reference declared systems. Powers impact analysis when a system changes.",
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "entities": {
+          "type": "array",
+          "description": "Entity ids this flow reads or writes.",
+          "items": { "$ref": "#/$defs/id" }
+        },
+        "code": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["location", "runtime"],
+          "properties": {
+            "location": { "type": "string", "minLength": 3, "description": "Repository and path, or the platform and project name if it lives in a low-code tool." },
+            "runtime": { "type": "string", "description": "Where it executes and on what schedule infrastructure." },
+            "language": { "type": "string" },
+            "deploy_procedure": { "type": "string", "description": "Name of the runbook procedure that ships a change to this flow." }
+          }
+        },
+        "human_in_the_loop": {
+          "type": "array",
+          "description": "Points where a person must still act. These are the steps that quietly stop working when that person leaves.",
+          "items": { "type": "string" }
+        },
+        "failure_mode": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["on_failure", "who_notices"],
+          "properties": {
+            "on_failure": { "type": "string", "minLength": 10, "description": "What the system does: retry, queue, halt, fall back to manual." },
+            "who_notices": { "type": "string", "minLength": 5, "description": "The named person or channel that finds out. 'Nobody' is a finding, and should be recorded as a risk." },
+            "tolerable_downtime": { "type": "string", "description": "How long this can be broken before the business feels it." }
+          }
+        },
+        "known_exceptions": {
+          "type": "array",
+          "description": "Cases deliberately not handled, and what happens to them instead. Prevents a successor from 'fixing' an intentional gap.",
+          "items": { "type": "string" }
+        },
+        "last_verified": { "$ref": "#/$defs/date" }
+      }
+    },
+
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "date", "decision", "context", "rejected"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "date": { "$ref": "#/$defs/date" },
+        "decision": { "type": "string", "minLength": 15, "description": "What was chosen, stated actively." },
+        "context": { "type": "string", "minLength": 25, "description": "The situation and pressures at the time. Written so it still makes sense a year later." },
+        "rejected": {
+          "type": "array",
+          "minItems": 1,
+          "description": "Alternatives considered and why they lost. Without this the decision looks arbitrary and gets reversed by accident.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["option", "why_not"],
+            "properties": {
+              "option": { "type": "string" },
+              "why_not": { "type": "string", "minLength": 10 }
+            }
+          }
+        },
+        "revisit_when": {
+          "type": "string",
+          "description": "The condition that should reopen this. Decisions with expiry conditions age far better than ones without."
+        },
+        "flow_ids": { "type": "array", "items": { "$ref": "#/$defs/id" } }
+      }
+    }
+  }
+}
