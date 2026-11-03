@@ -48,6 +48,8 @@ next one, deliver the walkthrough.
 | [`spec/SPEC.md`](./spec/SPEC.md) | Field-by-field guide covering what each section is for and how to fill it in. |
 | [`patterns/`](./patterns/) | The flow pattern library: four patterns and the rules the library runs on. |
 | [`examples/meridian-freight.manifest.json`](./examples/meridian-freight.manifest.json) | A complete worked example. Fictional client, realistic mess, including a staffing transition that went badly and what it taught. |
+| [`evals/`](./evals/) | The briefing put to the test: five maintenance scenarios run against fresh agents whose only context is the compiled briefing, plus a recorded 5-of-5 run with a control. |
+| [`mcp/`](./mcp/) | The toolchain as an MCP server, so any MCP-capable agent gets validate, brief, scaffold, and field reports as tools. |
 | [`tools/validate.js`](./tools/validate.js) | Zero-dependency validator for manifests and patterns, including role-coverage checks. |
 | [`tools/conform.js`](./tools/conform.js) | Conformance checker: verifies a shipped deployment repository lines up with its manifest and the method. |
 | [`tools/scaffold.js`](./tools/scaffold.js) | Turns a pattern into a per-client engagement workbook. |
@@ -73,6 +75,12 @@ node fde-hub/tools/scaffold.js fde-hub/patterns/document-intake-match.pattern.js
 
 # Hand the deployment to a maintenance agent: compile the briefing
 node fde-hub/tools/brief.js fde-hub/examples/meridian-freight.manifest.json --out CLAUDE.md
+
+# Test that the briefing actually works: run the maintenance evals
+node fde-hub/evals/run.js
+
+# Or give an agent the whole toolchain over MCP
+claude mcp add fde-hub -- node "$(pwd)/fde-hub/mcp/server.js"
 ```
 
 To start a manifest for a real client, copy the example and replace it section by section.
