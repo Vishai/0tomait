@@ -1,6 +1,7 @@
 # 0tomait
 
-Website and working artifacts for 0tomait, an agent-systems engineering practice.
+Website and working artifacts for 0tomait, an AI leverage and agent-systems engineering
+practice.
 
 Two things live in this repository:
 
@@ -15,9 +16,10 @@ Two things live in this repository:
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The Agent Job Pilot landing page. It explains the category, scope, pricing, and fit test. |
-| `agent-job.html` | The evidence-backed demo. It reads the latest real Revenue Path Reliability run and replays its source checks and queue. |
-| `ops-agent/` | The zero-dependency demo runner, product contract, persistent queue state, and inspectable run records. |
+| `index.html` | The AI Leverage Map and Agent Job Pilot landing page. It explains the engagement path, pricing, proof, and fit test. |
+| `agent-job.html` | The completed contract-to-kickoff walkthrough. It reads the saved output from the executable composite demo runner. |
+| `demo-agent/` | The transparent composite fixture, job contract, zero-dependency runner, and completed output used by the public demo. |
+| `ops-agent/` | The earlier live Revenue Path Reliability runner and its persistent queue records. Retained as engineering evidence, not the public sales story. |
 | `demo.html` | The earlier fictional deployment walkthrough. It remains supporting evidence for the handover method. |
 | `win.html` | Lead magnet: two copy-paste AI prompts. Linked from the QR codes below. |
 | `qr-code-win*.png` | QR codes pointing at `win.html`, for print and slides. |

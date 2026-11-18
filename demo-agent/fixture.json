@@ -1,0 +1,34 @@
+{
+  "data_class": "composite demonstration data",
+  "case_id": "HANDOFF-1042",
+  "started_at": "2026-11-17T09:14:00-07:00",
+  "client": "Field Service Co.",
+  "contract": {
+    "id": "CTR-1042",
+    "status": "signed",
+    "value_usd": 4800,
+    "signed_at": "2026-11-17T09:14:00-07:00"
+  },
+  "crm": {
+    "deal_id": "DEAL-778",
+    "stage": "won",
+    "contract_id": "CTR-1042"
+  },
+  "billing": {
+    "invoice": null,
+    "payment_callback": {
+      "status": "paid",
+      "received_at": "2026-11-17T09:30:00-07:00"
+    }
+  },
+  "project": null,
+  "calendar": null,
+  "approval": {
+    "decision": "approved",
+    "approved_at": "2026-11-17T09:22:00-07:00",
+    "scope": [
+      "send deposit invoice",
+      "invite client to kickoff"
+    ]
+  }
+}

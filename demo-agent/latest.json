@@ -1,0 +1,157 @@
+{
+  "demo_notice": "Executable composite demonstration data. No real client record or live account is represented.",
+  "job": {
+    "job_id": "contract-to-kickoff",
+    "job_name": "Contract-to-kickoff handoff",
+    "objective": "Turn a signed client contract into a paid, provisioned, scheduled project without losing work between systems.",
+    "trigger": "A contract is signed and its CRM opportunity is marked won.",
+    "sources": [
+      "contract system",
+      "CRM",
+      "billing",
+      "project workspace",
+      "calendar"
+    ],
+    "definition_of_done": [
+      "The signed contract is linked to the won CRM deal",
+      "The deposit is paid",
+      "The project workspace and onboarding checklist exist",
+      "The kickoff is scheduled",
+      "Every action has a receipt and no exception remains"
+    ],
+    "policy": {
+      "may_do": [
+        "Read and reconcile approved client records",
+        "Create a project shell from the approved template",
+        "Create an onboarding checklist",
+        "Draft a deposit invoice",
+        "Verify payment and scheduling callbacks"
+      ],
+      "requires_approval": [
+        "Send a financial request",
+        "Invite external attendees",
+        "Change scope, price, or contract terms"
+      ],
+      "must_never_do": [
+        "Invent a client record or payment",
+        "Change contract value",
+        "Mark the handoff complete without source evidence"
+      ]
+    }
+  },
+  "case_id": "HANDOFF-1042",
+  "status": "complete",
+  "summary": {
+    "contract_value_usd": 4800,
+    "systems_reconciled": 5,
+    "approval_gates": 1,
+    "exceptions_remaining": 0,
+    "minutes_to_ready": 18
+  },
+  "before": {
+    "contract": "signed",
+    "crm": "won",
+    "invoice": "missing",
+    "payment": "missing",
+    "project": "missing",
+    "kickoff": "missing"
+  },
+  "after": {
+    "contract": "linked",
+    "crm": "delivery ready",
+    "invoice": "paid",
+    "payment": "verified",
+    "project": "prj_b6637409f8",
+    "onboarding": "chk_2f6493c6d0",
+    "kickoff": "evt_c5534569a0"
+  },
+  "timeline": [
+    {
+      "at": "09:14",
+      "verb": "TRIGGER",
+      "detail": "Signed contract matched to the won CRM deal",
+      "evidence": "CTR-1042 ↔ DEAL-778"
+    },
+    {
+      "at": "09:15",
+      "verb": "RECONCILE",
+      "detail": "Checked contract, CRM, billing, project workspace, and calendar",
+      "evidence": "5 source records read; 3 missing handoff artifacts"
+    },
+    {
+      "at": "09:16",
+      "verb": "DECIDE",
+      "detail": "Classified the case as a dropped post-sale handoff",
+      "evidence": "contract signed + deal won + no invoice + no project + no kickoff"
+    },
+    {
+      "at": "09:18",
+      "verb": "ACT",
+      "detail": "Created the project shell and onboarding checklist",
+      "evidence": "prj_b6637409f8; chk_2f6493c6d0"
+    },
+    {
+      "at": "09:19",
+      "verb": "PREPARE",
+      "detail": "Drafted the deposit invoice and kickoff invitation",
+      "evidence": "inv_1c945e6268; approval required before external send"
+    },
+    {
+      "at": "09:20",
+      "verb": "HOLD",
+      "detail": "Paused at the financial and external-communication boundary",
+      "evidence": "owner approval request APR-1042"
+    },
+    {
+      "at": "09:22",
+      "verb": "RESUME",
+      "detail": "Owner approved the invoice send and kickoff invitation",
+      "evidence": "APR-1042 approved; scope unchanged"
+    },
+    {
+      "at": "09:23",
+      "verb": "ACT",
+      "detail": "Sent the deposit invoice and proposed kickoff window",
+      "evidence": "inv_1c945e6268; delivery receipt accepted"
+    },
+    {
+      "at": "09:30",
+      "verb": "VERIFY",
+      "detail": "Payment callback matched to the invoice and contract",
+      "evidence": "inv_1c945e6268; payment status paid"
+    },
+    {
+      "at": "09:32",
+      "verb": "COMPLETE",
+      "detail": "Kickoff booked and all five systems reconciled",
+      "evidence": "evt_c5534569a0; 0 exceptions remaining"
+    }
+  ],
+  "completion_ledger": [
+    {
+      "requirement": "Contract linked to won deal",
+      "evidence": "CTR-1042 ↔ DEAL-778",
+      "status": "verified"
+    },
+    {
+      "requirement": "Deposit paid",
+      "evidence": "inv_1c945e6268 / payment callback matched",
+      "status": "verified"
+    },
+    {
+      "requirement": "Project ready",
+      "evidence": "prj_b6637409f8 + chk_2f6493c6d0",
+      "status": "verified"
+    },
+    {
+      "requirement": "Kickoff scheduled",
+      "evidence": "evt_c5534569a0",
+      "status": "verified"
+    },
+    {
+      "requirement": "No exception remains",
+      "evidence": "5 systems reconciled after final callback",
+      "status": "verified"
+    }
+  ]
+}

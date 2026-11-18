@@ -1,0 +1,39 @@
+{
+  "job_id": "contract-to-kickoff",
+  "job_name": "Contract-to-kickoff handoff",
+  "objective": "Turn a signed client contract into a paid, provisioned, scheduled project without losing work between systems.",
+  "trigger": "A contract is signed and its CRM opportunity is marked won.",
+  "sources": [
+    "contract system",
+    "CRM",
+    "billing",
+    "project workspace",
+    "calendar"
+  ],
+  "definition_of_done": [
+    "The signed contract is linked to the won CRM deal",
+    "The deposit is paid",
+    "The project workspace and onboarding checklist exist",
+    "The kickoff is scheduled",
+    "Every action has a receipt and no exception remains"
+  ],
+  "policy": {
+    "may_do": [
+      "Read and reconcile approved client records",
+      "Create a project shell from the approved template",
+      "Create an onboarding checklist",
+      "Draft a deposit invoice",
+      "Verify payment and scheduling callbacks"
+    ],
+    "requires_approval": [
+      "Send a financial request",
+      "Invite external attendees",
+      "Change scope, price, or contract terms"
+    ],
+    "must_never_do": [
+      "Invent a client record or payment",
+      "Change contract value",
+      "Mark the handoff complete without source evidence"
+    ]
+  }
+}
