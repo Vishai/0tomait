@@ -3,7 +3,7 @@
 Website and working artifacts for 0tomait, an AI leverage and agent-systems engineering
 practice.
 
-Two things live in this repository:
+Three things live in this repository:
 
 1. **The website**: a dependency-free static site. Self-contained pages, no build
    step, nothing to break.
@@ -11,6 +11,8 @@ Two things live in this repository:
    tooling for making forward-deployed automation engagements survive the engineer who
    built them. Start with its [README](./fde-hub/README.md) and
    [thesis](./fde-hub/docs/thesis.md).
+3. **[`marketing/`](./marketing/)**: the launch campaigns, copy bank, 90-day roadmap,
+   dated work queue, attribution links, scorecard, and commercial visual-production rules.
 
 ## The site
 
@@ -21,7 +23,8 @@ Two things live in this repository:
 | `demo-agent/` | The transparent composite fixture, job contract, zero-dependency runner, and completed output used by the public demo. |
 | `ops-agent/` | The earlier live Revenue Path Reliability runner and its persistent queue records. Retained as engineering evidence, not the public sales story. |
 | `demo.html` | The earlier fictional deployment walkthrough. It remains supporting evidence for the handover method. |
-| `win.html` | Lead magnet: two copy-paste AI prompts. Linked from the QR codes below. |
+| `win.html` | Lead magnet: the interactive Automation Survival Audit. Linked from the QR codes below. |
+| `og-*.png` | Social preview images for the homepage, demo, and audit. |
 | `qr-code-win*.png` | QR codes pointing at `win.html`, for print and slides. |
 | `_headers` | Security headers for Cloudflare Pages / Netlify hosting. |
 | `.htaccess` | The same protections for Apache hosting; ignored on platform hosts. |

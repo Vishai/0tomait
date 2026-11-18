@@ -1,0 +1,9 @@
+campaign_id,campaign,source,medium,content,destination,tracked_url
+warm_last_item,Last Real Item,direct_email,warm_outreach,personal_note,homepage,https://0tomait.com/?utm_source=direct_email&utm_medium=warm_outreach&utm_campaign=warm_last_item&utm_content=personal_note
+demo_handoff,Dropped Handoff,direct_email,outbound,handwritten,agent-job,https://0tomait.com/agent-job.html?utm_source=direct_email&utm_medium=outbound&utm_campaign=demo_handoff&utm_content=handwritten
+demo_handoff,Dropped Handoff,linkedin,organic_social,launch_post,agent-job,https://0tomait.com/agent-job.html?utm_source=linkedin&utm_medium=organic_social&utm_campaign=demo_handoff&utm_content=launch_post
+leverage_classifier,AI or Not,linkedin,organic_social,classifier_post,homepage,https://0tomait.com/?utm_source=linkedin&utm_medium=organic_social&utm_campaign=leverage_classifier&utm_content=classifier_post
+survival_audit,Automation Survival Audit,linkedin,organic_social,score_post,audit,https://0tomait.com/win.html?utm_source=linkedin&utm_medium=organic_social&utm_campaign=survival_audit&utm_content=score_post
+operator_partners,Operator Partners,direct_email,partner_outreach,partner_note,agent-job,https://0tomait.com/agent-job.html?utm_source=direct_email&utm_medium=partner_outreach&utm_campaign=operator_partners&utm_content=partner_note
+client_record,Client Record,linkedin,organic_social,proof_post,homepage,https://0tomait.com/?utm_source=linkedin&utm_medium=organic_social&utm_campaign=client_record&utm_content=proof_post
+

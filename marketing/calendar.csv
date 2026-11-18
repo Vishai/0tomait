@@ -1,0 +1,24 @@
+date,campaign,channel,action,audience_or_asset,target,status,approval_required
+2026-11-18,Launch infrastructure,website,Deploy updated offer and completed demo,0tomait.com,1,complete,no
+2026-11-19,Launch infrastructure,analytics,Enable Cloudflare Web Analytics and add calendar source question,Cloudflare and Google Calendar,2,blocked_owner_login,yes
+2026-11-19,Last Real Item,private pipeline,Select first five warm contacts with one evidence note each,Existing relationships,5,draft,yes
+2026-11-20,Last Real Item,email_or_dm,Send first reviewed warm notes,Approved warm contacts,5,needs_review,yes
+2026-11-20,Dropped Handoff,linkedin,Publish launch post,Agent-job demo,1,needs_review,yes
+2026-11-23,Operator Partners,email_or_dm,Send two reviewed partner notes,Adjacent operators,2,needs_review,yes
+2026-11-24,AI or Not,linkedin,Publish classification post,Contract-to-kickoff example,1,needs_review,yes
+2026-11-24,Dropped Handoff,research,Research five accounts and record one public signal each,Target accounts,5,draft,no
+2026-11-25,Dropped Handoff,email_or_dm,Send reviewed first notes,Qualified researched accounts,5,needs_review,yes
+2026-11-27,Weekly review,pipeline,Record replies walkthroughs buyer language and next experiment,All active records,1,draft,no
+2026-11-30,Last Real Item,private pipeline,Select second five warm contacts,Existing relationships,5,draft,yes
+2026-12-01,Last Real Item,email_or_dm,Send second warm batch and eligible follow-ups,Approved contacts,10,needs_review,yes
+2026-12-02,Survival Audit,linkedin,Publish audit post,Automation Survival Audit,1,needs_review,yes
+2026-12-03,Dropped Handoff,research,Research five additional accounts,Target accounts,5,draft,no
+2026-12-04,Weekly review,pipeline,Classify every live opportunity and update scorecard,All active records,1,draft,no
+2026-12-07,Operator Partners,email_or_dm,Send three additional partner notes,Adjacent operators,3,needs_review,yes
+2026-12-08,AI or Not,linkedin,Publish price and scope post,Why $3500,1,needs_review,yes
+2026-12-09,Dropped Handoff,email_or_dm,Send second researched account batch,Qualified accounts,5,needs_review,yes
+2026-12-11,Weekly review,pipeline,Review message audience and conversion by campaign,All campaigns,1,draft,no
+2026-12-14,AI or Not,linkedin,Publish client record post,Approved engagement record,1,needs_review,yes
+2026-12-15,Last Real Item,email_or_dm,Send final warm batch and close-loop follow-ups,Approved contacts,10,needs_review,yes
+2026-12-16,Month review,scorecard,Choose next-month workflow cluster from buyer language,All walkthrough evidence,1,draft,no
+
