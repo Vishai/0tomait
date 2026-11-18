@@ -1,10 +1,10 @@
 # 0tomait
 
-Website and working artifacts for 0tomait, a forward-deployed AI engineering practice.
+Website and working artifacts for 0tomait, an agent-systems engineering practice.
 
 Two things live in this repository:
 
-1. **The website**: a dependency-free static site. Two self-contained pages, no build
+1. **The website**: a dependency-free static site. Self-contained pages, no build
    step, nothing to break.
 2. **[`fde-hub/`](./fde-hub/)**: the deployment-manifest spec, flow pattern library, and
    tooling for making forward-deployed automation engagements survive the engineer who
@@ -15,7 +15,10 @@ Two things live in this repository:
 
 | File | What it is |
 | --- | --- |
-| `index.html` | The landing page. Light navy/teal theme, all CSS and JS inline, deliberately self-contained. CTA links to the Google Calendar booking page. |
+| `index.html` | The Agent Job Pilot landing page. It explains the category, scope, pricing, and fit test. |
+| `agent-job.html` | The evidence-backed demo. It reads the latest real Revenue Path Reliability run and replays its source checks and queue. |
+| `ops-agent/` | The zero-dependency demo runner, product contract, persistent queue state, and inspectable run records. |
+| `demo.html` | The earlier fictional deployment walkthrough. It remains supporting evidence for the handover method. |
 | `win.html` | Lead magnet: two copy-paste AI prompts. Linked from the QR codes below. |
 | `qr-code-win*.png` | QR codes pointing at `win.html`, for print and slides. |
 | `_headers` | Security headers for Cloudflare Pages / Netlify hosting. |

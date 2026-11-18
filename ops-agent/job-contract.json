@@ -1,0 +1,45 @@
+{
+  "job_id": "0tomait-revenue-path",
+  "job_name": "Revenue path reliability",
+  "objective": "Keep the public offer, demonstration, and booking path reachable and consistent with the approved Agent Job Pilot contract.",
+  "schedule": "Daily and after every production release",
+  "owner": "Brandon Armstrong",
+  "sources": {
+    "live_home": "https://0tomait.com/",
+    "live_demo": "https://0tomait.com/demo",
+    "booking": "https://calendar.app.google/cmtRRbjmx9MnxDTr9",
+    "source_home": "index.html",
+    "source_demo": "agent-job.html"
+  },
+  "approved_contract": {
+    "product_name": "Agent Job Pilot",
+    "headline": "Give AI a job that keeps running.",
+    "price": "$3,500 fixed",
+    "booking_title_contains": "Agent Job",
+    "booking_url": "https://calendar.app.google/cmtRRbjmx9MnxDTr9"
+  },
+  "retired_offers": [
+    "AI Workflow Accelerator",
+    "Inbox Triage",
+    "$750 flat",
+    "$4,500 for the full 8 weeks"
+  ],
+  "policy": {
+    "may_do": [
+      "Read public pages and repository files",
+      "Run deterministic checks",
+      "Deduplicate findings",
+      "Prepare a source repair and verification evidence"
+    ],
+    "requires_approval": [
+      "Change public copy or prices",
+      "Merge or deploy a repair",
+      "Change the external booking configuration"
+    ],
+    "must_never_do": [
+      "Publish without human approval",
+      "Invent availability, client results, or performance claims",
+      "Treat a successful HTTP response as proof that the customer journey is correct"
+    ]
+  }
+}

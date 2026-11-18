@@ -1,0 +1,282 @@
+{
+  "schema_version": 1,
+  "run_id": "2026-11-18T05-06-51-201Z",
+  "checked_at": "2026-11-18T05:06:51.201Z",
+  "job": {
+    "id": "0tomait-revenue-path",
+    "name": "Revenue path reliability",
+    "objective": "Keep the public offer, demonstration, and booking path reachable and consistent with the approved Agent Job Pilot contract.",
+    "schedule": "Daily and after every production release"
+  },
+  "source_commit": "4900a50ca32df9d33dbc004342c0def0b9cce8f8",
+  "summary": {
+    "sources_checked": 5,
+    "sources_ok": 4,
+    "active_findings": 14,
+    "requires_approval": 13,
+    "resolved_total": 0
+  },
+  "sources": [
+    {
+      "label": "live_home",
+      "url": "https://0tomait.com/",
+      "final_url": "https://0tomait.com/",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 415,
+      "sha256": "fe68a40a59b3fffd0b47b5fa62abf31ce28a44946ad65c58da03f506bfb768a3",
+      "title": "0tomait - Forward-Deployed AI Engineering"
+    },
+    {
+      "label": "live_demo",
+      "url": "https://0tomait.com/demo",
+      "final_url": "https://0tomait.com/demo",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 401,
+      "sha256": "2f7b25a68595eabd73773538b0bf9d5a47245e4984b8b50ea25bdbf7ca318b04",
+      "title": "Walk through a deployment | 0tomait"
+    },
+    {
+      "label": "booking",
+      "url": "https://calendar.app.google/cmtRRbjmx9MnxDTr9",
+      "final_url": "https://calendar.google.com/calendar/appointments/schedules/AcZssZ22K-VirCtL4llWNOM59UGlShweIRow3wbaIWz7ObZ_h8EWoKUJ4JPO7sxcVPUalR1wd3KJtsmX",
+      "status": 200,
+      "ok": true,
+      "duration_ms": 912,
+      "sha256": "d7a1db2bdda89c5c9b9174ffcd8db3d9e00b90e52a1001779fdc3ed3aa33b719",
+      "title": "Discovery Call - AI Workflow Accelerator"
+    },
+    {
+      "label": "source_home",
+      "path": "index.html",
+      "ok": true,
+      "sha256": "fe68a40a59b3fffd0b47b5fa62abf31ce28a44946ad65c58da03f506bfb768a3",
+      "title": "0tomait - Forward-Deployed AI Engineering"
+    },
+    {
+      "label": "source_demo",
+      "path": "agent-job.html",
+      "ok": false,
+      "sha256": null,
+      "title": null,
+      "error": "ENOENT: no such file or directory, open '/Users/brandonarmstrong/Documents/ChatGPT/0tomait/site-source/agent-job.html'"
+    }
+  ],
+  "active_findings": [
+    {
+      "fingerprint": "6a6f29889bc679cc",
+      "scope": "source_demo",
+      "check": "source_reachable",
+      "expected": "Source is readable and returns a successful response",
+      "observed": "ENOENT: no such file or directory, open '/Users/brandonarmstrong/Documents/ChatGPT/0tomait/site-source/agent-job.html'",
+      "evidence": "agent-job.html",
+      "action": "Investigate access or deployment before processing downstream checks",
+      "approval": "none",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "f208fa940abfbb16",
+      "scope": "live_home",
+      "check": "retired_offer:AI Workflow Accelerator",
+      "expected": "Retired offers are absent from the approved revenue path",
+      "observed": "Found “AI Workflow Accelerator”",
+      "evidence": " · live in 7 days Book Setup ALSO / START SMALLER Not ready for an embedded engineer? The AI Workflow Accelerator is an 8-week program where we build 2-3 automations for your business together. I do the heavy lifting, you learn by do",
+      "action": "Verify the approved source has been deployed",
+      "approval": "human approves deployment",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "12b028854656a24d",
+      "scope": "live_home",
+      "check": "retired_offer:$750 flat",
+      "expected": "Retired offers are absent from the approved revenue path",
+      "observed": "Found “$750 flat”",
+      "evidence": "end. Nothing deleted or sent without your OK, plus a one-page runbook so it keeps working $750 flat · live in 7 days Book Setup ALSO / START SMALLER Not ready for an embedded engineer? The AI Workflow Accelerator is an ",
+      "action": "Verify the approved source has been deployed",
+      "approval": "human approves deployment",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "8add718541e485cf",
+      "scope": "live_home",
+      "check": "retired_offer:$4,500 for the full 8 weeks",
+      "expected": "Retired offers are absent from the approved revenue path",
+      "observed": "Found “$4,500 for the full 8 weeks”",
+      "evidence": "s, built with you, documented for you You leave self-sufficient, with no dependency on me $4,500 for the full 8 weeks · or 2 payments of $2,400 NEXT STEP Bring in an engineer your business gets to keep Book a free 30-minute call. We'll l",
+      "action": "Verify the approved source has been deployed",
+      "approval": "human approves deployment",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "1495b73a0cb0b2c4",
+      "scope": "source_home",
+      "check": "retired_offer:AI Workflow Accelerator",
+      "expected": "Retired offers are absent from the approved revenue path",
+      "observed": "Found “AI Workflow Accelerator”",
+      "evidence": " · live in 7 days Book Setup ALSO / START SMALLER Not ready for an embedded engineer? The AI Workflow Accelerator is an 8-week program where we build 2-3 automations for your business together. I do the heavy lifting, you learn by do",
+      "action": "Prepare a source repair",
+      "approval": "product owner approves copy and price changes",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "51fef98e99512a97",
+      "scope": "source_home",
+      "check": "retired_offer:$750 flat",
+      "expected": "Retired offers are absent from the approved revenue path",
+      "observed": "Found “$750 flat”",
+      "evidence": "end. Nothing deleted or sent without your OK, plus a one-page runbook so it keeps working $750 flat · live in 7 days Book Setup ALSO / START SMALLER Not ready for an embedded engineer? The AI Workflow Accelerator is an ",
+      "action": "Prepare a source repair",
+      "approval": "product owner approves copy and price changes",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "2d2614ac049ed91b",
+      "scope": "source_home",
+      "check": "retired_offer:$4,500 for the full 8 weeks",
+      "expected": "Retired offers are absent from the approved revenue path",
+      "observed": "Found “$4,500 for the full 8 weeks”",
+      "evidence": "s, built with you, documented for you You leave self-sufficient, with no dependency on me $4,500 for the full 8 weeks · or 2 payments of $2,400 NEXT STEP Bring in an engineer your business gets to keep Book a free 30-minute call. We'll l",
+      "action": "Prepare a source repair",
+      "approval": "product owner approves copy and price changes",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "e8fa967b7607055e",
+      "scope": "live_home",
+      "check": "approved_contract:headline",
+      "expected": "Contains “Give AI a job, not another prompt.”",
+      "observed": "Approved value was not found",
+      "evidence": "https://0tomait.com/",
+      "action": "Verify the approved source has been deployed",
+      "approval": "human approves deployment",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "d9af23eea04b9a43",
+      "scope": "live_home",
+      "check": "approved_contract:product_name",
+      "expected": "Contains “Agent Job Pilot”",
+      "observed": "Approved value was not found",
+      "evidence": "https://0tomait.com/",
+      "action": "Verify the approved source has been deployed",
+      "approval": "human approves deployment",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "f586e6a880e09e71",
+      "scope": "live_home",
+      "check": "approved_contract:price",
+      "expected": "Contains “$3,500 fixed”",
+      "observed": "Approved value was not found",
+      "evidence": "https://0tomait.com/",
+      "action": "Verify the approved source has been deployed",
+      "approval": "human approves deployment",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "062f461d6bbb0ee3",
+      "scope": "source_home",
+      "check": "approved_contract:headline",
+      "expected": "Contains “Give AI a job, not another prompt.”",
+      "observed": "Approved value was not found",
+      "evidence": "index.html",
+      "action": "Prepare a source repair",
+      "approval": "product owner approves source repair",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "7a87032fceaca218",
+      "scope": "source_home",
+      "check": "approved_contract:product_name",
+      "expected": "Contains “Agent Job Pilot”",
+      "observed": "Approved value was not found",
+      "evidence": "index.html",
+      "action": "Prepare a source repair",
+      "approval": "product owner approves source repair",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "1590ba44f29c5d35",
+      "scope": "source_home",
+      "check": "approved_contract:price",
+      "expected": "Contains “$3,500 fixed”",
+      "observed": "Approved value was not found",
+      "evidence": "index.html",
+      "action": "Prepare a source repair",
+      "approval": "product owner approves source repair",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    },
+    {
+      "fingerprint": "10cef3b8d88a35ba",
+      "scope": "booking",
+      "check": "booking_title_contract",
+      "expected": "Booking title contains “Agent Job”",
+      "observed": "Discovery Call - AI Workflow Accelerator",
+      "evidence": "https://calendar.google.com/calendar/appointments/schedules/AcZssZ22K-VirCtL4llWNOM59UGlShweIRow3wbaIWz7ObZ_h8EWoKUJ4JPO7sxcVPUalR1wd3KJtsmX returned HTTP 200",
+      "action": "Ask the owner to rename the Google Calendar appointment schedule, then verify on the next run",
+      "approval": "owner must change an external account setting",
+      "status": "open",
+      "first_seen_at": "2026-11-18T05:06:51.201Z",
+      "last_seen_at": "2026-11-18T05:06:51.201Z",
+      "occurrences": 1
+    }
+  ],
+  "policy": {
+    "may_do": [
+      "Read public pages and repository files",
+      "Run deterministic checks",
+      "Deduplicate findings",
+      "Prepare a source repair and verification evidence"
+    ],
+    "requires_approval": [
+      "Change public copy or prices",
+      "Merge or deploy a repair",
+      "Change the external booking configuration"
+    ],
+    "must_never_do": [
+      "Publish without human approval",
+      "Invent availability, client results, or performance claims",
+      "Treat a successful HTTP response as proof that the customer journey is correct"
+    ]
+  }
+}

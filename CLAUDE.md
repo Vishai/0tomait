@@ -7,8 +7,9 @@ it is the briefing for this deployment, and this deployment is a production webs
 
 Two things live here:
 
-1. **The website** (`index.html`, `demo.html`, `win.html`): the public site for 0tomait,
-   a forward-deployed AI engineering practice. Served by Cloudflare Pages.
+1. **The website** (`index.html`, `agent-job.html`, `demo.html`, `win.html`): the public
+   site for 0tomait, an agent-systems engineering practice. Served by Cloudflare Pages.
+   `ops-agent/` contains the inspectable runner and evidence behind `agent-job.html`.
 2. **`fde-hub/`**: the published method. A deployment-manifest spec, a flow pattern
    library, and zero-dependency tooling. Start with `fde-hub/README.md` and
    `fde-hub/docs/thesis.md` before touching anything in it.
