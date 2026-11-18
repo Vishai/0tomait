@@ -1,7 +1,7 @@
 {
   "job_id": "0tomait-revenue-path",
-  "updated_at": "2026-11-18T05:12:01.539Z",
-  "last_run_id": "2026-11-18T05-12-01-539Z",
+  "updated_at": "2026-11-18T05:15:29.002Z",
+  "last_run_id": "2026-11-18T05-15-29-002Z",
   "findings": {
     "6a6f29889bc679cc": {
       "fingerprint": "6a6f29889bc679cc",
@@ -29,8 +29,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     "12b028854656a24d": {
       "fingerprint": "12b028854656a24d",
@@ -43,8 +43,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     "8add718541e485cf": {
       "fingerprint": "8add718541e485cf",
@@ -57,8 +57,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     "1495b73a0cb0b2c4": {
       "fingerprint": "1495b73a0cb0b2c4",
@@ -131,8 +131,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     "f586e6a880e09e71": {
       "fingerprint": "f586e6a880e09e71",
@@ -145,8 +145,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     "062f461d6bbb0ee3": {
       "fingerprint": "062f461d6bbb0ee3",
@@ -204,8 +204,8 @@
       "approval": "owner must change an external account setting",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     "1a8e27cc3cfefccc": {
       "fingerprint": "1a8e27cc3cfefccc",
@@ -218,8 +218,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:11:28.635Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 2
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 3
     }
   }
 }

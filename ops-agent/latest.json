@@ -1,14 +1,14 @@
 {
   "schema_version": 1,
-  "run_id": "2026-11-18T05-12-01-539Z",
-  "checked_at": "2026-11-18T05:12:01.539Z",
+  "run_id": "2026-11-18T05-15-29-002Z",
+  "checked_at": "2026-11-18T05:15:29.002Z",
   "job": {
     "id": "0tomait-revenue-path",
     "name": "Revenue path reliability",
     "objective": "Keep the public offer, demonstration, and booking path reachable and consistent with the approved Agent Job Pilot contract.",
     "schedule": "Daily and after every production release"
   },
-  "source_commit": "4900a50ca32df9d33dbc004342c0def0b9cce8f8",
+  "source_commit": "3afeb5325e28b118780e33bea6c54884970a8068",
   "summary": {
     "sources_checked": 5,
     "sources_ok": 5,
@@ -23,7 +23,7 @@
       "final_url": "https://0tomait.com/",
       "status": 200,
       "ok": true,
-      "duration_ms": 216,
+      "duration_ms": 294,
       "sha256": "fe68a40a59b3fffd0b47b5fa62abf31ce28a44946ad65c58da03f506bfb768a3",
       "title": "0tomait - Forward-Deployed AI Engineering"
     },
@@ -33,7 +33,7 @@
       "final_url": "https://0tomait.com/demo",
       "status": 200,
       "ok": true,
-      "duration_ms": 203,
+      "duration_ms": 281,
       "sha256": "2f7b25a68595eabd73773538b0bf9d5a47245e4984b8b50ea25bdbf7ca318b04",
       "title": "Walk through a deployment | 0tomait"
     },
@@ -43,22 +43,22 @@
       "final_url": "https://calendar.google.com/calendar/appointments/schedules/AcZssZ22K-VirCtL4llWNOM59UGlShweIRow3wbaIWz7ObZ_h8EWoKUJ4JPO7sxcVPUalR1wd3KJtsmX",
       "status": 200,
       "ok": true,
-      "duration_ms": 756,
-      "sha256": "36b1e14f25463c4ef74845fc0c8fd4c66d869e8f53e030235167be10edac8178",
+      "duration_ms": 881,
+      "sha256": "b9359340d4ae03408756c2e3275e0cc6a32c21d2442cadc0dfd8f3c57e357144",
       "title": "Discovery Call - AI Workflow Accelerator"
     },
     {
       "label": "source_home",
       "path": "index.html",
       "ok": true,
-      "sha256": "254aa3ca521ee55d7aee7753b17c0dad75c5bb1438e6f1bb403889b68cb7f24c",
+      "sha256": "32ca7b6ba46cb4f940a01d9f29ae3b329137c698dcbbf62cabfb956c6d1e610d",
       "title": "0tomait | Agent jobs for real operations"
     },
     {
       "label": "source_demo",
       "path": "agent-job.html",
       "ok": true,
-      "sha256": "95b6b3ac19af2af9333797d9bebe83a65fc8ed7a10f351e0c398a8dfdba509a9",
+      "sha256": "20d59443e8e8ac483e2325f4887a8bd667d92206938f002698818a1cbdbc7b36",
       "title": "A real agent job | 0tomait"
     }
   ],
@@ -74,8 +74,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     {
       "fingerprint": "12b028854656a24d",
@@ -88,8 +88,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     {
       "fingerprint": "8add718541e485cf",
@@ -102,8 +102,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     {
       "fingerprint": "d9af23eea04b9a43",
@@ -116,8 +116,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     {
       "fingerprint": "f586e6a880e09e71",
@@ -130,8 +130,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     {
       "fingerprint": "10cef3b8d88a35ba",
@@ -144,8 +144,8 @@
       "approval": "owner must change an external account setting",
       "status": "open",
       "first_seen_at": "2026-11-18T05:06:51.201Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 3
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 4
     },
     {
       "fingerprint": "1a8e27cc3cfefccc",
@@ -158,8 +158,8 @@
       "approval": "human approves deployment",
       "status": "open",
       "first_seen_at": "2026-11-18T05:11:28.635Z",
-      "last_seen_at": "2026-11-18T05:12:01.539Z",
-      "occurrences": 2
+      "last_seen_at": "2026-11-18T05:15:29.002Z",
+      "occurrences": 3
     }
   ],
   "policy": {
